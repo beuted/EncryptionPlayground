@@ -1,3 +1,9 @@
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+/* AES implementation in JavaScript                                   (c) Chris Veness 2005-2016  */
+/*                                                                                   MIT Licence  */
+/* www.movable-type.co.uk/scripts/aes.html                                                        */
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
 'use strict';
 
 
