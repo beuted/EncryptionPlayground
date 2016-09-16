@@ -11,19 +11,19 @@
                 var _q = $('#q').val();
 
                 if (!!_p && !RSA.isPrime(_p)) {
-                	_p = null;
-                	console.log('p is not a prime number');
-                	$('#p').css('border', '1px solid red');
+                    _p = null;
+                    alert('p is not a prime number');
+                    $('#p').css('border', '1px solid red');
                 } else if (!!_p) {
-                	$('#p').css('border', '1px solid green');
+                    $('#p').css('border', '1px solid green');
                 }
 
                 if (!!_q && !RSA.isPrime(_q)) {
-                	_q = null;
-                	console.log('q is not a prime number');
-                	$('#q').css('border', '1px solid red')
+                    _q = null;
+                    alert('q is not a prime number');
+                    $('#q').css('border', '1px solid red')
                 } else if (!!_q) {
-                	$('#q').css('border', '1px solid green');
+                    $('#q').css('border', '1px solid green');
                 }
 
                 res = RSA.generate(_p, _q);
@@ -46,6 +46,20 @@
                 $('#decrypted_message').text(decrypted_message);
             }
 
+            var aes_encrypt = function() {
+                var t = new Date();
+                var ciphertext = Aes.Ctr.encrypt($('#aes_message_input').val(), $('#aes_password').val(), 256);
+                $('#encrypt_time').html(((new Date() - t))+'ms');
+                $('#aes_encrypted_message').text(ciphertext);
+            }
+
+            var aes_decrypt = function() {
+                var t = new Date();
+                var plain = Aes.Ctr.decrypt($('#aes_encrypted_message_input').val(), $('#aes_password').val(), 256);
+                $('#decrypt_time').html(((new Date() - t))+'ms');
+                $('#aes_decrypted_message').text(plain);
+            }
+
             $(document).ready(() => {
                 rsa_generate();
 
@@ -55,24 +69,15 @@
 
                 $('#rsa_decrypt').click(rsa_decrypt);
 
-                $('#aes_encrypt').click(function() {
-                    var t = new Date();
-                    var ciphertext = Aes.Ctr.encrypt($('#aes_message_input').val(), $('#aes_password').val(), 256);
-                    $('#encrypt_time').html(((new Date() - t))+'ms');
-                    $('#aes_encrypted_message').text(ciphertext);
-                });
+                $('#aes_encrypt').click(aes_encrypt);
 
-                $('#aes_decrypt').click(function() {
-                    var t = new Date();
-                    var plain = Aes.Ctr.decrypt($('#aes_encrypted_message_input').val(), $('#aes_password').val(), 256);
-                    $('#decrypt_time').html(((new Date() - t))+'ms');
-                    $('#aes_decrypted_message').text(plain);
-                });
+                $('#aes_decrypt').click(aes_decrypt);
             });
         </script>
     </head>
     <body>
         <h1>RSA (asymmetric public-private key cryptosystem)</h1>
+        <div>(Non-minified source-code for you to look)</div>
 
         <h2>Generating keys</h2>
 
@@ -103,12 +108,16 @@
 
         <button id="rsa_decrypt">decrypt with public key</button><br><br>
 
-
         <hr>
         <h1>AES (symmetric-key algorithm)</h1>
-        <a href="http://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html">Hand-wavy AES explanation</a><br><br>
+        <div>WIP</div>
 
-        <div>Password: <input id="aes_password" type="text"></input></div><br>
+
+        <hr>
+        <h1>AES + Counter mode of operation (symmetric-key algorithm)</h1>
+        <div>(Non-minified source-code for you to look, also have a look at this <a href="http://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html">Hand-wavy AES explanation</a>)</div><br><br>
+
+        <div><b>Password:</b> <input id="aes_password" type="text"></input></div><br>
 
         <h2>Encrypting</h2>
         <div>Message: <input id="aes_message_input" type="text"></input></div>
