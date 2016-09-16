@@ -2,8 +2,6 @@
 
 /**
  * RSA hash function reference implementation.
- *
- * @namespace
  */
 var RSA = {};
 
