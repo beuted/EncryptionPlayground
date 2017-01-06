@@ -1,0 +1,56 @@
+<html>
+    <head>
+        <script src="../vendors/jQuery-2.2.3.min.js" type="text/javascript"></script>
+        <script src="../vendors/BigInteger.min.js" type="text/javascript"></script>
+        <script src="../aes.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            var res;
+
+            var aes_encrypt = function() {
+                var t = new Date();
+                var ciphertext = Aes.Ctr.encrypt($('#aes_message_input').val(), $('#aes_password').val(), 256);
+                $('#encrypt_time').html(((new Date() - t))+'ms');
+                $('#aes_encrypted_message').text(ciphertext);
+            }
+
+            var aes_decrypt = function() {
+                var t = new Date();
+                var plain = Aes.Ctr.decrypt($('#aes_encrypted_message_input').val(), $('#aes_password').val(), 256);
+                $('#decrypt_time').html(((new Date() - t))+'ms');
+                $('#aes_decrypted_message').text(plain);
+            }
+
+            $(document).ready(() => {
+                $('#aes_encrypt').click(aes_encrypt);
+
+                $('#aes_decrypt').click(aes_decrypt);
+            });
+        </script>
+    </head>
+    <body>
+        <h1>AES (symmetric-key algorithm)</h1>
+        <div>WIP</div>
+
+
+        <hr>
+        <h1>AES + Counter mode of operation (symmetric-key algorithm)</h1>
+        <div>(Non-minified source-code for you to look, also have a look at this <a href="http://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html">Hand-wavy AES explanation</a>)</div><br><br>
+
+        <div><b>Password:</b> <input id="aes_password" type="text"></input></div><br>
+
+        <h2>Encrypting</h2>
+        <div>Message: <input id="aes_message_input" type="text"></input></div>
+        <div>Calculated encrypted message: <b id="aes_encrypted_message"></b></div>
+        <div>Calculated in: <b id="encrypt_time"></b></div>
+        <br>
+        <button id="aes_encrypt">encrypt with private key</button><br><br>
+
+
+        <h2>Decrypting</h2>
+        <div>Encrypted message: <input id="aes_encrypted_message_input" type="text"></input></div>
+        <div>Calculated decrypted message: <b id="aes_decrypted_message"></b></div>
+        <div>Calculated in: <b id="decrypt_time"></b></div><br>
+
+        <button id="aes_decrypt">decrypt with public key</button>
+    </body>
+</html>
