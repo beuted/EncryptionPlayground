@@ -1,0 +1,122 @@
+<html>
+    <head>
+        <script src="../vendors/jQuery-2.2.3.min.js" type="text/javascript"></script>
+
+        <!-- Scripts comming from https://github.com/kjur/jsrsasign -->
+        <script src="../vendors/jsrsasign/jsrsasign-all-min.js" type="text/javascript"></script>
+
+
+        <script src="../crypto-currency.js" type="text/javascript"></script>
+        <script type="text/javascript">
+
+        var network = new Network();
+        var alice = new User('Alice', network);
+        var bob = new User('Bob', network);
+        var charlie = new User('Charlie', network);
+
+        var signedMessage;
+        $(document).ready(function() {
+            var message = alice.GetMessage("Bob", 1);
+            signedMessage = alice.GetSignedMessage("Bob", 1);
+            var isOk = bob.VerifySignedMessageAndAddToBlockChain(signedMessage);
+            if (isOk)
+                bob.BroadcastSignedMessage(signedMessage);
+
+            $('.transaction').text(JSON.stringify(message));
+            $('.signed-message').text(JSON.stringify(signedMessage));
+            $('.verify-message').text(isOk);
+            $('#Alice').replaceWith(alice.GetMarkup());
+            $('#Bob').replaceWith(bob.GetMarkup());
+            $('#Charlie').replaceWith(charlie.GetMarkup());
+        });
+
+        broadcastMessage10Times = function() {
+            for (var i = 0; i < 10; i++) {
+                bob.VerifySignedMessageAndAddToBlockChain(signedMessage);
+                bob.BroadcastSignedMessage(signedMessage);
+            }
+            
+            // Refresh UI
+            $('#Alice').replaceWith(alice.GetMarkup());
+            $('#Bob').replaceWith(bob.GetMarkup());
+            $('#Charlie').replaceWith(charlie.GetMarkup());
+        }
+
+        </script>
+        <style>
+            .user {
+                display: inline-block;
+                width: 400px;
+                vertical-align: top;
+                margin: 10px;
+                padding: 10px;
+                font-family: monospace;
+                background-color: #d4d6ff;
+            }
+
+            .user>h2 {
+                margin-top: 3px;
+                margin-bottom: 3px;
+            }
+
+            .user .hover-to-see {
+                cursor: pointer;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 50ch;
+                white-space: nowrap;
+            }
+
+            .user .hover-to-see:hover {
+                text-overflow: inherit;
+                width: inherit;
+                white-space: normal;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Crypto-currency (block-chain)</h1>
+        <div>(Non-minified source-code for you to look, also have a look at this <a href="http://www.michaelnielsen.org/ddi/how-the-bitcoin-protocol-actually-works/">How The Bitcoin Protocol Actually Works/</a>)</div><br><br>
+
+        <div>For these example we are going to consider the following simple problem: Alice want to buy a potato from Bob for 1 Crypto-Coin, <b>How can Alice transfert 1 Crypto-Coin to Bob?</b> both players will have a private and a public key that will allow them to sign messages. The asymmetric encryption system for these key is not really the subject of our demonstration so we will just use RSA we <a href="file:///E:/src/repos/EncryptionPlayground/pages/rsa.html">implemented here</a> but we will need a deeper implementation that supports encryption/decryption of large amount of data and of strings as well as a signing implementation I've found <a href="https://github.com/kjur/jsrsasign">a really nice one here</a></div><br>
+
+        <h2><b>Step 1:</b> Signed letter of intent</h2>
+
+        <p>Let's consider the Crypto-coin trade being just a message Alice is sending, signed with her private key.</p>
+        <ol>
+            <li><b>Transaction message:</b>
+<code class="transaction"></code>
+            </li>
+
+            <li><b>Alice will then sign the message with her private key:</b>
+<code class="signed-message"></code>
+            </li>
+
+            <li><b>Bob can then verify that the message is from Alice by checking the signature, he finds that is is:</b>
+<code class="verify-message"></code>
+            </li>
+
+            <li><b>Bob will broadcast this message to all users proving that he now owns +1 coin and Alice -1</b>
+
+            <li><b>Bob can now give Alice the potato she bought him. He can prove that Alice sent him a coin since he have a message signed with her private key</b>
+        </ol>
+
+        <p>As the transaction have been signed with Alice private key we can know for sure that Alice is okay with the transaction so if this encrypted transaction is broadcasted on the network everybody will be aware that Bob now have +1 coin and Alice -1 coin.</p>
+        
+        <p>Demo:</p>
+        <div id="Alice"></div>
+        <div id="Bob"></div>
+        <div id="Charlie"></div>
+        
+        <p>This implementation can be abuse in an easy way</p>
+        <p><b>Simple double emission</b>: Bob could replay the same transaction on the network and steal all Alice money!</p>
+        <ol>
+            <li><b>Previous signed transaction message:</b>
+<code class="signed-message"></code>
+            </li>
+
+            <li><b>Bob can replay the message 10 times and steal 10 coins from Alice, Charlie and others will have no way to know! <button onclick="broadcastMessage10Times()">Broadcast the same transaction message 10 times 😈</button></b>
+        </ol>
+
+    </body>
+</html>
