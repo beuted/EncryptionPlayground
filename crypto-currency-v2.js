@@ -50,12 +50,18 @@ jK/5TBduLJ5J06jJAkAXxbUaC/i8Jd3sjpKnI5zSwTri33sMCr5ko2ixHLAdPkvI
 3JEmuTcyHcPocz1//pIDzLofwkYdmnCSyYpDBzoe
 -----END RSA PRIVATE KEY-----`;
 
+        var genesisTransaction = { from: "Root", to: "Alice", amount: 50, date: Date.now() };
+
         var rsa = new RSAKey();
         rsa.readPrivateKeyFromPEMString(privateKey);
-        var genesisTransaction = { from: "Root", to: "Alice", amount: 50, date: Date.now() };
+
+        var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });
+        md.updateString(JSON.stringify(genesisTransaction));
+
         return {
             message: genesisTransaction,
-            signature: rsa.signString(genesisTransaction, 'sha256')
+            signature: rsa.signString(genesisTransaction, 'sha256'),
+            hash: md.digest()
         }
     }
 
@@ -97,16 +103,19 @@ class User {
         return { "from": this.name, "to": receiver, "amount": amount, "date": date };
     }
 
-    GetSignedMessage(receiver, amount, date) {
+    GetSignedMessageWithSerialNumber(receiver, amount, date) {
         let message = this.GetMessage(receiver, amount, date);
+        var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });
+        md.updateString(JSON.stringify(message));
 
         return {
             message: message,
-            signature: this.Sign(JSON.stringify(message))
+            signature: this.Sign(JSON.stringify(message)),
+            hash: md.digest()
         }
     }
 
-    VerifySignedMessage(signedMessage) {
+    VerifySignedMessageWithSerialNumber(signedMessage) {
         // Find the public key in the adress book or in the current user
         let debitorEntry;
         if (signedMessage.message.from == this.name)
@@ -115,18 +124,34 @@ class User {
             debitorEntry = this.localAddressBook[signedMessage.message.from];
 
 
-        if (!debitorEntry || !debitorEntry.publicKey)
-            throw `No debitor publicKey found for ${signedMessage.message.from}`;
-        else
-            return this.Verify(JSON.stringify(signedMessage.message), signedMessage.signature, debitorEntry.publicKey);
+        if (!debitorEntry || !debitorEntry.publicKey) {
+            console.error(this.name, `: No debitor publicKey found for ${signedMessage.message.from}`);
+            return false;
+        }
+
+        var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });
+        md.updateString(JSON.stringify(signedMessage.message));
+        
+        if (signedMessage.hash != md.digest()) {
+            console.error(this.name, ": Hash does not match message:", signedMessage.hash, signedMessage.hash);
+            return false;
+        }
+
+        if (this.localBlockChain.findIndex(x => x.hash == signedMessage.hash) !== -1) {
+            console.error(this.name, ": A message with a similar hash have been found:", signedMessage.hash);
+            return false;
+        }
+
+        return this.Verify(JSON.stringify(signedMessage.message), signedMessage.signature, debitorEntry.publicKey);
     }
 
     VerifySignedMessageAndAddToBlockChain(signedMessage) {
-        let isSignatureValid = this.VerifySignedMessage(signedMessage)
+        let isSignatureValid = this.VerifySignedMessageWithSerialNumber(signedMessage)
         if (isSignatureValid) {
             this.localBlockChain.push(signedMessage);
-        } else
-            console.log(`SignedMessage rejected: ${signedMessage}`);
+        } else {
+            console.error(this.name, ": SignedMessage rejected:", signedMessage);
+        }
         return isSignatureValid;
     }
 
