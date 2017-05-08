@@ -146,13 +146,21 @@ class User {
     }
 
     VerifySignedMessageAndAddToBlockChain(signedMessage) {
+        // Signature verification
         let isSignatureValid = this.VerifySignedMessageWithSerialNumber(signedMessage)
-        if (isSignatureValid) {
-            this.localBlockChain.push(signedMessage);
-        } else {
+        if (!isSignatureValid) {
             console.error(this.name, ": SignedMessage rejected:", signedMessage);
+            return false;
         }
-        return isSignatureValid;
+
+        // Verification that user have enougth coins
+        if (!this.VerifyUserHaveEnoughtCoins(signedMessage.message.from, signedMessage.message.amount)) {
+            console.error(this.name, ": User", signedMessage.message.from, "don't have", signedMessage.message.amount, "to spend");
+            return false;
+        }
+
+        this.localBlockChain.push(signedMessage);
+        return true;
     }
 
     GetBlockChain() {
@@ -173,6 +181,22 @@ class User {
     GenrerateRsa() {
         this.rsa = new RSAKey();
         this.rsa.readPrivateKeyFromPEMString(this.privateKey);
+    }
+
+    // Check that at the moment user $username have AT LEAST $amount coins 
+    VerifyUserHaveEnoughtCoins(username, amount) {
+        var credit = 0;
+        for (var i = this.localBlockChain.length - 1; i >= 0; i--) {
+            if (this.localBlockChain[i].message.to == username)
+                credit += this.localBlockChain[i].message.amount;
+
+            if (this.localBlockChain[i].message.from == username)
+                credit -= this.localBlockChain[i].message.amount;
+
+            if (credit >= amount)
+                return true;
+        }
+        return false;
     }
 
     Sign(message) {
