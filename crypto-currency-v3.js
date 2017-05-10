@@ -165,8 +165,7 @@ class User {
 
     VerifySignedMessageAndAddToBlockChain(signedMessage) {
         // Signature, hash, amount of disponible money,... verification
-        let isValid = this.VerifySignedMessageWithSerialNumber(signedMessage)
-        if (!isValid)
+        if (!this.VerifySignedMessageWithSerialNumber(signedMessage))
             return false;
 
         this.localBlockChain.push(signedMessage);
@@ -246,6 +245,9 @@ class User {
     VerifyUserHaveEnoughtCoins(username, amount) {
         var credit = 0;
         for (var i = this.localBlockChain.length - 1; i >= 0; i--) {
+            if (!this.IsMessageValidated(this.localBlockChain[i].hash))
+                continue;
+
             if (this.localBlockChain[i].message.to == username)
                 credit += this.localBlockChain[i].message.amount;
 
@@ -287,5 +289,29 @@ class User {
             else if (this.localAddressBook[b.message.to])
                 this.localAddressBook[b.message.to].money += b.message.amount;
         });
+    }
+}
+
+class BobPuppetUser extends User {
+    VerifySignedMessageAndAddToBlockChain(signedMessage) {
+        // !!!!!!!!!!!!!!!! MALICIOUS BEHAVIOR HERE !!!!!!!!!!!!! //              
+        if (signedMessage.message.from === "Bob") {
+            this.localBlockChain.push(signedMessage);                
+            this.network.BroadcastValidationToUser(signedMessage.message.to, this.name, signedMessage.hash, this.Sign(signedMessage.hash));
+            return true;
+        }
+
+        // Signature, hash, amount of disponible money,... verification        
+        if (!this.VerifySignedMessageWithSerialNumber(signedMessage))
+            return false;
+
+        this.localBlockChain.push(signedMessage);
+
+        // Broadcast that the message is valid to all users on the network
+        Object.keys(this.localAddressBook).forEach((name, value) => {
+            this.network.BroadcastValidationToUser(name, this.name, signedMessage.hash, this.Sign(signedMessage.hash));
+        });
+
+        return true;
     }
 }

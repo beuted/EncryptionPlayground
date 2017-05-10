@@ -46,7 +46,7 @@ A1gYVE+E256zs/kwgptzUN/iU6c6gOyL8H8C9ppdG3V1+5vI4Yj6AwyBAkBkCTSo
 GOPCkt4xSJmADXroPGrmhnL0ZAAvk59To0RtKiIS9r6IzDuoA4tQaCKXBjFymfsN
 N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
 /tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
------END RSA PRIVATE KEY-----`, network, );
+-----END RSA PRIVATE KEY-----`, network);
         var charlie = new User('Charlie', `-----BEGIN RSA PRIVATE KEY-----
 MIICWwIBAAKBgHNNh/YaZnvIr58+v1MagvNjOzEg18yLVAQeZWpnNzE0qxquB2w2
 eM2Rk6V9fh4WS35fatAvPfVqF/y5oZGwQ3v2ebm/AXTzrI+XCxJDRiHqsuIFRl8Z
@@ -87,7 +87,7 @@ xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
         });
 
         aliceSend1CoinToBob = function() {
-            var message = alice.GetMessage("Bob", 1);
+            var message = alice.GetMessage("Bob", 1, Date.now());
             signedMessage = alice.GetSignedMessageWithSerialNumber("Bob", 1, Date.now());
             var sanityCheckOk = alice.VerifySignedMessageAndAddToBlockChain(signedMessage);
             if (sanityCheckOk)
@@ -102,43 +102,6 @@ xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
             $('#Dylan').replaceWith(dylan.GetMarkup());
         }
 
-        broadcastSameMessage = function() {
-            if (!signedMessage) {
-                alert('First send a legit message to be able to replay it');
-                return;
-            }
-
-            bob.BroadcastSignedMessage(signedMessage);
-            
-            // Refresh UI
-            $('#Alice').replaceWith(alice.GetMarkup());
-            $('#Bob').replaceWith(bob.GetMarkup());
-            $('#Charlie').replaceWith(charlie.GetMarkup());
-            $('#Dylan').replaceWith(dylan.GetMarkup());
-        }
-
-        broadcastDifferentMessages = function() {
-            if (!signedMessage) {
-                alert('First send a legit message to be able to replay it with a different date');
-                return;
-            }
-
-            let modifiedMessage = Object.assign({}, signedMessage);
-            modifiedMessage.message.date = Date.now();
-
-            var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });
-            md.updateString(JSON.stringify(modifiedMessage));
-
-            modifiedMessage.hash = md.digest();
-            bob.BroadcastSignedMessage(modifiedMessage);
-            
-            // Refresh UI
-            $('#Alice').replaceWith(alice.GetMarkup());
-            $('#Bob').replaceWith(bob.GetMarkup());
-            $('#Charlie').replaceWith(charlie.GetMarkup());
-            $('#Dylan').replaceWith(dylan.GetMarkup());
-        }
-
         broadcastSimultaneousMessages = function() {
             bob.ComputeMoneyForKnownUsers(); // Update bob exact amount of money based on his local blockchain
             signedMessage1 = bob.GetSignedMessageWithSerialNumber("Alice", bob.money, Date.now());
@@ -146,9 +109,24 @@ xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
 
             bob.BroadcastToSpecificUser("Alice", signedMessage1);
             bob.BroadcastToSpecificUser("Charlie", signedMessage2);
+            bob.BroadcastToSpecificUser("Dylan", signedMessage2);
 
-            // Bob only add Alice transaction to his local blockchain
-            bob.VerifySignedMessageAndAddToBlockChain(signedMessage1);
+            if (bob.localAddressBook["BobPuppet1"]) {
+                bob.BroadcastToSpecificUser("BobPuppet1", signedMessage1);
+                bob.BroadcastToSpecificUser("BobPuppet2", signedMessage1);
+                bob.BroadcastToSpecificUser("BobPuppet3", signedMessage1);
+                bob.BroadcastToSpecificUser("BobPuppet4", signedMessage1);
+                
+                bob.BroadcastToSpecificUser("BobPuppet1", signedMessage2);
+                bob.BroadcastToSpecificUser("BobPuppet2", signedMessage2);
+                bob.BroadcastToSpecificUser("BobPuppet3", signedMessage2);
+                bob.BroadcastToSpecificUser("BobPuppet4", signedMessage2);
+            }
+
+
+
+            // Bob only add Charlie transaction to his local blockchain
+            bob.VerifySignedMessageAndAddToBlockChain(signedMessage2);
 
             $('#Alice').replaceWith(alice.GetMarkup());
             $('#Bob').replaceWith(bob.GetMarkup());
@@ -156,6 +134,80 @@ xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
             $('#Dylan').replaceWith(dylan.GetMarkup());
         }
 
+        var networkSwarmed = false;
+        swarmNetworkWithBobPuppets = function() {
+            if (networkSwarmed)
+                return;
+
+            var bobPuppet1 = new BobPuppetUser('BobPuppet1', `-----BEGIN RSA PRIVATE KEY-----
+MIICWgIBAAKBgHJNuOcdqshauCKFhxYHUNGuIyv6H7OLtUV+Ew3ra75hWWW2fMNl
+gHFwATEIg9xaDHaVmGXxdBmot78ZUeNpVYuymflwfBl06VUxSYpl7QfS5M4E9gOV
+sERX/ytzRl3uuTprk/LvGwcejsVpHLlxBuVPMy6u2yPE0+X59ayLX26/AgMBAAEC
+gYBI0esyklvzOJiGpbrh9dcvPll58uevYxohI6jP/WOu7iYd/pyNf2TM4CZiLqKT
+B2tZQQTOLX1hu3MUc/UPhFPSybbBh4aXPYU7cBPmXz910m7PwrQZcFUETKV2Mkug
+sLim1baAq++O6jUYM6RRnEcdtag3uIN/21VCevx9yTqYAQJBALSN6Nj7OFRcQfiw
+ijakun2H7ldNKOXH3c8DgRTDgBrfJDmOZlcIZmQ6G10ZsROk5beRkVgHGX8G3Dia
+nU2el4ECQQCiEOapzIZCLEpfG3Ay+X6FQfrkhkvrg9EECucx0GYQ6bAUgkwTiLn6
+g70sKXT2E2fYvEQDB0v1t6pAHHcMWyY/AkBjmJAj+NgGuOlvPDrRj6aLjkrr/1Ub
+A1gYVE+E256zs/kwgptzUN/iU6c6gOyL8H8C9ppdG3V1+5vI4Yj6AwyBAkBkCTSo
+GOPCkt4xSJmADXroPGrmhnL0ZAAvk59To0RtKiIS9r6IzDuoA4tQaCKXBjFymfsN
+N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
+/tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
+-----END RSA PRIVATE KEY-----`, network);
+
+            var bobPuppet2 = new BobPuppetUser('BobPuppet2', `-----BEGIN RSA PRIVATE KEY-----
+MIICWgIBAAKBgHJNuOcdqshauCKFhxYHUNGuIyv6H7OLtUV+Ew3ra75hWWW2fMNl
+gHFwATEIg9xaDHaVmGXxdBmot78ZUeNpVYuymflwfBl06VUxSYpl7QfS5M4E9gOV
+sERX/ytzRl3uuTprk/LvGwcejsVpHLlxBuVPMy6u2yPE0+X59ayLX26/AgMBAAEC
+gYBI0esyklvzOJiGpbrh9dcvPll58uevYxohI6jP/WOu7iYd/pyNf2TM4CZiLqKT
+B2tZQQTOLX1hu3MUc/UPhFPSybbBh4aXPYU7cBPmXz910m7PwrQZcFUETKV2Mkug
+sLim1baAq++O6jUYM6RRnEcdtag3uIN/21VCevx9yTqYAQJBALSN6Nj7OFRcQfiw
+ijakun2H7ldNKOXH3c8DgRTDgBrfJDmOZlcIZmQ6G10ZsROk5beRkVgHGX8G3Dia
+nU2el4ECQQCiEOapzIZCLEpfG3Ay+X6FQfrkhkvrg9EECucx0GYQ6bAUgkwTiLn6
+g70sKXT2E2fYvEQDB0v1t6pAHHcMWyY/AkBjmJAj+NgGuOlvPDrRj6aLjkrr/1Ub
+A1gYVE+E256zs/kwgptzUN/iU6c6gOyL8H8C9ppdG3V1+5vI4Yj6AwyBAkBkCTSo
+GOPCkt4xSJmADXroPGrmhnL0ZAAvk59To0RtKiIS9r6IzDuoA4tQaCKXBjFymfsN
+N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
+/tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
+-----END RSA PRIVATE KEY-----`, network);
+
+            var bobPuppet3 = new BobPuppetUser('BobPuppet3', `-----BEGIN RSA PRIVATE KEY-----
+MIICWgIBAAKBgHJNuOcdqshauCKFhxYHUNGuIyv6H7OLtUV+Ew3ra75hWWW2fMNl
+gHFwATEIg9xaDHaVmGXxdBmot78ZUeNpVYuymflwfBl06VUxSYpl7QfS5M4E9gOV
+sERX/ytzRl3uuTprk/LvGwcejsVpHLlxBuVPMy6u2yPE0+X59ayLX26/AgMBAAEC
+gYBI0esyklvzOJiGpbrh9dcvPll58uevYxohI6jP/WOu7iYd/pyNf2TM4CZiLqKT
+B2tZQQTOLX1hu3MUc/UPhFPSybbBh4aXPYU7cBPmXz910m7PwrQZcFUETKV2Mkug
+sLim1baAq++O6jUYM6RRnEcdtag3uIN/21VCevx9yTqYAQJBALSN6Nj7OFRcQfiw
+ijakun2H7ldNKOXH3c8DgRTDgBrfJDmOZlcIZmQ6G10ZsROk5beRkVgHGX8G3Dia
+nU2el4ECQQCiEOapzIZCLEpfG3Ay+X6FQfrkhkvrg9EECucx0GYQ6bAUgkwTiLn6
+g70sKXT2E2fYvEQDB0v1t6pAHHcMWyY/AkBjmJAj+NgGuOlvPDrRj6aLjkrr/1Ub
+A1gYVE+E256zs/kwgptzUN/iU6c6gOyL8H8C9ppdG3V1+5vI4Yj6AwyBAkBkCTSo
+GOPCkt4xSJmADXroPGrmhnL0ZAAvk59To0RtKiIS9r6IzDuoA4tQaCKXBjFymfsN
+N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
+/tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
+-----END RSA PRIVATE KEY-----`, network);
+
+            var bobPuppet4 = new BobPuppetUser('BobPuppet4', `-----BEGIN RSA PRIVATE KEY-----
+MIICWgIBAAKBgHJNuOcdqshauCKFhxYHUNGuIyv6H7OLtUV+Ew3ra75hWWW2fMNl
+gHFwATEIg9xaDHaVmGXxdBmot78ZUeNpVYuymflwfBl06VUxSYpl7QfS5M4E9gOV
+sERX/ytzRl3uuTprk/LvGwcejsVpHLlxBuVPMy6u2yPE0+X59ayLX26/AgMBAAEC
+gYBI0esyklvzOJiGpbrh9dcvPll58uevYxohI6jP/WOu7iYd/pyNf2TM4CZiLqKT
+B2tZQQTOLX1hu3MUc/UPhFPSybbBh4aXPYU7cBPmXz910m7PwrQZcFUETKV2Mkug
+sLim1baAq++O6jUYM6RRnEcdtag3uIN/21VCevx9yTqYAQJBALSN6Nj7OFRcQfiw
+ijakun2H7ldNKOXH3c8DgRTDgBrfJDmOZlcIZmQ6G10ZsROk5beRkVgHGX8G3Dia
+nU2el4ECQQCiEOapzIZCLEpfG3Ay+X6FQfrkhkvrg9EECucx0GYQ6bAUgkwTiLn6
+g70sKXT2E2fYvEQDB0v1t6pAHHcMWyY/AkBjmJAj+NgGuOlvPDrRj6aLjkrr/1Ub
+A1gYVE+E256zs/kwgptzUN/iU6c6gOyL8H8C9ppdG3V1+5vI4Yj6AwyBAkBkCTSo
+GOPCkt4xSJmADXroPGrmhnL0ZAAvk59To0RtKiIS9r6IzDuoA4tQaCKXBjFymfsN
+N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
+/tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
+-----END RSA PRIVATE KEY-----`, network);
+
+            $('#BobPuppet1').replaceWith(bobPuppet1.GetMarkup());
+            $('#BobPuppet2').replaceWith(bobPuppet2.GetMarkup());
+            $('#BobPuppet3').replaceWith(bobPuppet3.GetMarkup());
+            $('#BobPuppet4').replaceWith(bobPuppet4.GetMarkup());
+        }
         </script>
     </head>
     <body>
@@ -202,9 +254,9 @@ xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
 
             <p>Let's start with a simple idea, let's add a layer of verification to the system. Once Alice receive a coin from Bob
             She will first do all the checks on the hash, signature and amount of coins Bob owns we previously discussed.
-            Alice will add the transaction in her blockchain but will not consider yet that it is valid.
+            Alice will add the transaction in her blockchain <b>but will not consider yet that it is valid</b>.
             Alice will then ask all the network to validate that this translation legit or not, when Alice will receive let's say
-            <b>50% of users in the network</b> responses saying that the transaction is correct. She will consider the transaction valid.</p>
+            <b>50% of users in the network</b> responses saying that <b>the transaction is correct</b>. She will consider the transaction valid.</p>
     
             <button class="btn btn-primary" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button>
 
@@ -224,16 +276,16 @@ xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
                             <code class="verify-message"></code>
                         </li>
 
-                        <li><b>Bob will broadcast this message to all users proving that he now owns +1 coin and Alice -1</b>
+                        <li><b>But Bob do not consider the transaction "verified" yet. He will broadcast this message to all users in his network and ask them to verify the transaction</b>
 
-                        <li><b>Bob can now give Alice the potato she bought him. He can prove that Alice sent him a coin since he have a message signed with her private key</b>
+                        <li><b>Users will respond to Bob that the message is correct considering their current blockchain</b></li>
+
+                        <li><b>Bob can now give Alice the potato she bought him.</b>
                     </ol>
                 </div>
             </article>
 
-            <p>As the transaction have been signed with Alice private key we can know for sure that Alice is okay with the transaction and since
-            the hash parameter match the hash of the message and is unique on the network we can now for sure that it have not been "replayed":
-            If this encrypted transaction is broadcasted on the network everybody will be aware that Bob now have +1 coin and Alice -1 coin.</p>
+            <p>blablbla</p>
 
             <h3 class="h3">State of the network</h3>
             <div class="row">
@@ -241,22 +293,28 @@ xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
                 <div id="Bob"></div>
                 <div id="Charlie"></div>
                 <div id="Dylan"></div>
+                <div id="BobPuppet1"></div>
+                <div id="BobPuppet2"></div>
+                <div id="BobPuppet3"></div>
+                <div id="BobPuppet4"></div>
             </div>
             
             <h3>Timing attacks?</h3>
 
-            <p><button class="btn btn-primary btn-sm" onclick="broadcastSimultaneousMessages()">Simultaneously send two messages giving all Bob's money to Alice and Charlie 😈</button></p>
+            <p><button class="btn btn-primary btn-sm" onclick="broadcastSimultaneousMessages()">Simultaneously send two messages giving all Bob's money to Alice and Charlie 👿</button></p>
 
-            <div class="alert alert-danger" role="alert">This implementation can still be abuse!</div>
-
+            <div class="alert alert-danger" role="alert">This implementation will not work either! (but we're getting close)</div>
 
             <p>Few issues comes with what we just discribed here:</p>
-            <p>First Alice have no way to know how many people in the network there is, so she have no way to know what
-            <b>"50% of the users in the network"</b> is.</p>
-            <p>Then, even if she had a way to know, Bob could create billions of fake users and swarm the network with
-            puppets that will validate all his transactions. We need a better definition of: “once enough people
-            have broadcast that message” for the currency to work.
-            </p>
+            <ol>
+                <li>Alice have no way to know how many people in the network there is, so she have no way to know what
+                <b>"50% of the users in the network"</b> is.</li>
+                <li>Why a user will bother responding to Alice when she ask if the message she have been sent is valid?</li>                
+                <li>Even if she had a way to know, Bob could create billions of fake users and swarm the network with
+                puppets that will validate all his transactions. <button class="btn btn-primary btn-sm" onclick="swarmNetworkWithBobPuppets()">Swarm the network with bob's puppets 😈</button></li>
+            </ol>
+
+            <p>We need a better definition of: “once enough people have broadcast that message” for the currency to work.</p>
 
             <div class="row navigation">
                 <div class="col-sm-12">
