@@ -1,0 +1,46 @@
+article {
+    margin: 15px 0 30px 0;
+}
+
+.user-container {
+    padding: 15px;
+}
+
+.card > .card-block > ol {
+    font-size: 13px;
+}
+
+.user {
+    font-size: 13px;
+    vertical-align: top;
+}
+
+.user>h2 {
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+.user .hover-to-see {
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    white-space: nowrap;
+}
+
+.user .hover-to-see:hover {
+    text-overflow: inherit;
+    width: inherit;
+    white-space: normal;
+}
+
+/* Bootstrap custom */
+
+.btn {
+    cursor: pointer;    
+}
+
+.container {
+    margin-top: 30px;    
+    margin-bottom: 15px;    
+}

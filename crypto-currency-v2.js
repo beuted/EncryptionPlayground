@@ -20,7 +20,7 @@ class Network {
         user.VerifySignedMessageAndAddToBlockChain(signedMessage);
     }
 
-    GetGenesisTranslation() {
+    GetGenesisTransaction() {
         return this.genesisTranslation;
     }
 
@@ -77,7 +77,7 @@ class User {
 
         this.GenrerateRsa();
         this.localBlockChain = [];
-        this.localBlockChain.push(this.network.GetGenesisTranslation()); // Init the local chain of transaction with genesis one
+        this.localBlockChain.push(this.network.GetGenesisTransaction()); // Init the local chain of transaction with genesis one
         this.localAddressBook = {};
 
         this.network.Register(this);
@@ -85,10 +85,10 @@ class User {
 
     GetMarkup() {
         this.ComputeMoneyForKnownUsers();
-        return `<div class="user" id="${this.name}">
-    <h2>
+        return `<div class="user-container col-sm-4" id="${this.name}"><div class="card user"><div class="card-block">
+    <h4>
         ${this.name}
-    </h2>
+    </h4>
     <p><b>Money I think I Own</b>: ${this.money}\$</p>
     <p class="publicKey hover-to-see"><b>publicKey</b>: <code>${JSON.stringify(this.publicKey, undefined, 2)}</code></p>
     <p class="privateKey hover-to-see"><b>privateKey</b>: <code>${this.privateKey}</code></p>
@@ -123,43 +123,48 @@ class User {
         else
             debitorEntry = this.localAddressBook[signedMessage.message.from];
 
-
         if (!debitorEntry || !debitorEntry.publicKey) {
             console.error(this.name, `: No debitor publicKey found for ${signedMessage.message.from}`);
             return false;
         }
 
+        // Hash match message
         var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });
-        md.updateString(JSON.stringify(signedMessage.message));
-        
+        md.updateString(JSON.stringify(signedMessage.message));        
         if (signedMessage.hash != md.digest()) {
-            console.error(this.name, ": Hash does not match message:", signedMessage.hash, signedMessage.hash);
+            console.error(this.name, ": Hash does not match message:", signedMessage.hash);
             return false;
         }
 
+        // No hash similarities
         if (this.localBlockChain.findIndex(x => x.hash == signedMessage.hash) !== -1) {
             console.error(this.name, ": A message with a similar hash have been found:", signedMessage.hash);
             return false;
         }
 
-        return this.Verify(JSON.stringify(signedMessage.message), signedMessage.signature, debitorEntry.publicKey);
-    }
-
-    VerifySignedMessageAndAddToBlockChain(signedMessage) {
-        // Signature verification
-        let isSignatureValid = this.VerifySignedMessageWithSerialNumber(signedMessage)
-        if (!isSignatureValid) {
-            console.error(this.name, ": SignedMessage rejected:", signedMessage);
+        // Message signature match user spending coins (the "from" property)
+        if (!this.Verify(JSON.stringify(signedMessage.message), signedMessage.signature, debitorEntry.publicKey)) {
+            console.error(this.name, ": User", signedMessage.message.from, "signature is not a valid");
             return false;
         }
 
-        // Verification that user have enougth coins
+        // User have enough coins
         if (!this.VerifyUserHaveEnoughtCoins(signedMessage.message.from, signedMessage.message.amount)) {
             console.error(this.name, ": User", signedMessage.message.from, "don't have", signedMessage.message.amount, "to spend");
             return false;
         }
 
+        return true;
+    }
+
+    VerifySignedMessageAndAddToBlockChain(signedMessage) {
+        // Signature, hash, amount of disponible money,... verification
+        let isValid = this.VerifySignedMessageWithSerialNumber(signedMessage)
+        if (!isValid)
+            return false;
+
         this.localBlockChain.push(signedMessage);
+
         return true;
     }
 
@@ -175,6 +180,11 @@ class User {
         Object.keys(this.localAddressBook).forEach((name, value) => {
             network.BroadcastToUser(name, signedMessage);
         });
+    }
+
+    // Malicious
+    BroadcastToSpecificUser(username, signedMessage) {
+        network.BroadcastToUser(username, signedMessage);
     }
 
     // Private

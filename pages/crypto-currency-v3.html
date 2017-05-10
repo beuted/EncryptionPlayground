@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
         <link href="../style/main.css" rel="stylesheet">
 
         <script src="../vendors/jQuery-2.2.3.min.js" type="text/javascript"></script>
@@ -12,7 +13,7 @@
         <script src="../vendors/jsrsasign/jsrsasign-all-min.js" type="text/javascript"></script>
 
 
-        <script src="../crypto-currency-v2.js" type="text/javascript"></script>
+        <script src="../crypto-currency-v3.js" type="text/javascript"></script>
         <script type="text/javascript">
 
         var network = new Network();
@@ -61,27 +62,44 @@ rFahNLeR1+uaHYdnZN2762rvc9K/qp8SY9h050yxYss3zFakFD9hObJfAkEAlW31
 f/bZZlvIjDUvkhvc9QJATDAOITmhUk/1iADjP1vqdmfVXZRdxs/iJYChQIrck0fb
 hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
 -----END RSA PRIVATE KEY-----`, network);
+        var dylan = new User('Dylan', `-----BEGIN RSA PRIVATE KEY-----
+MIICWwIBAAKBgHoAhy90y1pqYuD+4v8Tg2eggd+/bk75xI3ATSC9ogZikOKNq5u3
+gI9vRaylJhrzqdpdTu5whBY1g2QoOIHcjPmqnsTmHhMU4fNAhvLW+ThfYrwgsYlQ
+YgipJBfwoZm+xc54tZbRhg89s9TXJk3H/d55WPEWN8F6V3nQukwldeqvAgMBAAEC
+gYAUkgY5IC4xXoKxgQhxDa84R73eJf7JXh+f7u6SOKcbAH+BU3W92aDZjl9nDqlw
+Heljohvu5BXBUOCIgKeWbcNvDrNNHfgOjrUjzLJ86IVw4zt5GeV/9XhPoH3rpfG6
+CMJ2FbqRGJYxcPks3FteqAGRPLmAUiHZh/PYlPniuANQ0QJBAPD+noxaKcjlgLX5
+zq2ljkBF+XhP9N9xdD74R1aDbpv5J8WH/UJUUCyoKsG4Iv7m2F7oa2bq1zPoaTWc
+03/95WUCQQCBmTQs4s3xCa/8KF9C5UMmYOlE7sP1T+lT8N+p+pV2j7OHv03GcSG7
+lv9CC6LCyID5/PBbJwVitmh768LUruiDAkB2zN31zGC600A+9PWIrotQbe5L/AZ3
+u+MVQ6lPIZ1+MDYF70LO1udrDD9/nblKtRvGtYZ0hqItyY1Ly5KLjurtAkAB32fc
+mi5lpEExwJeXzN5KiK32PAkC23PArcNdnmxYeT0b4gzKqEnXfxgTKT3h2KnccuY6
+Ovcd9QrPd5mqHxjnAkEAydMa7DM1rmj90T7dHpUbyNcqbDgOg5mojEOPgQX2DClc
+xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
+-----END RSA PRIVATE KEY-----`, network);
 
         var signedMessage;
         $(document).ready(function() {
             $('#Alice').replaceWith(alice.GetMarkup());
             $('#Bob').replaceWith(bob.GetMarkup());
             $('#Charlie').replaceWith(charlie.GetMarkup());
+            $('#Dylan').replaceWith(dylan.GetMarkup());            
         });
 
         aliceSend1CoinToBob = function() {
             var message = alice.GetMessage("Bob", 1);
             signedMessage = alice.GetSignedMessageWithSerialNumber("Bob", 1, Date.now());
-            var isOk = bob.VerifySignedMessageAndAddToBlockChain(signedMessage);
-            if (isOk)
-                bob.BroadcastSignedMessage(signedMessage);
+            var sanityCheckOk = alice.VerifySignedMessageAndAddToBlockChain(signedMessage);
+            if (sanityCheckOk)
+                alice.BroadcastSignedMessage(signedMessage);
 
             $('.transaction').text(JSON.stringify(message, undefined, 2));
             $('.signed-message').text(JSON.stringify(signedMessage, undefined, 2));
-            $('.verify-message').text(isOk);
+            $('.verify-message').text(sanityCheckOk);
             $('#Alice').replaceWith(alice.GetMarkup());
             $('#Bob').replaceWith(bob.GetMarkup());
             $('#Charlie').replaceWith(charlie.GetMarkup());
+            $('#Dylan').replaceWith(dylan.GetMarkup());
         }
 
         broadcastSameMessage = function() {
@@ -96,6 +114,7 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
             $('#Alice').replaceWith(alice.GetMarkup());
             $('#Bob').replaceWith(bob.GetMarkup());
             $('#Charlie').replaceWith(charlie.GetMarkup());
+            $('#Dylan').replaceWith(dylan.GetMarkup());
         }
 
         broadcastDifferentMessages = function() {
@@ -117,6 +136,7 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
             $('#Alice').replaceWith(alice.GetMarkup());
             $('#Bob').replaceWith(bob.GetMarkup());
             $('#Charlie').replaceWith(charlie.GetMarkup());
+            $('#Dylan').replaceWith(dylan.GetMarkup());
         }
 
         broadcastSimultaneousMessages = function() {
@@ -133,55 +153,60 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
             $('#Alice').replaceWith(alice.GetMarkup());
             $('#Bob').replaceWith(bob.GetMarkup());
             $('#Charlie').replaceWith(charlie.GetMarkup());
+            $('#Dylan').replaceWith(dylan.GetMarkup());
         }
 
         </script>
     </head>
     <body>
         <div class="container">
+            <h1 class="h1">Agreement on the state of the blockchain</h1>
 
-            <h1 class="h1">Using serial numbers to make coins uniquely identifiable</h1>
+            <p>How can we address the problem of double spending? The obvious solution is that when Bob sends
+            Alice a Crypto-Coin, Alice shouldn’t try to verify the transaction alone. Rather, she should broadcast the
+            possible transaction to the entire network of Crypto-coins users, and ask them to help determine whether
+            the transaction is legitimate. If they collectively decide that the transaction is okay, then Alice can
+            accept the Crypto-Coin, and everyone will update their block chain. This type of protocol can help prevent
+            timing attack, since if Bob tries to spend his Crypto-Coin with both Alice and Charlie, other people on
+            the network will notice, and network users will tell both Alice and Charlie that there is a problem with
+            the transaction, and the transaction shouldn’t go through.</p>
 
-            <p>What we’d like is a way of making infocoins unique. They need a label or serial number. Alice would sign the message
-            “I, Alice, am giving Bob one infocoin, with serial number 8740348”. Then, later, Alice could sign the message “I, Alice,
-            am giving Bob one infocoin, with serial number 8770431”, and Bob (and everyone else) would know that a different infocoin
-            was being transferred.</p>
+            <p>In more detail, let’s suppose Bob wants to give Alice a Crypto-Coin. As before, he signs the message
+            “I, Bob, am giving Alice one Crypto-Coin, with serial number 1234567”, and gives the signed message to Alice.
+            Also as before, Alice does a sanity check, using his copy of the block chain to check that, indeed, the coin
+            currently belongs to Alice. But at that point the protocol is modified. Alice doesn’t just go ahead and accept
+            the transaction. Instead, she broadcasts Bob’s message to the entire network. Other members of the network
+            check to see whether Bob owns that Crypto-Coin. If so, they broadcast the message “Yes, Bob owns enough Crypto-Coin for
+            the transaction 1234567, it can now be transferred to Alice.” Once enough people have broadcast that message,
+            everyone updates their block chain to show that Crypto-Coin now belongs to Bob through the transaction 1234567”.</p>
 
-            <p>To make this scheme work we need a trusted source of serial numbers for the infocoins. One way to create such a source is
-            to introduce a bank. This bank would provide serial numbers for infocoins, keep track of who has which infocoins, and verify
-            that transactions really are legitimate,</p>
+            <p>This protocol has many imprecise elements at present. For instance, what does it mean to say “once enough people
+            have broadcast that message”? What exactly does “enough” mean here? It can’t mean everyone in the network, since
+            we don’t a priori know who is on the Crypto-Coin network. For the same reason, it can’t mean some fixed fraction of
+            users in the network. We won’t try to make these ideas precise right now. Instead, in the next section I’ll point
+            out a serious problem with the approach as described. Fixing that problem will at the same time have the pleasant
+            side effect of making the ideas above much more precise.</p>
 
-            <p>In more detail, let’s suppose Alice goes into the bank, and says “I want to withdraw one infocoin from my account”. The
-            bank reduces her account balance by one infocoin, and assigns her a new, never-before used serial number, let’s say 1234567.
-            Then, when Alice wants to transfer her infocoin to Bob, she signs the message “I, Alice, am giving Bob one infocoin, with serial
-            number 1234567”. But Bob doesn’t just accept the infocoin. Instead, he contacts the bank, and verifies that: (a) the infocoin
-            with that serial number belongs to Alice; and (b) Alice hasn’t already spent the infocoin. If both those things are true,
-            then Bob tells the bank he wants to accept the infocoin, and the bank updates their records to show that the infocoin with that
-            serial number is now in Bob’s possession, and no longer belongs to Alice.</p>
+            <!--<h2>A proof of work</h2>
 
-            <h2 class="h2">Making everyone collectively the bank</h2>
+            <p>Suppose Alice wants to double spend in the network-based protocol I just described. She could do this by taking
+            over the Crypto-coin network. Let’s suppose she uses an automated system to set up a large number of separate identities,
+            let’s say a billion, on the Crypto-coin network. As before, she tries to double spend the same Crypto-coin with both Bob
+            and Charlie. But when Bob and Charlie ask the network to validate their respective transactions, Alice’s sock puppet
+            identities swamp the network, announcing to Bob that they’ve validated his transaction, and to Charlie that they’ve
+            validated his transaction, possibly fooling one or both into accepting the transaction.</p>-->
 
-            <p>This last solution looks pretty promising. However, it turns out that we can do something much more ambitious. We can eliminate
-            the bank entirely from the protocol. This changes the nature of the currency considerably. It means that there is no longer
-            any single organization in charge of the currency. And when you think about the enormous power a central bank has – control
-            over the money supply – that’s a pretty huge change.</p>
+            <div class="alert alert-success" role="alert">We are reaching here the issue that have stayed unsolved for about 30 years until somebody under the nickname of
+            Satoshi Nakamoto published <a href = "https://bitcoin.org/bitcoin.pdf">a paper on the subject</a> in 2008 that will
+            solve the issue of removing the "trusted 3rd party".</div>
 
-            <p>The idea is to make it so everyone (collectively) is the bank. In particular, we’ll assume that everyone using Infocoin keeps
-            a complete record of which infocoins belong to which person. You can think of this as a shared public ledger showing all
-            Infocoin transactions. We’ll call this ledger the block chain, since that’s what the complete record will be called in Bitcoin,
-            once we get to it.</p>
-
-            <p>Now, suppose Alice wants to transfer an infocoin to Bob. She signs the message “I, Alice, am giving Bob one infocoin, with
-            serial number 1234567”, and gives the signed message to Bob. Bob can use his copy of the block chain to check that, indeed,
-            the infocoin is Alice’s to give. If that checks out then he broadcasts both Alice’s message and his acceptance of the transaction
-            to the entire network, and everyone updates their copy of the block chain.</p>
-
-            <h2 class="h2">Where do serial number come from?</h2>
-
-            <p>A simple idea to get this serial number would be to <b>use a hash of the message with its date</b>, so our previous messages would look 
-            like this.</p>
+            <p>Let's start with a simple idea, let's add a layer of verification to the system. Once Alice receive a coin from Bob
+            She will first do all the checks on the hash, signature and amount of coins Bob owns we previously discussed.
+            Alice will add the transaction in her blockchain but will not consider yet that it is valid.
+            Alice will then ask all the network to validate that this translation legit or not, when Alice will receive let's say
+            <b>50% of users in the network</b> responses saying that the transaction is correct. She will consider the transaction valid.</p>
     
-            <p><button class="btn btn-primary btn-sm" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button></p>
+            <button class="btn btn-primary" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button>
 
             <article class="card">
                 <div class="card-block">
@@ -210,44 +235,33 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
             the hash parameter match the hash of the message and is unique on the network we can now for sure that it have not been "replayed":
             If this encrypted transaction is broadcasted on the network everybody will be aware that Bob now have +1 coin and Alice -1 coin.</p>
 
-            <h3>State of the network</h3>
+            <h3 class="h3">State of the network</h3>
             <div class="row">
                 <div id="Alice"></div>
                 <div id="Bob"></div>
                 <div id="Charlie"></div>
+                <div id="Dylan"></div>
             </div>
             
-            <h3>Simple double emission?</h3>
-            <p><b>Previous signed transaction message:</b><code class="signed-message"></code></p>
+            <h3>Timing attacks?</h3>
 
-            <p>This time Bob :</p>
-            <ol>
-                <li><b>cannot replay the message 10 times</b> because they will have the same hash:
-                <button class="btn btn-primary btn-sm" onclick="broadcastSameMessage()">Try broadcasting the same transaction message 👿</button><br>
-                </li>
-                <li>and he <b>cannot change the message to change the hash</b> because the message will not be signed correctly anymore.
-                <button class="btn btn-primary btn-sm" onclick="broadcastDifferentMessages()">Just change the date of the message to change its hash
-                (with the same signature) 👿</button></li>
-            </ol>
+            <p><button class="btn btn-primary btn-sm" onclick="broadcastSimultaneousMessages()">Simultaneously send two messages giving all Bob's money to Alice and Charlie 😈</button></p>
 
             <div class="alert alert-danger" role="alert">This implementation can still be abuse!</div>
 
-            <h3>Timing attacks</h3>
-            <p>Great, having these hashes as serial numbers we can avoid simple double spending, but we are still weak against
-            "timing attacks", where malicious people spends money they don't have.</p>
-            <p>Let's consider that Bob send <b>X coins</b> to Alice, (X being all the coins he has) and <b>at the exact same time</b>,
-            send X coins to Charlie.</p>
-            <p>What will happen is that Alice will update her local blockchain with the transaction where Bob gives her all his coins and
-            Charlie will update his local blockchain with a transaction where bob gives him all his coins, and both will give bob X potatoes
-            even tho' only one out of Alice and Charlie have been paid.</p>
-            <p><button class="btn btn-primary btn-sm" onclick="broadcastSimultaneousMessages()">Simultaneously send two messages giving all Bob's money to Alice and Charlie 😈</button></p>
-            <p>In order to avoid that we need a way to choose and validate a common version of the blockchain for all users. It means
-            that we need to be able to choose if Bob have given all his coins to Alice or to Charlie.</p>
-         
+
+            <p>Few issues comes with what we just discribed here:</p>
+            <p>First Alice have no way to know how many people in the network there is, so she have no way to know what
+            <b>"50% of the users in the network"</b> is.</p>
+            <p>Then, even if she had a way to know, Bob could create billions of fake users and swarm the network with
+            puppets that will validate all his transactions. We need a better definition of: “once enough people
+            have broadcast that message” for the currency to work.
+            </p>
+
             <div class="row navigation">
                 <div class="col-sm-12">
-                    <a class="btn btn-success float-left" href="./crypto-currency.html"><< prev</a>                    
-                    <a class="btn btn-success float-right" href="./crypto-currency-v3.html">next >></a>
+                    <a class="btn btn-success float-left" href="./crypto-currency-v2.html"><< prev</a>                    
+                    <a class="btn btn-success float-right" href="./crypto-currency-v4.html">next >></a>
                 </div>
             </div>
         </div>

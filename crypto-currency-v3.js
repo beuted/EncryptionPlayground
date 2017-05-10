@@ -20,6 +20,11 @@ class Network {
         user.VerifySignedMessageAndAddToBlockChain(signedMessage);
     }
 
+    BroadcastValidationToUser(name, validatorName, messageHash, signedMessageHash) {
+        let user = this.GetUser(name);
+        user.ReceiveValidation(validatorName, messageHash, signedMessageHash);
+    }
+
     GetGenesisTransaction() {
         return this.genesisTranslation;
     }
@@ -50,12 +55,18 @@ jK/5TBduLJ5J06jJAkAXxbUaC/i8Jd3sjpKnI5zSwTri33sMCr5ko2ixHLAdPkvI
 3JEmuTcyHcPocz1//pIDzLofwkYdmnCSyYpDBzoe
 -----END RSA PRIVATE KEY-----`;
 
+        var genesisTransaction = { from: "Root", to: "Alice", amount: 50, date: Date.now() };
+
         var rsa = new RSAKey();
         rsa.readPrivateKeyFromPEMString(privateKey);
-        var genesisTransaction = { from: "Root", to: "Alice", amount: 50, date: Date.now() };
+
+        var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });
+        md.updateString(JSON.stringify(genesisTransaction));
+
         return {
             message: genesisTransaction,
-            signature: rsa.signString(genesisTransaction, 'sha256')
+            signature: rsa.signString(genesisTransaction, 'sha256'),
+            hash: md.digest()
         }
     }
 
@@ -73,6 +84,7 @@ class User {
         this.localBlockChain = [];
         this.localBlockChain.push(this.network.GetGenesisTransaction()); // Init the local chain of transaction with genesis one
         this.localAddressBook = {};
+        this.localBlockValidators = {}; // { [transactionHash: string]: validatorHashes: string[] }
 
         this.network.Register(this);
     }
@@ -88,7 +100,7 @@ class User {
     <p class="privateKey hover-to-see"><b>privateKey</b>: <code>${this.privateKey}</code></p>
     <p class="localBlockChain hover-to-see"><b>localBlockChain (${this.localBlockChain.length})</b>: <code>${JSON.stringify(this.localBlockChain, undefined, 2)}</code></p>
     <p class="localAddressBook hover-to-see"><b>localAddressBook (${Object.keys(this.localAddressBook).length})</b>: <code>${JSON.stringify(Object.keys(this.localAddressBook).map((key, index) => { return { name: key, publicKey: '[...]', money: this.localAddressBook[key].money }; }), undefined, 2)}</code></p>
-</div></div></div>
+</div>
 `;
     }
 
@@ -97,16 +109,19 @@ class User {
         return { "from": this.name, "to": receiver, "amount": amount, "date": date };
     }
 
-    GetSignedMessage(receiver, amount, date) {
+    GetSignedMessageWithSerialNumber(receiver, amount, date) {
         let message = this.GetMessage(receiver, amount, date);
+        var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });
+        md.updateString(JSON.stringify(message));
 
         return {
             message: message,
-            signature: this.Sign(JSON.stringify(message))
+            signature: this.Sign(JSON.stringify(message)),
+            hash: md.digest()
         }
     }
 
-    VerifySignedMessage(signedMessage) {
+    VerifySignedMessageWithSerialNumber(signedMessage) {
         // Find the public key in the adress book or in the current user
         let debitorEntry;
         if (signedMessage.message.from == this.name)
@@ -119,13 +134,27 @@ class User {
             return false;
         }
 
+        // Hash match message
+        var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });
+        md.updateString(JSON.stringify(signedMessage.message));        
+        if (signedMessage.hash != md.digest()) {
+            console.error(this.name, ": Hash does not match message:", signedMessage.hash);
+            return false;
+        }
+
+        // No hash similarities
+        if (this.localBlockChain.findIndex(x => x.hash == signedMessage.hash) !== -1) {
+            console.error(this.name, ": A message with a similar hash have been found:", signedMessage.hash);
+            return false;
+        }
+
         // Message signature match user spending coins (the "from" property)
         if (!this.Verify(JSON.stringify(signedMessage.message), signedMessage.signature, debitorEntry.publicKey)) {
             console.error(this.name, ": User", signedMessage.message.from, "signature is not a valid");
             return false;
         }
 
-        // Verification that user have enougth coins
+        // User have enough coins
         if (!this.VerifyUserHaveEnoughtCoins(signedMessage.message.from, signedMessage.message.amount)) {
             console.error(this.name, ": User", signedMessage.message.from, "don't have", signedMessage.message.amount, "to spend");
             return false;
@@ -135,13 +164,17 @@ class User {
     }
 
     VerifySignedMessageAndAddToBlockChain(signedMessage) {
-        // Signature, amount of disponible money,... verification
-        let isValid = this.VerifySignedMessage(signedMessage)
-        if (!isValid) {
+        // Signature, hash, amount of disponible money,... verification
+        let isValid = this.VerifySignedMessageWithSerialNumber(signedMessage)
+        if (!isValid)
             return false;
-        }
- 
+
         this.localBlockChain.push(signedMessage);
+
+        // Broadcast that the message is valid to all users on the network
+        Object.keys(this.localAddressBook).forEach((name, value) => {
+            this.network.BroadcastValidationToUser(name, this.name, signedMessage.hash, this.Sign(signedMessage.hash));
+        });
 
         return true;
     }
@@ -160,10 +193,53 @@ class User {
         });
     }
 
+    ReceiveValidation(validatorName, messageHash, signedMessageHash) {
+        // Find the public key in the adress book or in the current user
+        let validatorEntry;
+        if (validatorName == this.name)
+            validatorEntry = { publicKey: this.publicKey };
+        else
+            validatorEntry = this.localAddressBook[validatorName];
+
+        if (!validatorEntry || !validatorEntry.publicKey) {
+            console.error(this.name, `: No validator publicKey found for ${validatorName}`);
+            return false;
+        }
+
+        // Message signature match user spending coins (the "from" property)
+        if (!this.Verify(messageHash, signedMessageHash, validatorEntry.publicKey)) {
+            console.error(this.name, ": User", validatorName, "signature is not a valid");
+            return false;
+        }
+
+        // Add the name of the validator to the list of validators of the message (if not already here)
+        if (!this.localBlockValidators[messageHash])
+            this.localBlockValidators[messageHash] = [];
+        if (this.localBlockValidators[messageHash].findIndex(name => name == validatorName) == -1)
+            this.localBlockValidators[messageHash].push(validatorName)
+
+        return true;
+    }
+
+    // Malicious
+    BroadcastToSpecificUser(username, signedMessage) {
+        network.BroadcastToUser(username, signedMessage);
+    }
+
     // Private
     GenrerateRsa() {
         this.rsa = new RSAKey();
         this.rsa.readPrivateKeyFromPEMString(this.privateKey);
+    }
+
+    IsMessageValidated(messageHash) {
+        if (this.network.GetGenesisTransaction().hash == messageHash)
+            return true;
+
+        if (!this.localBlockValidators[messageHash])
+            return false;
+
+        return this.localBlockValidators[messageHash].length / Object.keys(this.localAddressBook).length >= 0.5;
     }
 
     // Check that at the moment user $username have AT LEAST $amount coins 
@@ -198,6 +274,9 @@ class User {
         });
 
         this.localBlockChain.forEach(b => {
+            if (!this.IsMessageValidated(b.hash))
+                return;
+
             if (b.message.from == this.name)
                 this.money -= b.message.amount;
             else if (this.localAddressBook[b.message.from])
