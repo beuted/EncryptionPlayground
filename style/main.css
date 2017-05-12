@@ -21,10 +21,17 @@ article {
     overflow: auto;
     white-space: nowrap;
     height: 20px;
+
+    transition: 0.25s ease-in-out;
 }
 
-.network:hover {
-    bottom: 0;
+.network, .network:hover, .network:focus {
+    color: #292b2c;
+    text-decoration: none;
+}
+
+.network:focus {
+    transform: translate(0,-220px);
 }
 
 .user-container {

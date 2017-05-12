@@ -80,6 +80,8 @@ xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
 
         var signedMessage;
         $(document).ready(function() {
+            $('.network').click(e=> e.preventDefault());
+
             $('#Alice').replaceWith(alice.GetMarkup());
             $('#Bob').replaceWith(bob.GetMarkup());
             $('#Charlie').replaceWith(charlie.GetMarkup());
@@ -297,7 +299,8 @@ N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
             </div>
         </div>
 
-        <div class="network">
+
+        <a class="network" href="#">
             <div id="Alice"></div>
             <div id="Bob"></div>
             <div id="Charlie"></div>
@@ -306,6 +309,6 @@ N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
             <div id="BobPuppet2"></div>
             <div id="BobPuppet3"></div>
             <div id="BobPuppet4"></div>
-        </div>
+        </a>
     </body>
 </html>

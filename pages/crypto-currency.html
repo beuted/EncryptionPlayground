@@ -64,6 +64,8 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
 
         var signedMessage;
         $(document).ready(function() {
+            $('.network').click(e=> e.preventDefault());
+
             $('#Alice').replaceWith(alice.GetMarkup());
             $('#Bob').replaceWith(bob.GetMarkup());
             $('#Charlie').replaceWith(charlie.GetMarkup());
@@ -184,10 +186,10 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
             </article>
         </div>
 
-        <div class="network">
+        <a class="network" href="#">
             <div id="Alice"></div>
             <div id="Bob"></div>
             <div id="Charlie"></div>
-        </div>
+        </a>
     </body>
 </html>
