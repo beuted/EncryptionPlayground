@@ -45,7 +45,7 @@ A1gYVE+E256zs/kwgptzUN/iU6c6gOyL8H8C9ppdG3V1+5vI4Yj6AwyBAkBkCTSo
 GOPCkt4xSJmADXroPGrmhnL0ZAAvk59To0RtKiIS9r6IzDuoA4tQaCKXBjFymfsN
 N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
 /tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
------END RSA PRIVATE KEY-----`, network, );
+-----END RSA PRIVATE KEY-----`, network);
         var charlie = new User('Charlie', `-----BEGIN RSA PRIVATE KEY-----
 MIICWwIBAAKBgHNNh/YaZnvIr58+v1MagvNjOzEg18yLVAQeZWpnNzE0qxquB2w2
 eM2Rk6V9fh4WS35fatAvPfVqF/y5oZGwQ3v2ebm/AXTzrI+XCxJDRiHqsuIFRl8Z
@@ -76,9 +76,12 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
             if (isOk)
                 bob.BroadcastSignedMessage(signedMessage);
 
+            $('#transaction-block').css("display", "block");
+
             $('.transaction').text(JSON.stringify(message, undefined, 2));
             $('.signed-message').text(JSON.stringify(signedMessage, undefined, 2));
-            $('.verify-message').text(isOk);
+            $('.verify-message').text(isOk ? "valid" : "invalid");
+            
             $('#Alice').replaceWith(alice.GetMarkup());
             $('#Bob').replaceWith(bob.GetMarkup());
             $('#Charlie').replaceWith(charlie.GetMarkup());
@@ -142,22 +145,25 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
 
             <h1 class="h1">Using serial numbers to make coins uniquely identifiable</h1>
 
-            <p>What we’d like is a way of making infocoins unique. They need a label or serial number. Alice would sign the message
-            “I, Alice, am giving Bob one infocoin, with serial number 8740348”. Then, later, Alice could sign the message “I, Alice,
-            am giving Bob one infocoin, with serial number 8770431”, and Bob (and everyone else) would know that a different infocoin
+            <p>What we’d like is a way of making Crypto-Coins unique. They need a label or serial number. Alice would sign the message
+            <i>“I, Alice, am giving Bob one infocoin, with serial number 8740348”</i>. Then, later, Alice could sign the message <i>“I, Alice,
+            am giving Bob one infocoin, with serial number 8770431”</i>, and Bob (and everyone else) would know that a different infocoin
             was being transferred.</p>
 
-            <p>To make this scheme work we need a trusted source of serial numbers for the infocoins. One way to create such a source is
-            to introduce a bank. This bank would provide serial numbers for infocoins, keep track of who has which infocoins, and verify
+            <p>Something that will look like this: <code>{ "from": "Alice", "to": "Bob", "serialNumber": "8740348”" }</code></p>
+
+            <p>To make this scheme work we need a trusted source of serial numbers for the Crypto-Coins. <b>One way to create such a source is
+            to introduce a bank</b>. This bank would provide serial numbers for Crypto-Coins, keep track of who has which Crypto-Coins, and verify
             that transactions really are legitimate,</p>
 
-            <p>In more detail, let’s suppose Alice goes into the bank, and says “I want to withdraw one infocoin from my account”. The
+            <p>In more detail, let’s suppose Alice goes into the bank, and says <i>“I want to withdraw one infocoin from my account”</i>. The
             bank reduces her account balance by one infocoin, and assigns her a new, never-before used serial number, let’s say 1234567.
-            Then, when Alice wants to transfer her infocoin to Bob, she signs the message “I, Alice, am giving Bob one infocoin, with serial
-            number 1234567”. But Bob doesn’t just accept the infocoin. Instead, he contacts the bank, and verifies that: (a) the infocoin
+            Then, when Alice wants to transfer her infocoin to Bob, she signs the message <i>“I, Alice, am giving Bob one infocoin, with serial
+            number 1234567”</i>. But Bob doesn’t just accept the infocoin. Instead, he contacts the bank, and verifies that: (a) the infocoin
             with that serial number belongs to Alice; and (b) Alice hasn’t already spent the infocoin. If both those things are true,
             then Bob tells the bank he wants to accept the infocoin, and the bank updates their records to show that the infocoin with that
             serial number is now in Bob’s possession, and no longer belongs to Alice.</p>
+            <br>
 
             <h2 class="h2">Making everyone collectively the bank</h2>
 
@@ -167,23 +173,20 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
             over the money supply – that’s a pretty huge change.</p>
 
             <p>The idea is to make it so everyone (collectively) is the bank. In particular, we’ll assume that everyone using Infocoin keeps
-            a complete record of which infocoins belong to which person. You can think of this as a shared public ledger showing all
-            Infocoin transactions. We’ll call this ledger the block chain, since that’s what the complete record will be called in Bitcoin,
-            once we get to it.</p>
+            a complete record of which Crypto-Coins belong to which person. You can think of this as a shared public ledger showing all
+            Infocoin transactions. We’ll call this ledger <b>the block chain</b>.</p>
 
-            <p>Now, suppose Alice wants to transfer an infocoin to Bob. She signs the message “I, Alice, am giving Bob one infocoin, with
-            serial number 1234567”, and gives the signed message to Bob. Bob can use his copy of the block chain to check that, indeed,
+            <p>Now, suppose Alice wants to transfer an infocoin to Bob. She signs the message <i>“I, Alice, am giving Bob one infocoin, with
+            serial number 1234567”</i>, and gives the signed message to Bob. Bob can use his copy of the block chain to check that, indeed,
             the infocoin is Alice’s to give. If that checks out then he broadcasts both Alice’s message and his acceptance of the transaction
             to the entire network, and everyone updates their copy of the block chain.</p>
 
             <h2 class="h2">Where do serial number come from?</h2>
 
             <p>A simple idea to get this serial number would be to <b>use a hash of the message with its date</b>, so our previous messages would look 
-            like this.</p>
+            like this:</p>
     
-            <p><button class="btn btn-primary btn-sm" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button></p>
-
-            <article class="card">
+            <article class="card" id="transaction-block" style="display: none;">
                 <div class="card-block">
                     <ol style="margin: 0;">
                         <li><b>Transaction message:</b>
@@ -194,21 +197,22 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
                             <code class="signed-message"></code>
                         </li>
 
-                        <li><b>Bob can then verify that the message is from Alice by checking the signature, check that the hash is valid and that he
-                        cannot be found in his local blockchain, he finds that is is:</b>
+                        <li><b>Bob can then verify that the message is from Alice by checking the signature, that the hash is valid and that he
+                        cannot be found in his local blockchain twice, he finds that it is:</b>
                             <code class="verify-message"></code>
                         </li>
 
-                        <li><b>Bob will broadcast this message to all users proving that he now owns +1 coin and Alice -1</b>
+                        <li><b>Bob will broadcast this message to all users, proving that he now owns +1 coin and Alice -1</b>
 
                         <li><b>Bob can now give Alice the potato she bought him. He can prove that Alice sent him a coin since he have a message signed with her private key</b>
                     </ol>
                 </div>
             </article>
 
+            <p><button class="btn btn-primary btn-sm" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button></p>            
+
             <p>As the transaction have been signed with Alice private key we can know for sure that Alice is okay with the transaction and since
-            the hash parameter match the hash of the message and is unique on the network we can now for sure that it have not been "replayed":
-            If this encrypted transaction is broadcasted on the network everybody will be aware that Bob now have +1 coin and Alice -1 coin.</p>
+            the hash parameter match the hash of the message and is unique on the network we can now for sure that <b>it have not been "replayed"</b></p>
 
             <h3>State of the network</h3>
             <div class="row">
@@ -232,9 +236,9 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
 
             <div class="alert alert-danger" role="alert">This implementation can still be abuse!</div>
 
-            <h3>Timing attacks</h3>
+            <h3>Timing attack</h3>
             <p>Great, having these hashes as serial numbers we can avoid simple double spending, but we are still weak against
-            "timing attacks", where malicious people spends money they don't have.</p>
+            <i>"timing attacks"</i>, where malicious people spends money they don't have.</p>
             <p>Let's consider that Bob send <b>X coins</b> to Alice, (X being all the coins he has) and <b>at the exact same time</b>,
             send X coins to Charlie.</p>
             <p>What will happen is that Alice will update her local blockchain with the transaction where Bob gives her all his coins and

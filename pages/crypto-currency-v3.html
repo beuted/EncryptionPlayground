@@ -93,9 +93,12 @@ xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
             if (sanityCheckOk)
                 alice.BroadcastSignedMessage(signedMessage);
 
+            $('#transaction-block').css("display", "block");
+
             $('.transaction').text(JSON.stringify(message, undefined, 2));
             $('.signed-message').text(JSON.stringify(signedMessage, undefined, 2));
             $('.verify-message').text(sanityCheckOk);
+
             $('#Alice').replaceWith(alice.GetMarkup());
             $('#Bob').replaceWith(bob.GetMarkup());
             $('#Charlie').replaceWith(charlie.GetMarkup());
@@ -215,7 +218,7 @@ N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
             <h1 class="h1">Agreement on the state of the blockchain</h1>
 
             <p>How can we address the problem of double spending? The obvious solution is that when Bob sends
-            Alice a Crypto-Coin, Alice shouldn’t try to verify the transaction alone. Rather, she should broadcast the
+            Alice a Crypto-Coin, <b>Alice shouldn’t try to verify the transaction alone</b>. Rather, she should broadcast the
             possible transaction to the entire network of Crypto-coins users, and ask them to help determine whether
             the transaction is legitimate. If they collectively decide that the transaction is okay, then Alice can
             accept the Crypto-Coin, and everyone will update their block chain. This type of protocol can help prevent
@@ -224,29 +227,13 @@ N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
             the transaction, and the transaction shouldn’t go through.</p>
 
             <p>In more detail, let’s suppose Bob wants to give Alice a Crypto-Coin. As before, he signs the message
-            “I, Bob, am giving Alice one Crypto-Coin, with serial number 1234567”, and gives the signed message to Alice.
+            <i>“I, Bob, am giving Alice one Crypto-Coin, with serial number 1234567”</i>, and gives the signed message to Alice.
             Also as before, Alice does a sanity check, using his copy of the block chain to check that, indeed, the coin
             currently belongs to Alice. But at that point the protocol is modified. Alice doesn’t just go ahead and accept
             the transaction. Instead, she broadcasts Bob’s message to the entire network. Other members of the network
-            check to see whether Bob owns that Crypto-Coin. If so, they broadcast the message “Yes, Bob owns enough Crypto-Coin for
-            the transaction 1234567, it can now be transferred to Alice.” Once enough people have broadcast that message,
-            everyone updates their block chain to show that Crypto-Coin now belongs to Bob through the transaction 1234567”.</p>
-
-            <p>This protocol has many imprecise elements at present. For instance, what does it mean to say “once enough people
-            have broadcast that message”? What exactly does “enough” mean here? It can’t mean everyone in the network, since
-            we don’t a priori know who is on the Crypto-Coin network. For the same reason, it can’t mean some fixed fraction of
-            users in the network. We won’t try to make these ideas precise right now. Instead, in the next section I’ll point
-            out a serious problem with the approach as described. Fixing that problem will at the same time have the pleasant
-            side effect of making the ideas above much more precise.</p>
-
-            <!--<h2>A proof of work</h2>
-
-            <p>Suppose Alice wants to double spend in the network-based protocol I just described. She could do this by taking
-            over the Crypto-coin network. Let’s suppose she uses an automated system to set up a large number of separate identities,
-            let’s say a billion, on the Crypto-coin network. As before, she tries to double spend the same Crypto-coin with both Bob
-            and Charlie. But when Bob and Charlie ask the network to validate their respective transactions, Alice’s sock puppet
-            identities swamp the network, announcing to Bob that they’ve validated his transaction, and to Charlie that they’ve
-            validated his transaction, possibly fooling one or both into accepting the transaction.</p>-->
+            check to see whether Bob owns that Crypto-Coin. If so, they broadcast the message <i>“Yes, Bob owns enough Crypto-Coin for
+            the transaction 1234567, it can now be transferred to Alice.”</i> Once enough people have broadcast that message,
+            everyone updates their block chain to show that Crypto-Coin now belongs to Bob through the transaction 1234567”</i>.</p>
 
             <div class="alert alert-success" role="alert">We are reaching here the issue that have stayed unsolved for about 30 years until somebody under the nickname of
             Satoshi Nakamoto published <a href = "https://bitcoin.org/bitcoin.pdf">a paper on the subject</a> in 2008 that will
@@ -260,7 +247,7 @@ N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
     
             <button class="btn btn-primary" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button>
 
-            <article class="card">
+            <article class="card" id="transaction-block" style="display: none;">
                 <div class="card-block">
                     <ol style="margin: 0;">
                         <li><b>Transaction message:</b>
@@ -314,7 +301,7 @@ N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
                 puppets that will validate all his transactions. <button class="btn btn-primary btn-sm" onclick="swarmNetworkWithBobPuppets()">Swarm the network with bob's puppets 😈</button></li>
             </ol>
 
-            <p>We need a better definition of: “once enough people have broadcast that message” for the currency to work.</p>
+            <p>We need a better definition of: <i>“once enough people have broadcast that message” for the currency to work.</p>
 
             <div class="row navigation">
                 <div class="col-sm-12">

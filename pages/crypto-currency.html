@@ -45,7 +45,7 @@ A1gYVE+E256zs/kwgptzUN/iU6c6gOyL8H8C9ppdG3V1+5vI4Yj6AwyBAkBkCTSo
 GOPCkt4xSJmADXroPGrmhnL0ZAAvk59To0RtKiIS9r6IzDuoA4tQaCKXBjFymfsN
 N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
 /tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
------END RSA PRIVATE KEY-----`, network, );
+-----END RSA PRIVATE KEY-----`, network);
         var charlie = new User('Charlie', `-----BEGIN RSA PRIVATE KEY-----
 MIICWwIBAAKBgHNNh/YaZnvIr58+v1MagvNjOzEg18yLVAQeZWpnNzE0qxquB2w2
 eM2Rk6V9fh4WS35fatAvPfVqF/y5oZGwQ3v2ebm/AXTzrI+XCxJDRiHqsuIFRl8Z
@@ -78,12 +78,17 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
                 bob.BroadcastSignedMessage(signedMessage);
             }
 
+
+            $('#transaction-block').css("display", "block");
             $('.transaction').text(JSON.stringify(message, undefined, 2));
             $('.signed-message').text(JSON.stringify(signedMessage, undefined, 2));
-            $('.verify-message').text(isOk);
+            $('.verify-message').text(isOk ? "valid" : "invalid");
+
             $('#Alice').replaceWith(alice.GetMarkup());
             $('#Bob').replaceWith(bob.GetMarkup());
             $('#Charlie').replaceWith(charlie.GetMarkup());
+
+
         }
 
         broadcastMessage10Times = function() {
@@ -116,7 +121,7 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
                     a public key that will allow them to sign messages. The asymmetric encryption system for these key is not really
                     the subject of our demonstration so we will just use RSA we <a href="file:///E:/src/repos/EncryptionPlayground/pages/rsa.html">
                     implemented here</a> but we will need a deeper implementation that supports encryption/decryption of large amount of
-                    data and of strings as well as a signing implementation we will use <code>jsrsasign</code> for that</p>
+                    data and of strings as well as a signing implementation, so we will use <code>jsrsasign</code> for that.</p>
 
                     <a href="https://github.com/kjur/jsrsasign" class="card-link">Jsrsasign</a>
                     <a href="http://www.michaelnielsen.org/ddi/how-the-bitcoin-protocol-actually-works/" class="card-link">How The Bitcoin Protocol Actually Work</a>
@@ -127,8 +132,7 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
 
             <article>
                 <p>Let's consider the Crypto-coin trade being just a message Alice is sending, signed with her private key.</p>
-                <p><button class="btn btn-primary btn-sm" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button></p>
-                <div class="card">
+                <div class="card" id="transaction-block" style="display: none;">
                     <div class="card-block">
                         <ol style="margin: 0;">
                             <li><b>Transaction message:</b>
@@ -139,7 +143,7 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
                                 <code class="signed-message"></code>
                             </li>
 
-                            <li><b>Bob can then verify that the message is from Alice by checking the signature, he finds that is is:</b>
+                            <li><b>Bob can then verify that the message is from Alice by checking the signature, he finds that it is:</b>
                                 <code class="verify-message"></code>
                             </li>
 
@@ -150,8 +154,10 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
                     </div>
                 </article>
 
-                <p>As the transaction have been signed with Alice private key we can know for sure that Alice is okay with the transaction so if this encrypted transaction
-                is broadcasted on the network everybody will be aware that Bob now have +1 coin and Alice -1 coin.</p>
+                <p><button class="btn btn-primary btn-sm" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button></p>                
+
+                <p>As the transaction have been signed with Alice private key we can know for sure that Alice is okay with the transaction. So if this encrypted transaction
+                is broadcasted on the network, everybody will be aware that Bob now have +1 coin and Alice -1 coin.</p>
             </article>
             
             <h3 class="h3">State of the network</h3>

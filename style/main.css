@@ -1,3 +1,7 @@
+.h1 {
+    margin-bottom: 15px;
+}
+
 article {
     margin: 15px 0 30px 0;
 }
@@ -7,11 +11,12 @@ article {
 }
 
 .card > .card-block > ol {
-    font-size: 13px;
+    font-size: 14px;
+    overflow: hidden;
 }
 
 .user {
-    font-size: 13px;
+    font-size: 14px;
     vertical-align: top;
 }
 
@@ -35,6 +40,11 @@ article {
 }
 
 /* Bootstrap custom */
+@media (min-width: 1200px) {
+    .container {
+        width: 960px;
+    }
+}
 
 .btn {
     cursor: pointer;    
