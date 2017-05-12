@@ -81,7 +81,7 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
             $('.transaction').text(JSON.stringify(message, undefined, 2));
             $('.signed-message').text(JSON.stringify(signedMessage, undefined, 2));
             $('.verify-message').text(isOk ? "valid" : "invalid");
-            
+
             $('#Alice').replaceWith(alice.GetMarkup());
             $('#Bob').replaceWith(bob.GetMarkup());
             $('#Charlie').replaceWith(charlie.GetMarkup());
@@ -145,23 +145,23 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
 
             <h1 class="h1">Using serial numbers to make coins uniquely identifiable</h1>
 
-            <p>What we’d like is a way of making Crypto-Coins unique. They need a label or serial number. Alice would sign the message
-            <i>“I, Alice, am giving Bob one infocoin, with serial number 8740348”</i>. Then, later, Alice could sign the message <i>“I, Alice,
-            am giving Bob one infocoin, with serial number 8770431”</i>, and Bob (and everyone else) would know that a different infocoin
+            <p>What we’d like is a way of making potato-coins unique. They need a label or serial number. Alice would sign the message
+            <i>“I, Alice, am giving Bob one potato-coin, with serial number 8740348”</i>. Then, later, Alice could sign the message <i>“I, Alice,
+            am giving Bob one potato-coin, with serial number 8770431”</i>, and Bob (and everyone else) would know that a different potato-coin
             was being transferred.</p>
 
             <p>Something that will look like this: <code>{ "from": "Alice", "to": "Bob", "serialNumber": "8740348”" }</code></p>
 
-            <p>To make this scheme work we need a trusted source of serial numbers for the Crypto-Coins. <b>One way to create such a source is
-            to introduce a bank</b>. This bank would provide serial numbers for Crypto-Coins, keep track of who has which Crypto-Coins, and verify
+            <p>To make this scheme work we need a trusted source of serial numbers for the potato-coins. <b>One way to create such a source is
+            to introduce a bank</b>. This bank would provide serial numbers for potato-coins, keep track of who has which potato-coins, and verify
             that transactions really are legitimate,</p>
 
-            <p>In more detail, let’s suppose Alice goes into the bank, and says <i>“I want to withdraw one infocoin from my account”</i>. The
-            bank reduces her account balance by one infocoin, and assigns her a new, never-before used serial number, let’s say 1234567.
-            Then, when Alice wants to transfer her infocoin to Bob, she signs the message <i>“I, Alice, am giving Bob one infocoin, with serial
-            number 1234567”</i>. But Bob doesn’t just accept the infocoin. Instead, he contacts the bank, and verifies that: (a) the infocoin
-            with that serial number belongs to Alice; and (b) Alice hasn’t already spent the infocoin. If both those things are true,
-            then Bob tells the bank he wants to accept the infocoin, and the bank updates their records to show that the infocoin with that
+            <p>In more detail, let’s suppose Alice goes into the bank, and says <i>“I want to withdraw one potato-coin from my account”</i>. The
+            bank reduces her account balance by one potato-coin, and assigns her a new, never-before used serial number, let’s say 1234567.
+            Then, when Alice wants to transfer her potato-coin to Bob, she signs the message <i>“I, Alice, am giving Bob one potato-coin, with serial
+            number 1234567”</i>. But Bob doesn’t just accept the potato-coin. Instead, he contacts the bank, and verifies that: (a) the potato-coin
+            with that serial number belongs to Alice; and (b) Alice hasn’t already spent the potato-coin. If both those things are true,
+            then Bob tells the bank he wants to accept the potato-coin, and the bank updates their records to show that the potato-coin with that
             serial number is now in Bob’s possession, and no longer belongs to Alice.</p>
             <br>
 
@@ -172,13 +172,13 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
             any single organization in charge of the currency. And when you think about the enormous power a central bank has – control
             over the money supply – that’s a pretty huge change.</p>
 
-            <p>The idea is to make it so everyone (collectively) is the bank. In particular, we’ll assume that everyone using Infocoin keeps
-            a complete record of which Crypto-Coins belong to which person. You can think of this as a shared public ledger showing all
-            Infocoin transactions. We’ll call this ledger <b>the block chain</b>.</p>
+            <p>The idea is to make it so everyone (collectively) is the bank. In particular, we’ll assume that everyone using potato-coin keeps
+            a complete record of which potato-coins belong to which person. You can think of this as a shared public ledger showing all
+            potato-coin transactions. We’ll call this ledger <b>the block chain</b>.</p>
 
-            <p>Now, suppose Alice wants to transfer an infocoin to Bob. She signs the message <i>“I, Alice, am giving Bob one infocoin, with
+            <p>Now, suppose Alice wants to transfer an potato-coin to Bob. She signs the message <i>“I, Alice, am giving Bob one potato-coin, with
             serial number 1234567”</i>, and gives the signed message to Bob. Bob can use his copy of the block chain to check that, indeed,
-            the infocoin is Alice’s to give. If that checks out then he broadcasts both Alice’s message and his acceptance of the transaction
+            the potato-coin is Alice’s to give. If that checks out then he broadcasts both Alice’s message and his acceptance of the transaction
             to the entire network, and everyone updates their copy of the block chain.</p>
 
             <h2 class="h2">Where do serial number come from?</h2>
@@ -214,13 +214,6 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
             <p>As the transaction have been signed with Alice private key we can know for sure that Alice is okay with the transaction and since
             the hash parameter match the hash of the message and is unique on the network we can now for sure that <b>it have not been "replayed"</b></p>
 
-            <h3>State of the network</h3>
-            <div class="row">
-                <div id="Alice"></div>
-                <div id="Bob"></div>
-                <div id="Charlie"></div>
-            </div>
-            
             <h3>Simple double emission?</h3>
             <p><b>Previous signed transaction message:</b><code class="signed-message"></code></p>
 
@@ -255,5 +248,12 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
                 </div>
             </div>
         </div>
+
+        <div class="network">
+            <div id="Alice"></div>
+            <div id="Bob"></div>
+            <div id="Charlie"></div>
+        </div>
+            
     </body>
 </html>

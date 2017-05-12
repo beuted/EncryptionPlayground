@@ -218,22 +218,22 @@ N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
             <h1 class="h1">Agreement on the state of the blockchain</h1>
 
             <p>How can we address the problem of double spending? The obvious solution is that when Bob sends
-            Alice a Crypto-Coin, <b>Alice shouldn’t try to verify the transaction alone</b>. Rather, she should broadcast the
-            possible transaction to the entire network of Crypto-coins users, and ask them to help determine whether
+            Alice a potato-coin, <b>Alice shouldn’t try to verify the transaction alone</b>. Rather, she should broadcast the
+            possible transaction to the entire network of potato-coins users, and ask them to help determine whether
             the transaction is legitimate. If they collectively decide that the transaction is okay, then Alice can
-            accept the Crypto-Coin, and everyone will update their block chain. This type of protocol can help prevent
-            timing attack, since if Bob tries to spend his Crypto-Coin with both Alice and Charlie, other people on
+            accept the potato-coin, and everyone will update their block chain. This type of protocol can help prevent
+            timing attack, since if Bob tries to spend his potato-coin with both Alice and Charlie, other people on
             the network will notice, and network users will tell both Alice and Charlie that there is a problem with
             the transaction, and the transaction shouldn’t go through.</p>
 
-            <p>In more detail, let’s suppose Bob wants to give Alice a Crypto-Coin. As before, he signs the message
-            <i>“I, Bob, am giving Alice one Crypto-Coin, with serial number 1234567”</i>, and gives the signed message to Alice.
+            <p>In more detail, let’s suppose Bob wants to give Alice a potato-coin. As before, he signs the message
+            <i>“I, Bob, am giving Alice one potato-coin, with serial number 1234567”</i>, and gives the signed message to Alice.
             Also as before, Alice does a sanity check, using his copy of the block chain to check that, indeed, the coin
             currently belongs to Alice. But at that point the protocol is modified. Alice doesn’t just go ahead and accept
             the transaction. Instead, she broadcasts Bob’s message to the entire network. Other members of the network
-            check to see whether Bob owns that Crypto-Coin. If so, they broadcast the message <i>“Yes, Bob owns enough Crypto-Coin for
+            check to see whether Bob owns that potato-coin. If so, they broadcast the message <i>“Yes, Bob owns enough potato-coin for
             the transaction 1234567, it can now be transferred to Alice.”</i> Once enough people have broadcast that message,
-            everyone updates their block chain to show that Crypto-Coin now belongs to Bob through the transaction 1234567”</i>.</p>
+            everyone updates their block chain to show that potato-coin now belongs to Bob through the transaction 1234567.</p>
 
             <div class="alert alert-success" role="alert">We are reaching here the issue that have stayed unsolved for about 30 years until somebody under the nickname of
             Satoshi Nakamoto published <a href = "https://bitcoin.org/bitcoin.pdf">a paper on the subject</a> in 2008 that will
@@ -271,18 +271,6 @@ N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
             </article>
 
             <button class="btn btn-primary" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button>
-
-            <h3 class="h3">State of the network</h3>
-            <div class="row">
-                <div id="Alice"></div>
-                <div id="Bob"></div>
-                <div id="Charlie"></div>
-                <div id="Dylan"></div>
-                <div id="BobPuppet1"></div>
-                <div id="BobPuppet2"></div>
-                <div id="BobPuppet3"></div>
-                <div id="BobPuppet4"></div>
-            </div>
             
             <h3>Timing attacks?</h3>
 
@@ -299,7 +287,7 @@ N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
                 puppets that will validate all his transactions. <button class="btn btn-primary btn-sm" onclick="swarmNetworkWithBobPuppets()">Swarm the network with bob's puppets 😈</button></li>
             </ol>
 
-            <p>We need a better definition of: <i>“once enough people have broadcast that message” for the currency to work.</p>
+            <p>We need a better definition of: <i>“once enough people have broadcast that message”</i> for the currency to work.</p>
 
             <div class="row navigation">
                 <div class="col-sm-12">
@@ -307,6 +295,17 @@ N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
                     <a class="btn btn-success float-right" href="./crypto-currency-v4.html">next >></a>
                 </div>
             </div>
+        </div>
+
+        <div class="network">
+            <div id="Alice"></div>
+            <div id="Bob"></div>
+            <div id="Charlie"></div>
+            <div id="Dylan"></div>
+            <div id="BobPuppet1"></div>
+            <div id="BobPuppet2"></div>
+            <div id="BobPuppet3"></div>
+            <div id="BobPuppet4"></div>
         </div>
     </body>
 </html>

@@ -91,7 +91,7 @@ class User {
 
     GetMarkup() {
         this.ComputeMoneyForKnownUsers();
-        return `<div class="user-container col-sm-4" id="${this.name}"><div class="card user"><div class="card-block">
+        return `<div class="user-container" id="${this.name}"><div class="card user"><div class="card-block">
     <h4>
         ${this.name}
     </h4>

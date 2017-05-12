@@ -117,10 +117,11 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
             <article class="card">
                 <div class="card-block">
                     <p>For these examples we are going to consider the following simple problem: Alice want to buy a potato from Bob
-                    for 1 Crypto-Coin, <b>How can Alice transfert 1 Crypto-Coin to Bob?</b> both players will have a private and
-                    a public key that will allow them to sign messages. The asymmetric encryption system for these key is not really
-                    the subject of our demonstration so we will just use RSA we <a href="file:///E:/src/repos/EncryptionPlayground/pages/rsa.html">
-                    implemented here</a> but we will need a deeper implementation that supports encryption/decryption of large amount of
+                    for 1 potato-Coin, <b>How can Alice transfert 1 potato-Coin to Bob?</b> both users will have a private and
+                    a public key that will allow them to sign messages.</p>
+                    
+                    <p>The asymmetric encryption system we will use is RSA (we <a href="file:///E:/src/repos/EncryptionPlayground/pages/rsa.html">
+                    implemented a simple one here</a>) but we will need a deeper implementation that supports encryption/decryption of large amount of
                     data and of strings as well as a signing implementation, so we will use <code>jsrsasign</code> for that.</p>
 
                     <a href="https://github.com/kjur/jsrsasign" class="card-link">Jsrsasign</a>
@@ -131,7 +132,8 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
             <h2 class="h2"><b>Step 1:</b> Signed letter of intent</h2>
 
             <article>
-                <p>Let's consider the Crypto-coin trade being just a message Alice is sending, signed with her private key.</p>
+                <p>Let's take a potato-coin network with 3 people: Alice, Bob and Charlie. Now consider the potato-coin trade being just a
+                message Alice is sending, <b>signed with her private key</b>.</p>
                 <div class="card" id="transaction-block" style="display: none;">
                     <div class="card-block">
                         <ol style="margin: 0;">
@@ -156,18 +158,11 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
 
                 <p><button class="btn btn-primary btn-sm" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button></p>                
 
-                <p>As the transaction have been signed with Alice private key we can know for sure that Alice is okay with the transaction. So if this encrypted transaction
+                <p>As the transaction have been signed with Alice private key, we can know for sure that Alice is ok with the transaction. So if this encrypted transaction
                 is broadcasted on the network, everybody will be aware that Bob now have +1 coin and Alice -1 coin.</p>
             </article>
             
-            <h3 class="h3">State of the network</h3>
-            <div class="row">
-                <div id="Alice"></div>
-                <div id="Bob"></div>
-                <div id="Charlie"></div>
-            </div>
-
-            <div class="alert alert-danger" role="alert">This implementation can be abuse in an easy way!</div>
+            <div class="alert alert-danger" role="alert">This implementation can be abused in an easy way!</div>
             <h3 class="h3">Simple double emission</h3>
             <article>
                 <p>Bob could replay the same transaction on the network and steal all Alice money!</p>
@@ -187,6 +182,12 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
                     </div>
                 </div>
             </article>
+        </div>
+
+        <div class="network">
+            <div id="Alice"></div>
+            <div id="Bob"></div>
+            <div id="Charlie"></div>
         </div>
     </body>
 </html>
