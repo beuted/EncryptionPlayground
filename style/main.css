@@ -13,10 +13,10 @@ article {
 .network {
     width: 100%;
     position: fixed;
-    bottom: -130px;
+    bottom: -200px;
     margin: 0;
     height: 20px;
-    min-height: 190px;
+    min-height: 270px;
     overflow: auto;
     white-space: nowrap;
 
@@ -29,7 +29,7 @@ article {
 }
 
 .network.selected {
-    transform: translate(0,-130px);
+    transform: translate(0,-200px);
     background-color: white;
     cursor: default;
 }
@@ -38,7 +38,7 @@ article {
     position: fixed;
     z-index: 9999;
     right: 0;
-    bottom: 150px;
+    bottom: 220px;
     padding: 10px;
 
     transition: opacity 0s ease-in-out 0s;
@@ -95,7 +95,7 @@ article {
 }
 
 .img {
-    width: 60%;;
+    width: 60%;
 }
 
 /* Bootstrap custom */
