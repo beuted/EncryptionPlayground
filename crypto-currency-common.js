@@ -11,3 +11,16 @@ $(document).ready(function() {
     });
     $(() => $('[data-toggle="popover"]').popover());
 });
+
+var consoleError = console.error;
+
+showErrorNotification = function(content) {
+    $('body').append(`<div class="notification alert alert-danger alert-dismissable">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+        <strong>Error</strong> ${content}
+    </div>`)
+    consoleError(content);
+}
+
+
+console.error = showErrorNotification;

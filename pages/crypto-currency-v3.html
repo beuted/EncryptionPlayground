@@ -270,13 +270,17 @@ N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
 
                         <li><b>Bob can now give Alice the potato she bought him.</b>
                     </ol>
-                </div>
+                </div>                
             </article>
 
-            <button class="btn btn-primary" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button>
+            <button class="btn btn-primary" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button><br><br>
             
+
             <h3>Timing attacks?</h3>
 
+            <p>Timing attack will not work anymore since Alice and Charlie will now be able to agree on which transaction is valid and which one is not.
+            So when Bob will send all his coins to Alice and Charlie at the same time, only one of this transaction will be validated.</p>
+            
             <p><button class="btn btn-primary btn-sm" onclick="broadcastSimultaneousMessages()">Simultaneously send two messages giving all Bob's money to Alice and Charlie 👿</button></p>
 
             <div class="alert alert-danger" role="alert">This implementation will not work either! (but we're getting close)</div>

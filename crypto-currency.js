@@ -116,19 +116,19 @@ class User {
             debitorEntry = this.localAddressBook[signedMessage.message.from];
 
         if (!debitorEntry || !debitorEntry.publicKey) {
-            console.error(this.name, `: No debitor publicKey found for ${signedMessage.message.from}`);
+            console.error(`${this.name} : No debitor publicKey found for ${signedMessage.message.from}`);
             return false;
         }
 
         // Message signature match user spending coins (the "from" property)
         if (!this.Verify(JSON.stringify(signedMessage.message), signedMessage.signature, debitorEntry.publicKey)) {
-            console.error(this.name, ": User", signedMessage.message.from, "signature is not a valid");
+            console.error(`${this.name} : User ${signedMessage.message.from} signature is not a valid`);
             return false;
         }
 
         // Verification that user have enougth coins
         if (!this.VerifyUserHaveEnoughtCoins(signedMessage.message.from, signedMessage.message.amount)) {
-            console.error(this.name, ": User", signedMessage.message.from, "don't have", signedMessage.message.amount, "to spend");
+            console.error(`${this.name} : User ${signedMessage.message.from} don't have ${signedMessage.message.amount} to spend`);
             return false;
         }
 

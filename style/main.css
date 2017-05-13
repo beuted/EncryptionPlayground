@@ -87,6 +87,13 @@ article {
     white-space: normal;
 }
 
+.notification {
+    position: fixed;
+    top: 0;
+    width: 80%;
+    margin: 15px 10% 15px 10%;
+}
+
 /* Bootstrap custom */
 @media (min-width: 1200px) {
     .container {

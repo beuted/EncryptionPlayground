@@ -129,7 +129,7 @@ class User {
             debitorEntry = this.localAddressBook[signedMessage.message.from];
 
         if (!debitorEntry || !debitorEntry.publicKey) {
-            console.error(this.name, `: No debitor publicKey found for ${signedMessage.message.from}`);
+            console.error(`${this.name}: No debitor publicKey found for ${signedMessage.message.from}`);
             return false;
         }
 
@@ -137,25 +137,25 @@ class User {
         var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });
         md.updateString(JSON.stringify(signedMessage.message));        
         if (signedMessage.hash != md.digest()) {
-            console.error(this.name, ": Hash does not match message:", signedMessage.hash);
+            console.error(`${this.name}: Hash does not match message: ${signedMessage.hash}`);
             return false;
         }
 
         // No hash similarities
         if (this.localBlockChain.findIndex(x => x.hash == signedMessage.hash) !== -1) {
-            console.error(this.name, ": A message with a similar hash have been found:", signedMessage.hash);
+            console.error(`${this.name}: A message with a similar hash have been found: ${signedMessage.hash}`);
             return false;
         }
 
         // Message signature match user spending coins (the "from" property)
         if (!this.Verify(JSON.stringify(signedMessage.message), signedMessage.signature, debitorEntry.publicKey)) {
-            console.error(this.name, ": User", signedMessage.message.from, "signature is not a valid");
+            console.error(`${this.name}: User ${signedMessage.message.from} signature is not a valid`);
             return false;
         }
 
         // User have enough coins
         if (!this.VerifyUserHaveEnoughtCoins(signedMessage.message.from, signedMessage.message.amount)) {
-            console.error(this.name, ": User", signedMessage.message.from, "don't have", signedMessage.message.amount, "to spend");
+            console.error(`${this.name}: User ${signedMessage.message.from}  don't have ${signedMessage.message.amount} to spend`);
             return false;
         }
 
@@ -200,13 +200,13 @@ class User {
             validatorEntry = this.localAddressBook[validatorName];
 
         if (!validatorEntry || !validatorEntry.publicKey) {
-            console.error(this.name, `: No validator publicKey found for ${validatorName}`);
+            console.error(`${this.name}: No validator publicKey found for ${validatorName}`);
             return false;
         }
 
         // Message signature match user spending coins (the "from" property)
         if (!this.Verify(messageHash, signedMessageHash, validatorEntry.publicKey)) {
-            console.error(this.name, ": User", validatorName, "signature is not a valid");
+            console.error(`${this.name}: User ${validatorName} signature is not a valid`);
             return false;
         }
 
