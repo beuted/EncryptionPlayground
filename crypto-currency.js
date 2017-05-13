@@ -53,6 +53,7 @@ jK/5TBduLJ5J06jJAkAXxbUaC/i8Jd3sjpKnI5zSwTri33sMCr5ko2ixHLAdPkvI
         var rsa = new RSAKey();
         rsa.readPrivateKeyFromPEMString(privateKey);
         var genesisTransaction = { from: "Root", to: "Alice", amount: 50, date: Date.now() };
+
         return {
             message: genesisTransaction,
             signature: rsa.signString(genesisTransaction, 'sha256')

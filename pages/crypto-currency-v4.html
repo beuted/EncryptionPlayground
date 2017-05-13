@@ -1,0 +1,515 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+        <link href="../style/main.css" rel="stylesheet">
+
+        <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+        <!-- Scripts comming from https://github.com/kjur/jsrsasign -->
+        <script src="../vendors/jsrsasign/jsrsasign-all-min.js" type="text/javascript"></script>
+
+        <script src="../crypto-currency-v3.js" type="text/javascript"></script>
+        <script src="../crypto-currency-common.js" type="text/javascript"></script>
+
+        <script type="text/javascript">
+
+        var network = new Network();
+        var alice = new User('Alice', `-----BEGIN RSA PRIVATE KEY-----
+MIICWwIBAAKBgQDRhGF7X4A0ZVlEg594WmODVVUIiiPQs04aLmvfg8SborHss5gQ
+Xu0aIdUT6nb5rTh5hD2yfpF2WIW6M8z0WxRhwicgXwi80H1aLPf6lEPPLvN29EhQ
+NjBpkFkAJUbS8uuhJEeKw0cE49g80eBBF4BCqSL6PFQbP9/rByxdxEoAIQIDAQAB
+AoGAA9/q3Zk6ib2GFRpKDLO/O2KMnAfR+b4XJ6zMGeoZ7Lbpi3MW0Nawk9ckVaX0
+ZVGqxbSIX5Cvp/yjHHpww+QbUFrw/gCjLiiYjM9E8C3uAF5AKJ0r4GBPl4u8K4bp
+bXeSxSB60/wPQFiQAJVcA5xhZVzqNuF3EjuKdHsw+dk+dPECQQDubX/lVGFgD/xY
+uchz56Yc7VHX+58BUkNSewSzwJRbcueqknXRWwj97SXqpnYfKqZq78dnEF10SWsr
+/NMKi+7XAkEA4PVqDv/OZAbWr4syXZNv/Mpl4r5suzYMMUD9U8B2JIRnrhmGZPzL
+x23N9J4hEJ+Xh8tSKVc80jOkrvGlSv+BxwJAaTOtjA3YTV+gU7Hdza53sCnSw/8F
+YLrgc6NOJtYhX9xqdevbyn1lkU0zPr8mPYg/F84m6MXixm2iuSz8HZoyzwJARi2p
+aYZ5/5B2lwroqnKdZBJMGKFpUDn7Mb5hiSgocxnvMkv6NjT66Xsi3iYakJII9q8C
+Ma1qZvT/cigmdbAh7wJAQNXyoizuGEltiSaBXx4H29EdXNYWDJ9SS5f070BRbAIl
+dqRh3rcNvpY6BKJqFapda1DjdcncZECMizT/GMrc1w==
+-----END RSA PRIVATE KEY-----`, network);
+        var bob = new User('Bob', `-----BEGIN RSA PRIVATE KEY-----
+MIICWgIBAAKBgHJNuOcdqshauCKFhxYHUNGuIyv6H7OLtUV+Ew3ra75hWWW2fMNl
+gHFwATEIg9xaDHaVmGXxdBmot78ZUeNpVYuymflwfBl06VUxSYpl7QfS5M4E9gOV
+sERX/ytzRl3uuTprk/LvGwcejsVpHLlxBuVPMy6u2yPE0+X59ayLX26/AgMBAAEC
+gYBI0esyklvzOJiGpbrh9dcvPll58uevYxohI6jP/WOu7iYd/pyNf2TM4CZiLqKT
+B2tZQQTOLX1hu3MUc/UPhFPSybbBh4aXPYU7cBPmXz910m7PwrQZcFUETKV2Mkug
+sLim1baAq++O6jUYM6RRnEcdtag3uIN/21VCevx9yTqYAQJBALSN6Nj7OFRcQfiw
+ijakun2H7ldNKOXH3c8DgRTDgBrfJDmOZlcIZmQ6G10ZsROk5beRkVgHGX8G3Dia
+nU2el4ECQQCiEOapzIZCLEpfG3Ay+X6FQfrkhkvrg9EECucx0GYQ6bAUgkwTiLn6
+g70sKXT2E2fYvEQDB0v1t6pAHHcMWyY/AkBjmJAj+NgGuOlvPDrRj6aLjkrr/1Ub
+A1gYVE+E256zs/kwgptzUN/iU6c6gOyL8H8C9ppdG3V1+5vI4Yj6AwyBAkBkCTSo
+GOPCkt4xSJmADXroPGrmhnL0ZAAvk59To0RtKiIS9r6IzDuoA4tQaCKXBjFymfsN
+N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
+/tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
+-----END RSA PRIVATE KEY-----`, network);
+        var charlie = new User('Charlie', `-----BEGIN RSA PRIVATE KEY-----
+MIICWwIBAAKBgHNNh/YaZnvIr58+v1MagvNjOzEg18yLVAQeZWpnNzE0qxquB2w2
+eM2Rk6V9fh4WS35fatAvPfVqF/y5oZGwQ3v2ebm/AXTzrI+XCxJDRiHqsuIFRl8Z
+98f0zs/NNCHtCLGqdnu0zNdL4OyA+dCeexcch6TUQklkvJRuCTUJRt9TAgMBAAEC
+gYByjMMXj9DjB1Ta+0autDcGwD3tJ/jcoEr+sIgGtrZRb0bSAbUkH9XSPN+XWN5z
+26hyyy7d1yFR8G4WSQGoMJpJdJH3De4RrU7ZCyx8Ln1xgk1DwoJPvOmPNcUftR5f
+p3+XuuH/w6CywOtUttNgIdQeR6sIUCvgyCDHHbF5S8iMSQJBAMHKkTs9GEzK3r1s
+o7Wgl/Mk4sIiAxExkD3m27IVoCWDD2QZUwLCnbaQqHQNq5GtGRRxs3ciPu4P54XU
+C4RuKD8CQQCYUOu0cW229v4HVCVKeN51vbLDxdch38k9TswrQ1p3EzQuQTdxAkr4
+svQGSPvyChktlCrr7Qlv9OkmOAFFdSPtAkBzxkInouNOlXCmuC3Bx5Sf1SyHkGxG
+rFahNLeR1+uaHYdnZN2762rvc9K/qp8SY9h050yxYss3zFakFD9hObJfAkEAlW31
+/92z/GcOStRTjV9NKAfGJGioqVPqEtqGVP9L9jwB2ksjABx2vsyZuLzLZ+ZeUyfk
+f/bZZlvIjDUvkhvc9QJATDAOITmhUk/1iADjP1vqdmfVXZRdxs/iJYChQIrck0fb
+hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
+-----END RSA PRIVATE KEY-----`, network);
+        var dylan = new User('Dylan', `-----BEGIN RSA PRIVATE KEY-----
+MIICWwIBAAKBgHoAhy90y1pqYuD+4v8Tg2eggd+/bk75xI3ATSC9ogZikOKNq5u3
+gI9vRaylJhrzqdpdTu5whBY1g2QoOIHcjPmqnsTmHhMU4fNAhvLW+ThfYrwgsYlQ
+YgipJBfwoZm+xc54tZbRhg89s9TXJk3H/d55WPEWN8F6V3nQukwldeqvAgMBAAEC
+gYAUkgY5IC4xXoKxgQhxDa84R73eJf7JXh+f7u6SOKcbAH+BU3W92aDZjl9nDqlw
+Heljohvu5BXBUOCIgKeWbcNvDrNNHfgOjrUjzLJ86IVw4zt5GeV/9XhPoH3rpfG6
+CMJ2FbqRGJYxcPks3FteqAGRPLmAUiHZh/PYlPniuANQ0QJBAPD+noxaKcjlgLX5
+zq2ljkBF+XhP9N9xdD74R1aDbpv5J8WH/UJUUCyoKsG4Iv7m2F7oa2bq1zPoaTWc
+03/95WUCQQCBmTQs4s3xCa/8KF9C5UMmYOlE7sP1T+lT8N+p+pV2j7OHv03GcSG7
+lv9CC6LCyID5/PBbJwVitmh768LUruiDAkB2zN31zGC600A+9PWIrotQbe5L/AZ3
+u+MVQ6lPIZ1+MDYF70LO1udrDD9/nblKtRvGtYZ0hqItyY1Ly5KLjurtAkAB32fc
+mi5lpEExwJeXzN5KiK32PAkC23PArcNdnmxYeT0b4gzKqEnXfxgTKT3h2KnccuY6
+Ovcd9QrPd5mqHxjnAkEAydMa7DM1rmj90T7dHpUbyNcqbDgOg5mojEOPgQX2DClc
+xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
+-----END RSA PRIVATE KEY-----`, network);
+
+        var signedMessage;
+        $(document).ready(function() {
+            $('#Alice').replaceWith(alice.GetMarkup());
+            $('#Bob').replaceWith(bob.GetMarkup());
+            $('#Charlie').replaceWith(charlie.GetMarkup());
+            $('#Dylan').replaceWith(dylan.GetMarkup());            
+        });
+
+        aliceSend1CoinToBob = function() {
+            var message = alice.GetMessage("Bob", 1, Date.now());
+            signedMessage = alice.GetSignedMessageWithSerialNumber("Bob", 1, Date.now());
+            var sanityCheckOk = alice.VerifySignedMessageAndAddToBlockChain(signedMessage);
+            if (sanityCheckOk)
+                alice.BroadcastSignedMessage(signedMessage);
+
+            $('#transaction-block').css("display", "block");
+
+            $('.transaction').text(JSON.stringify(message, undefined, 2));
+            $('.signed-message').text(JSON.stringify(signedMessage, undefined, 2));
+            $('.verify-message').text(sanityCheckOk);
+
+            $('#Alice').replaceWith(alice.GetMarkup());
+            $('#Bob').replaceWith(bob.GetMarkup());
+            $('#Charlie').replaceWith(charlie.GetMarkup());
+            $('#Dylan').replaceWith(dylan.GetMarkup());
+        }
+
+        broadcastSimultaneousMessages = function() {
+            bob.ComputeMoneyForKnownUsers(); // Update bob exact amount of money based on his local blockchain
+            signedMessage1 = bob.GetSignedMessageWithSerialNumber("Alice", bob.money, Date.now());
+            signedMessage2 = bob.GetSignedMessageWithSerialNumber("Charlie", bob.money, Date.now());
+
+            bob.BroadcastToSpecificUser("Alice", signedMessage1);
+            bob.BroadcastToSpecificUser("Charlie", signedMessage2);
+            bob.BroadcastToSpecificUser("Dylan", signedMessage2);
+
+            if (bob.localAddressBook["BobPuppet1"]) {
+                bob.BroadcastToSpecificUser("BobPuppet1", signedMessage1);
+                bob.BroadcastToSpecificUser("BobPuppet2", signedMessage1);
+                bob.BroadcastToSpecificUser("BobPuppet3", signedMessage1);
+                bob.BroadcastToSpecificUser("BobPuppet4", signedMessage1);
+                
+                bob.BroadcastToSpecificUser("BobPuppet1", signedMessage2);
+                bob.BroadcastToSpecificUser("BobPuppet2", signedMessage2);
+                bob.BroadcastToSpecificUser("BobPuppet3", signedMessage2);
+                bob.BroadcastToSpecificUser("BobPuppet4", signedMessage2);
+            }
+
+
+
+            // Bob only add Charlie transaction to his local blockchain
+            bob.VerifySignedMessageAndAddToBlockChain(signedMessage2);
+
+            $('#Alice').replaceWith(alice.GetMarkup());
+            $('#Bob').replaceWith(bob.GetMarkup());
+            $('#Charlie').replaceWith(charlie.GetMarkup());
+            $('#Dylan').replaceWith(dylan.GetMarkup());
+        }
+
+        var networkSwarmed = false;
+        swarmNetworkWithBobPuppets = function() {
+            if (networkSwarmed)
+                return;
+
+            var bobPuppet1 = new BobPuppetUser('BobPuppet1', `-----BEGIN RSA PRIVATE KEY-----
+MIICWgIBAAKBgHJNuOcdqshauCKFhxYHUNGuIyv6H7OLtUV+Ew3ra75hWWW2fMNl
+gHFwATEIg9xaDHaVmGXxdBmot78ZUeNpVYuymflwfBl06VUxSYpl7QfS5M4E9gOV
+sERX/ytzRl3uuTprk/LvGwcejsVpHLlxBuVPMy6u2yPE0+X59ayLX26/AgMBAAEC
+gYBI0esyklvzOJiGpbrh9dcvPll58uevYxohI6jP/WOu7iYd/pyNf2TM4CZiLqKT
+B2tZQQTOLX1hu3MUc/UPhFPSybbBh4aXPYU7cBPmXz910m7PwrQZcFUETKV2Mkug
+sLim1baAq++O6jUYM6RRnEcdtag3uIN/21VCevx9yTqYAQJBALSN6Nj7OFRcQfiw
+ijakun2H7ldNKOXH3c8DgRTDgBrfJDmOZlcIZmQ6G10ZsROk5beRkVgHGX8G3Dia
+nU2el4ECQQCiEOapzIZCLEpfG3Ay+X6FQfrkhkvrg9EECucx0GYQ6bAUgkwTiLn6
+g70sKXT2E2fYvEQDB0v1t6pAHHcMWyY/AkBjmJAj+NgGuOlvPDrRj6aLjkrr/1Ub
+A1gYVE+E256zs/kwgptzUN/iU6c6gOyL8H8C9ppdG3V1+5vI4Yj6AwyBAkBkCTSo
+GOPCkt4xSJmADXroPGrmhnL0ZAAvk59To0RtKiIS9r6IzDuoA4tQaCKXBjFymfsN
+N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
+/tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
+-----END RSA PRIVATE KEY-----`, network);
+
+            var bobPuppet2 = new BobPuppetUser('BobPuppet2', `-----BEGIN RSA PRIVATE KEY-----
+MIICWgIBAAKBgHJNuOcdqshauCKFhxYHUNGuIyv6H7OLtUV+Ew3ra75hWWW2fMNl
+gHFwATEIg9xaDHaVmGXxdBmot78ZUeNpVYuymflwfBl06VUxSYpl7QfS5M4E9gOV
+sERX/ytzRl3uuTprk/LvGwcejsVpHLlxBuVPMy6u2yPE0+X59ayLX26/AgMBAAEC
+gYBI0esyklvzOJiGpbrh9dcvPll58uevYxohI6jP/WOu7iYd/pyNf2TM4CZiLqKT
+B2tZQQTOLX1hu3MUc/UPhFPSybbBh4aXPYU7cBPmXz910m7PwrQZcFUETKV2Mkug
+sLim1baAq++O6jUYM6RRnEcdtag3uIN/21VCevx9yTqYAQJBALSN6Nj7OFRcQfiw
+ijakun2H7ldNKOXH3c8DgRTDgBrfJDmOZlcIZmQ6G10ZsROk5beRkVgHGX8G3Dia
+nU2el4ECQQCiEOapzIZCLEpfG3Ay+X6FQfrkhkvrg9EECucx0GYQ6bAUgkwTiLn6
+g70sKXT2E2fYvEQDB0v1t6pAHHcMWyY/AkBjmJAj+NgGuOlvPDrRj6aLjkrr/1Ub
+A1gYVE+E256zs/kwgptzUN/iU6c6gOyL8H8C9ppdG3V1+5vI4Yj6AwyBAkBkCTSo
+GOPCkt4xSJmADXroPGrmhnL0ZAAvk59To0RtKiIS9r6IzDuoA4tQaCKXBjFymfsN
+N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
+/tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
+-----END RSA PRIVATE KEY-----`, network);
+
+            var bobPuppet3 = new BobPuppetUser('BobPuppet3', `-----BEGIN RSA PRIVATE KEY-----
+MIICWgIBAAKBgHJNuOcdqshauCKFhxYHUNGuIyv6H7OLtUV+Ew3ra75hWWW2fMNl
+gHFwATEIg9xaDHaVmGXxdBmot78ZUeNpVYuymflwfBl06VUxSYpl7QfS5M4E9gOV
+sERX/ytzRl3uuTprk/LvGwcejsVpHLlxBuVPMy6u2yPE0+X59ayLX26/AgMBAAEC
+gYBI0esyklvzOJiGpbrh9dcvPll58uevYxohI6jP/WOu7iYd/pyNf2TM4CZiLqKT
+B2tZQQTOLX1hu3MUc/UPhFPSybbBh4aXPYU7cBPmXz910m7PwrQZcFUETKV2Mkug
+sLim1baAq++O6jUYM6RRnEcdtag3uIN/21VCevx9yTqYAQJBALSN6Nj7OFRcQfiw
+ijakun2H7ldNKOXH3c8DgRTDgBrfJDmOZlcIZmQ6G10ZsROk5beRkVgHGX8G3Dia
+nU2el4ECQQCiEOapzIZCLEpfG3Ay+X6FQfrkhkvrg9EECucx0GYQ6bAUgkwTiLn6
+g70sKXT2E2fYvEQDB0v1t6pAHHcMWyY/AkBjmJAj+NgGuOlvPDrRj6aLjkrr/1Ub
+A1gYVE+E256zs/kwgptzUN/iU6c6gOyL8H8C9ppdG3V1+5vI4Yj6AwyBAkBkCTSo
+GOPCkt4xSJmADXroPGrmhnL0ZAAvk59To0RtKiIS9r6IzDuoA4tQaCKXBjFymfsN
+N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
+/tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
+-----END RSA PRIVATE KEY-----`, network);
+
+            var bobPuppet4 = new BobPuppetUser('BobPuppet4', `-----BEGIN RSA PRIVATE KEY-----
+MIICWgIBAAKBgHJNuOcdqshauCKFhxYHUNGuIyv6H7OLtUV+Ew3ra75hWWW2fMNl
+gHFwATEIg9xaDHaVmGXxdBmot78ZUeNpVYuymflwfBl06VUxSYpl7QfS5M4E9gOV
+sERX/ytzRl3uuTprk/LvGwcejsVpHLlxBuVPMy6u2yPE0+X59ayLX26/AgMBAAEC
+gYBI0esyklvzOJiGpbrh9dcvPll58uevYxohI6jP/WOu7iYd/pyNf2TM4CZiLqKT
+B2tZQQTOLX1hu3MUc/UPhFPSybbBh4aXPYU7cBPmXz910m7PwrQZcFUETKV2Mkug
+sLim1baAq++O6jUYM6RRnEcdtag3uIN/21VCevx9yTqYAQJBALSN6Nj7OFRcQfiw
+ijakun2H7ldNKOXH3c8DgRTDgBrfJDmOZlcIZmQ6G10ZsROk5beRkVgHGX8G3Dia
+nU2el4ECQQCiEOapzIZCLEpfG3Ay+X6FQfrkhkvrg9EECucx0GYQ6bAUgkwTiLn6
+g70sKXT2E2fYvEQDB0v1t6pAHHcMWyY/AkBjmJAj+NgGuOlvPDrRj6aLjkrr/1Ub
+A1gYVE+E256zs/kwgptzUN/iU6c6gOyL8H8C9ppdG3V1+5vI4Yj6AwyBAkBkCTSo
+GOPCkt4xSJmADXroPGrmhnL0ZAAvk59To0RtKiIS9r6IzDuoA4tQaCKXBjFymfsN
+N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
+/tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
+-----END RSA PRIVATE KEY-----`, network);
+
+            $('#BobPuppet1').replaceWith(bobPuppet1.GetMarkup());
+            $('#BobPuppet2').replaceWith(bobPuppet2.GetMarkup());
+            $('#BobPuppet3').replaceWith(bobPuppet3.GetMarkup());
+            $('#BobPuppet4').replaceWith(bobPuppet4.GetMarkup());
+        }
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <h1 class="h1">A proof of work</h1>
+
+            <p>There’s a clever way of avoiding these problems, using an idea known as <b>proof-of-work</b>.
+            The idea is counterintuitive and involves a combination of two ideas:</p>
+            <p>(1) to (artificially) make it computationally costly for network users to validate transactions.</p>
+            <p>(2) to reward them for trying to help validate transactions. The reward is used so that people on the network
+            will try to help validate transactions, even though that’s now been made a computationally costly process.</p>
+            
+            <p>The benefit of making it costly to validate transactions is that validation can no longer be influenced by the
+            number of network identities someone controls, but only by the total computational power they can bring to bear
+            on validation. As we’ll see, with some clever design we can make it so a cheater would need enormous computational
+            resources to cheat, making it impractical.</p>
+
+            <p>That’s the gist of proof-of-work. But to really understand proof-of-work, we need to go through the details.</p>
+
+            <p>Suppose Alice broadcasts to the network the news that <i>“I, Alice, am giving Bob one potato-coin, with serial number 1234567”</i>.</p>
+
+            <p>As other people on the network hear that message, each adds it to a queue of pending transactions that they’ve been
+            told about, but which haven’t yet been approved by the network. For instance, another network user named Dylan might
+            have the following queue of pending transactions:</p>
+
+            <p><code>{ "from": "Bob", "to": "Alice", "amount": 1, "date": 1234567 }</code></p>
+
+            <p><code>{ "from": "Charlie", "to": "Bob", "amount": 1, "date": 3456789 }</code></p>
+
+            <p><code>{ "from": "Alice", "to": "Bob", "amount": 1, "date": 7890123 }</code></p>
+
+            <p>Dylan checks his copy of the block chain, and can see that each transaction is valid. He would like to help out by
+            broadcasting news of that validity to the entire network.</p>
+
+            <p>However, before doing that, as part of the validation protocol Dylan is required to solve a hard computational
+            puzzle – the proof-of-work. Without the solution to that puzzle, the rest of the network won’t accept his validation
+            of the transaction.</p>
+
+            <p>What puzzle does Dylan need to solve? To explain that, let <code>h</code> be a fixed hash function known by everyone
+            in the network – it’s built into the protocol. Bitcoin uses the well-known <a href="https://en.wikipedia.org/wiki/SHA-2">SHA-256</a>
+            hash function, but any cryptographically secure hash function will do.</p>
+            
+            <p>Let’s say Dylan’s queue of pending transactions is a label, <code>l</code>, just so it’s got a name we can refer to.
+            Suppose Dylan appends a number <code>x</code> (called the nonce) to <code>l</code> and hashes the
+            combination.</p>
+<p><b>x = "0000000000":</b></p>
+<p><code>
+h("[{ \"from\": \"Bob\", \"to\": \"Alice\", \"amount\": 1, \"date\": 1234567 },
+{ \"from\": \"Charlie\", \"to\": \"Bob\", \"amount\": 1, \"date\": 3456789 },
+{ \"from\": \"Alice\", \"to\": \"Bob\", \"amount\": 1, \"date\": 7890123 }]0000000000")
+</code></p>
+<p><code>= fe25f7a881925510b9c96008a3efff6d79aeffc3302d6acb530a34ab75941da0</code></p>
+
+            <p>The puzzle Dylan has to solve – the proof-of-work – is to find a nonce <code>x</code> such that when we append <code>x</code>
+            to <code>l</code> and hash the combination the output hash begins with a long run of zeroes. The puzzle can be
+            made more or less difficult by varying the number of zeroes required to solve the puzzle. A relatively simple
+            proof-of-work puzzle might require just three or four zeroes at the start of the hash, while a more difficult
+            proof-of-work puzzle might require a much longer run of zeros, say 15 consecutive zeroes.
+            In either case, the above attempt to find a suitable nonce, with x = 0, is a failure, since the
+            output doesn’t begin with any zeroes at all.</p>
+
+<p><b>x = "0000000001":</b></p>
+<p><code>
+h("[{ \"from\": \"Bob\", \"to\": \"Alice\", \"amount\": 1, \"date\": 1234567 },
+{ \"from\": \"Charlie\", \"to\": \"Bob\", \"amount\": 1, \"date\": 3456789 },
+{ \"from\": \"Alice\", \"to\": \"Bob\", \"amount\": 1, \"date\": 7890123 }]0000000001")
+</code></p>
+<p><code>= f96c2321f421094c45adb81267fe22a2fddd6662ca73e01a115a12ace6d4ccc2</code></p>
+
+            <p><code>x</code> = "0000000001" doesn't work either, we can keep trying different values for the nonce,
+            <code>x</code> = 0000000002, 0000000003,...</p>
+            
+<p>Finally, at <b>x = 0000003869</b> we obtain:</p>
+<p><code>
+h("[{ \"from\": \"Bob\", \"to\": \"Alice\", \"amount\": 1, \"date\": 1234567 },
+{ \"from\": \"Charlie\", \"to\": \"Bob\", \"amount\": 1, \"date\": 3456789 },
+{ \"from\": \"Alice\", \"to\": \"Bob\", \"amount\": 1, \"date\": 7890123 }]0000003869")
+</code></p>
+<p><code>= 0006530f9b816d547dff0551b99231d1f98192a3f442a76d65d8949fb869ef16</code></p>
+
+            <p>What makes this puzzle hard to solve is the fact that the output from a cryptographic hash function behaves
+            like a random number: change the input even a tiny bit and the output from the hash function changes completely,
+            in a way that’s hard to predict. So if we want the output hash value to begin with 10 zeroes, say, then Dylan will
+            need, on average, to try <code>16^{10} ≈ 10^{12}</code> different values for x before he finds a suitable nonce. That’s a
+            pretty challenging task, requiring lots of computational power.</p>
+
+            <p>Obviously, it’s possible to make this puzzle more or less difficult to solve by requiring more or fewer zeroes in
+            the output from the hash function. In fact, the Bitcoin protocol gets quite a fine level of control over the
+            difficulty of the puzzle, by using a slight variation on the proof-of-work puzzle described above. Instead of
+            requiring leading zeroes, the Bitcoin proof-of-work puzzle requires the hash of a block’s header to be lower than
+            or equal to a number known as the <a href="https://en.bitcoin.it/wiki/Target">target</a>. This target is automatically
+            adjusted to ensure that a Bitcoin block takes, on average, about ten minutes to validate.</p>
+
+            <p><div class="alert alert-info" role="alert">In practice there is a sizeable randomness in how long it takes to validate a block – sometimes a new block is
+            validated in just a minute or two, other times it may take 20 minutes or even longer. It’s straightforward to modify
+            the Bitcoin protocol so that the time to validation is much more sharply peaked around ten minutes. Instead of solving a
+            single puzzle, we can require that multiple puzzles be solved; with some careful design it is possible to considerably
+            reduce the variance in the time to validate a block of transactions.</div></p>
+
+            <h3>Rewarding transactions validation</h3>
+
+            <p>Alright, let’s suppose Dylan is lucky and finds a suitable nonce, <code>x</code>. Celebration! (He’ll be rewarded for finding
+            the nonce, as described below). He broadcasts the block of transactions he’s approving to the network, together with
+            the value for <code>x</code>. Other participants in the potato-coin network can verify that <code>x</code> is a valid solution
+            to the proof-of-work puzzle. And they then update their block chains to include the new block of transactions.</p>
+
+            <p>For the proof-of-work idea to have any chance of succeeding, network users need an incentive to help validate transactions.
+            Without such an incentive, they have no reason to expend valuable computational power, merely to help validate other people’s
+            transactions. And if network users are not willing to expend that power, then the whole system won’t work. The solution to
+            this problem is to reward people who help validate transactions. In particular, suppose we reward whoever successfully
+            validates a block of transactions by crediting them with some potato-coins. Provided the potato-coin reward is large enough
+            that will give them an incentive to participate in validation.</p>
+
+            <p><div class="alert alert-info" role="alert">In the Bitcoin protocol, this validation process is called <b>mining</b>. For each block of transactions validated, the
+            successful miner receives a bitcoin reward. Initially, this was set to be a 50 bitcoin reward. But for every 210,000
+            validated blocks (roughly, once every four years) the reward halves. This has happened just once, to date, and so the
+            current reward for mining a block is 25 bitcoins. This halving in the rate will continue every four years until the
+            year 2140 CE. At that point, the reward for mining will drop below 10^{-8} bitcoins per block. 10^{-8} bitcoins is
+            actually the minimal unit of Bitcoin, and is known as a <i>satoshi</i>. So in 2140 CE the total supply of bitcoins will cease
+            to increase. However, that won’t eliminate the incentive to help validate transactions. Bitcoin also makes it possible
+            to set aside some currency in a transaction as a transaction fee, which goes to the miner who helps validate it.
+            In the early days of Bitcoin transaction fees were mostly set to zero, but as Bitcoin has gained in popularity,
+            transaction fees have gradually risen, and are now a substantial additional incentive on top of the 25 bitcoin reward
+            for mining a block.</div></p>
+
+            <p>You can think of proof-of-work as a competition to approve transactions. Each entry in the competition costs a
+            little bit of computing power. A miner’s chance of winning the competition is (roughly, and with some caveats)
+            equal to the proportion of the total computing power that they control. So, for instance, if a miner controls
+            one percent of the computing power being used to validate Bitcoin transactions, then they have roughly a one
+            percent chance of winning the competition. So provided a lot of computing power is being brought to bear on the
+            competition, a dishonest miner is likely to have only a relatively small chance to corrupt the validation process,
+            unless they expend a huge amount of computing resources.</p>
+
+            <p>Of course, while it’s encouraging that a dishonest party has only a relatively small chance to corrupt the
+            block chain, that’s not enough to give us confidence in the currency. In particular, we haven’t yet conclusively
+            addressed the issue of double spending.</p>
+
+            <h3>Having the network to agree on the block chain</h3>
+
+            <p>I’ll analyse double spending shortly. Before doing that, I want to fill in an important detail in the
+            description of potato-coin. <b>We’d ideally like the potato-coin network to agree upon the order in which transactions have
+            occurred</b>. If we don’t have such an ordering then at any given moment it may not be clear who owns which potato-coins.
+            To help do this we’ll require that new blocks always include a pointer to the last block validated in the chain, in
+            addition to the list of transactions in the block. (The pointer is actually just a hash of the previous block). So
+            typically the block chain is just a linear chain of blocks of transactions, one after the other, with later blocks each
+            containing a pointer to the immediately prior block:</p>
+
+            <img class="img" src="../assets/block_chain.png"></img>
+
+            <p>Occasionally, a fork will appear in the block chain. This can happen, for instance, if by chance two miners happen
+            to validate a block of transactions near-simultaneously – both broadcast their newly-validated block out to the network,
+            and some people update their block chain one way, and others update their block chain the other way:</p>
+
+            <img class="img" src="../assets/block_chain_fork.png"></img>
+
+            <p>This causes exactly the problem we’re trying to avoid – it’s no longer clear in what order transactions have occurred,
+            and it may not be clear who owns which potato-coins. Fortunately, there’s a simple idea that can be used to remove any
+            forks. The rule is this: if a fork occurs, people on the network keep track of both forks. But at any given time,
+            miners only work to extend whichever fork is longest in their copy of the block chain.</p>
+
+            <p>Suppose, for example, that we have a fork in which some miners receive block A first, and some miners receive block B first.
+            Those miners who receive block A first will continue mining along that fork, while the others will mine along fork B. Let’s
+            suppose that the miners working on fork B are the next to successfully mine a block:</p>
+
+            <img class="img" src="../assets/block_chain_extended.png"></img>
+
+            <p>After they receive news that this has happened, the miners working on fork A will notice that fork B is now longer,
+            and will switch to working on that fork. Presto, in short order work on fork A will cease, and everyone will be working
+            on the same linear chain, and block A can be ignored. Of course, any still-pending transactions in A will still be pending
+            in the queues of the miners working on fork B, and so all transactions will eventually be validated.</p>
+
+            <p>Likewise, it may be that the miners working on fork A are the first to extend their fork. In that case work on fork B
+            will quickly cease, and again we have a single linear chain.</p>
+
+            <p>No matter what the outcome, this process ensures that the block chain has an agreed-upon time ordering of the blocks.
+            In Bitcoin proper, a transaction is not considered confirmed until: (1) it is part of a block in the longest fork, and (2)
+            at least 5 blocks follow it in the longest fork. In this case we say that the transaction has “6 confirmations”. This gives
+            the network time to come to an agreed-upon the ordering of the blocks. We’ll also use this strategy for potato-coin.</p>
+
+            <p>With the time-ordering now understood, let’s return to think about what happens if a dishonest party tries to double spend.
+            Suppose Alice tries to double spend with Bob and Charlie. One possible approach is for her to try to validate a block that
+            includes both transactions. Assuming she has one percent of the computing power, she will occasionally get lucky and validate
+            the block by solving the proof-of-work. Unfortunately for Alice, the double spending will be immediately spotted by other people
+            in the potato-coin network and rejected, despite solving the proof-of-work problem. So that’s not something we need to worry about.</p>
+
+            <p>A more serious problem occurs if she broadcasts two separate transactions in which she spends the same potato-coin with Bob and
+            Charlie, respectively. She might, for example, broadcast one transaction to a subset of the miners, and the other transaction
+            to another set of miners, hoping to get both transactions validated in this way. Fortunately, in this case, as we’ve seen, the
+            network will eventually confirm one of these transactions, but not both. So, for instance, Bob’s transaction might ultimately
+            be confirmed, in which case Bob can go ahead confidently. Meanwhile, Charlie will see that his transaction has not been
+            confirmed, and so will decline Alice’s offer. So this isn’t a problem either. In fact, knowing that this will be the case,
+            there is little reason for Alice to try this in the first place.</p>
+
+            <p>An important variant on double spending is if Alice = Bob, i.e., Alice tries to spend a coin with Charlie which she
+            is also “spending” with herself (i.e., giving back to herself). This sounds like it ought to be easy to detect and deal
+            with, but, of course, it’s easy on a network to set up multiple identities associated with the same person or organization,
+            so this possibility needs to be considered. In this case, Alice’s strategy is to wait until Charlie accepts the potato-coin,
+            which happens after the transaction has been confirmed 6 times in the longest chain. She will then attempt to fork the
+            chain before the transaction with Charlie, adding a block which includes a transaction in which she pays herself:</p>
+
+            <img class="img" src="../assets/block_chain_cheating.png"></img>
+
+            <p>Unfortunately for Alice, it’s now very difficult for her to catch up with the longer fork. Other miners won’t want to
+            help her out, since they’ll be working on the longer fork. And unless Alice is able to solve the proof-of-work at least as
+            fast as everyone else in the network combined – roughly, that means controlling more than fifty percent of the computing
+            power – then she will just keep falling further and further behind. Of course, she might get lucky. We can, for example,
+            imagine a scenario in which Alice controls one percent of the computing power, but happens to get lucky and finds six
+            extra blocks in a row, before the rest of the network has found any extra blocks. In this case, she might be able to
+            get ahead, and get control of the block chain. But this particular event will occur with probability <code>1/100^6 = 10^{-12}</code>.
+            A more general analysis along these lines shows that Alice’s probability of ever catching up is infinitesimal, unless
+            she is able to solve proof-of-work puzzles at a rate approaching all other miners combined.</p>
+
+            <h3>Outroduction</h3>            
+
+            <p>Of course, this is not a rigorous security analysis showing that Alice cannot double spend. It’s merely an informal
+            plausibility argument. The original paper introducing Bitcoin did not, in fact, contain a rigorous security
+            analysis, only informal arguments along the lines I’ve presented here. The security community is still analysing
+            Bitcoin, and trying to understand possible vulnerabilities. You can see some of this research listed here, and I
+            mention a few related problems in the “Problems for the author” below. At this point I think it’s fair to say that
+            the jury is still out on how secure Bitcoin is.</p>
+
+            <p>The proof-of-work and mining ideas give rise to many questions. How much reward is enough to persuade people to
+            mine? How does the change in supply of potato-coins affect the potato-coin economy? Will potato-coin mining end up concentrated
+            in the hands of a few, or many? If it’s just a few, doesn’t that endanger the security of the system? Presumably
+            transaction fees will eventually equilibriate – won’t this introduce an unwanted source of friction, and make small
+            transactions less desirable? These are all great questions, but beyond the scope of this post. I may come back to the
+            questions (in the context of Bitcoin) in a future post. For now, we’ll stick to our focus on understanding how the
+            Bitcoin protocol works.</p>
+            
+
+            <article class="card" id="transaction-block" style="display: none;">
+                <div class="card-block">
+                    <ol style="margin: 0;">
+                        <li><b>Transaction message:</b>
+                            <code class="transaction"></code>
+                        </li>
+
+                        <li><b>Alice will then sign the message with her private key:</b>
+                            <code class="signed-message"></code>
+                        </li>
+
+                        <li><b>Bob can then verify that the message is from Alice by checking the signature, check that the hash is valid and that he
+                        cannot be found in his local blockchain, he finds that is is:</b>
+                            <code class="verify-message"></code>
+                        </li>
+
+                        <li><b>But Bob do not consider the transaction "verified" yet. He will broadcast this message to all users in his network and ask them to verify the transaction</b>
+
+                        <li><b>Users will respond to Bob that the message is correct considering their current blockchain</b></li>
+
+                        <li><b>Bob can now give Alice the potato she bought him.</b>
+                    </ol>
+                </div>                
+            </article>
+
+            <button class="btn btn-primary" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button><br><br>
+            
+
+            <h3>Timing attacks?</h3>
+
+            <p>Timing attack will not work anymore since Alice and Charlie will now be able to agree on which transaction is valid and which one is not.
+            So when Bob will send all his coins to Alice and Charlie at the same time, only one of this transaction will be validated.</p>
+            
+            <p><button class="btn btn-primary btn-sm" onclick="broadcastSimultaneousMessages()">Simultaneously send two messages giving all Bob's money to Alice and Charlie 👿</button></p>
+
+            <div class="alert alert-danger" role="alert">This implementation will not work either! (but we're getting close)</div>
+
+            <p>Few issues comes with what we just discribed here:</p>
+            <ol>
+                <li>Alice have no way to know how many people in the network there is, so she have no way to know what
+                <b>"50% of the users in the network"</b> is.</li>
+                <li>Why a user will bother responding to Alice when she ask if the message she have been sent is valid?</li>                
+                <li>Even if she had a way to know, Bob could create billions of fake users and swarm the network with
+                puppets that will validate all his transactions. <button class="btn btn-primary btn-sm" onclick="swarmNetworkWithBobPuppets()">Swarm the network with bob's puppets 😈</button></li>
+            </ol>
+
+            <p>We need a better definition of: <i>“once enough people have broadcast that message”</i> for the currency to work.</p>
+
+            <div class="row navigation">
+                <div class="col-sm-12">
+                    <a class="btn btn-success float-left" href="./crypto-currency-v2.html"><< prev</a>                    
+                    <a class="btn btn-success float-right" href="./crypto-currency-v4.html">next >></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="close-network">❌</div>
+        <div class="network">
+            <div id="Alice"></div>
+            <div id="Bob"></div>
+            <div id="Charlie"></div>
+            <div id="Dylan"></div>
+            <div id="BobPuppet1"></div>
+            <div id="BobPuppet2"></div>
+            <div id="BobPuppet3"></div>
+            <div id="BobPuppet4"></div>
+        </div>
+    </body>
+</html>

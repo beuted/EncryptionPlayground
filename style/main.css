@@ -94,6 +94,10 @@ article {
     margin: 15px 10% 15px 10%;
 }
 
+.img {
+    width: 60%;;
+}
+
 /* Bootstrap custom */
 @media (min-width: 1200px) {
     .container {
