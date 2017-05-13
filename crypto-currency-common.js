@@ -13,7 +13,6 @@ $(document).ready(function() {
 });
 
 var consoleError = console.error;
-
 showErrorNotification = function(content) {
     $('body').append(`<div class="notification alert alert-danger alert-dismissable">
         <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
@@ -21,6 +20,17 @@ showErrorNotification = function(content) {
     </div>`)
     consoleError(content);
 }
+console.error = showErrorNotification;
+
+var consoleInfo = console.info;
+showInfoNotification = function(content) {
+    $('body').append(`<div class="notification alert alert-info alert-dismissable">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+        <strong>Info</strong> ${content}
+    </div>`)
+    consoleInfo(content);
+}
+console.info = showInfoNotification;
 
 /*function pad (str, max) {
     str = str.toString();
@@ -36,6 +46,3 @@ for (var i=0; i < 100000; i++) {
     if (l[0] == "0" && l[1] == "0" && l[2] == "0")
         console.log(l, i)
 }*/
-
-
-console.error = showErrorNotification;

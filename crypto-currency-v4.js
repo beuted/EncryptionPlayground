@@ -17,7 +17,7 @@ class Network {
 
     BroadcastTransactionToUser(name, signedMessage) {
         let user = this.GetUser(name);
-        user.VerifySignedMessageAndAddToUnvalidatedBlocks(signedMessage);
+        user.VerifySignedMessageAndAddToUnvalidatedTransactions(signedMessage);
     }
 
     BroadcastBlockToUser(name, block) {
@@ -101,7 +101,7 @@ class User {
         var genesisBlock = this.network.GetGenesisBlock();
         this.localBlockChain[genesisBlock.proofOfWork] = genesisBlock; // Init the local chain of transaction with genesis one
         this.localAddressBook = {};
-        this.unvalidatedBlocks = [];
+        this.unvalidatedTransactions = [];
 
         this.network.Register(this);
     }
@@ -114,9 +114,9 @@ class User {
         <label class="privateKey" data-container="body" data-placement="top" data-trigger="hover" data-toggle="popover" data-content="${this.privateKey.replace(/"/g, '\'')}">🔑</label>
     </h4>
     <p><b>Money I think I Own</b>: ${this.money}\$</p>
-    <p class="localBlockChain hover-to-see"><b>localBlockChain (${this.localBlockChain.length})</b>: <code>${JSON.stringify(this.localBlockChain, undefined, 2)}</code></p>
+    <p class="localBlockChain hover-to-see"><b>localBlockChain (${Object.keys(this.localBlockChain).length})</b>: <code>${JSON.stringify(this.localBlockChain, undefined, 2)}</code></p>
     <p class="localAddressBook hover-to-see"><b>localAddressBook (${Object.keys(this.localAddressBook).length})</b>: <code>${JSON.stringify(Object.keys(this.localAddressBook).map((key, index) => { return { name: key, publicKey: '[...]', money: this.localAddressBook[key].money }; }), undefined, 2)}</code></p>
-    <p class="hover-to-see"><b>unvalidatedBlocks (${this.unvalidatedBlocks.length})</b>: <code>${JSON.stringify(this.unvalidatedBlocks, undefined, 2)}</code></p>    
+    <p class="hover-to-see"><b>unvalidatedTransactions (${this.unvalidatedTransactions.length})</b>: <code>${JSON.stringify(this.unvalidatedTransactions, undefined, 2)}</code></p>    
 </div>
 `;
     }
@@ -215,12 +215,12 @@ class User {
         return !found;*/
     }
 
-    VerifySignedMessageAndAddToUnvalidatedBlocks(signedMessage) {
+    VerifySignedMessageAndAddToUnvalidatedTransactions(signedMessage) {
         // Signature, hash, amount of disponible money,... verification
         if (!this.VerifySignedMessageWithSerialNumber(signedMessage))
             return false;
 
-        this.unvalidatedBlocks.push(signedMessage);
+        this.unvalidatedTransactions.push(signedMessage);
 
         return true;
     }
@@ -269,7 +269,19 @@ class User {
             return false;
         }
 
-        this.localBlockChain[block.hash] = block;
+        this.localBlockChain[block.proofOfWork] = block;
+
+        var done = false;
+        while (!done) {
+            done = true;                        
+            this.unvalidatedTransactions.forEach((t, index) => {
+                if (block.transactions.findIndex(x => x.hash == t.hash) !== -1) {
+                    done = false;                                
+                    this.unvalidatedTransactions.splice(index, 1);
+                    return;
+                }
+            });
+        }
     }
 
     // Malicious
@@ -334,15 +346,22 @@ class User {
     }
 
     Mine() {
-        if (this.unvalidatedBlocks.length >= 5) {
-            var transactionList = this.unvalidatedBlocks.slice(0, 10);
-            var message = findValidHash(transactionList)
+        if (this.unvalidatedTransactions.length >= 10) {
+            var transactionList = this.unvalidatedTransactions.slice(0, 10);
+            var beginTime = Date.now()
+            var message = findValidHash(transactionList);
+            var timeSpentMiningBlock = (Date.now() - beginTime)/1000;
+            console.info(`${this.name}: Took ${timeSpentMiningBlock}s to mine a block`);
             if (message)  {
                 var block = new Block(transactionList, message.hash, message.nonce);
                 this.BroadcastValidatedBlock(block);
+                this.ReceiveValidation(block);
                 return true;
             } 
+        } else {
+            console.info(`${this.name}: Can't mine a block if less than 10 transactions are waiting.`);
         }
+
         return false;
     }
 }
@@ -352,7 +371,7 @@ function findValidHash(transactionList) {
 
     for (var i=0; i < 100000; i++) {
         var nonce = pad(i, 10);
-        
+
         var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });        
         md.updateString(content + nonce); 
         var h = md.digest();

@@ -92,7 +92,7 @@ xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
         aliceSend1CoinToBob = function() {
             var message = alice.GetMessage("Bob", 1, Date.now());
             signedMessage = alice.GetSignedMessageWithSerialNumber("Bob", 1, Date.now());
-            var sanityCheckOk = alice.VerifySignedMessageAndAddToUnvalidatedBlocks(signedMessage);
+            var sanityCheckOk = alice.VerifySignedMessageAndAddToUnvalidatedTransactions(signedMessage);
             if (sanityCheckOk)
                 alice.BroadcastSignedMessage(signedMessage);
 
