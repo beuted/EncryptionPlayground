@@ -1,5 +1,5 @@
 body  {
-    margin-bottom: 100px;
+    margin-bottom: 210px;
 }
 
 .h1 {
@@ -13,25 +13,43 @@ article {
 .network {
     width: 100%;
     position: fixed;
-    bottom: -220px;
+    bottom: -130px;
     margin: 0;
-    background-color: white;
-    border-top: solid 1px lightgray;
-    min-height: 290px;
+    height: 20px;
+    min-height: 190px;
     overflow: auto;
     white-space: nowrap;
-    height: 20px;
+
+    background-color: white;
+    border-top: solid 1px lightgray;
+    cursor: pointer;
 
     transition: 0.25s ease-in-out;
+    background-color: rgb(250,250,255);
 }
 
-.network, .network:hover, .network:focus {
-    color: #292b2c;
-    text-decoration: none;
+.network.selected {
+    transform: translate(0,-130px);
+    background-color: white;
+    cursor: default;
 }
 
-.network:focus {
-    transform: translate(0,-220px);
+.close-network {
+    position: fixed;
+    z-index: 9999;
+    right: 0;
+    bottom: 150px;
+    padding: 10px;
+
+    transition: opacity 0s ease-in-out 0s;
+    opacity: 0;   
+}
+
+.close-network.selected {
+    cursor: pointer;
+
+    transition: opacity 0.25s ease-in-out 0.25s;    
+    opacity: 1;
 }
 
 .user-container {
@@ -83,4 +101,13 @@ article {
 .container {
     margin-top: 30px;    
     margin-bottom: 15px;    
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.popover{
+    max-width: 600px;
 }

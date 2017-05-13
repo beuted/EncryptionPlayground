@@ -88,10 +88,9 @@ class User {
         return `<div class="user-container" id="${this.name}"><div class="card user"><div class="card-block">
     <h4>
         ${this.name}
+        <label class="privateKey" data-container="body" data-placement="top" data-trigger="hover" data-toggle="popover" data-content="${this.privateKey.replace(/"/g, '\'')}">🔑</label>
     </h4>
     <p><b>Money I think I Own</b>: ${this.money}\$</p>
-    <p class="publicKey hover-to-see"><b>publicKey</b>: <code>${JSON.stringify(this.publicKey, undefined, 2)}</code></p>
-    <p class="privateKey hover-to-see"><b>privateKey</b>: <code>${this.privateKey}</code></p>
     <p class="localBlockChain hover-to-see"><b>localBlockChain (${this.localBlockChain.length})</b>: <code>${JSON.stringify(this.localBlockChain, undefined, 2)}</code></p>
     <p class="localAddressBook hover-to-see"><b>localAddressBook (${Object.keys(this.localAddressBook).length})</b>: <code>${JSON.stringify(Object.keys(this.localAddressBook).map((key, index) => { return { name: key, publicKey: '[...]', money: this.localAddressBook[key].money }; }), undefined, 2)}</code></p>
 </div>

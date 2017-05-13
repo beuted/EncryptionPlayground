@@ -6,13 +6,16 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
         <link href="../style/main.css" rel="stylesheet">
 
-        <script src="../vendors/jQuery-2.2.3.min.js" type="text/javascript"></script>
+        <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 
         <!-- Scripts comming from https://github.com/kjur/jsrsasign -->
         <script src="../vendors/jsrsasign/jsrsasign-all-min.js" type="text/javascript"></script>
 
-
         <script src="../crypto-currency.js" type="text/javascript"></script>
+        <script src="../crypto-currency-common.js" type="text/javascript"></script>
+
         <script type="text/javascript">
 
         var network = new Network();
@@ -64,8 +67,6 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
 
         var signedMessage;
         $(document).ready(function() {
-            $('.network').click(e=> e.preventDefault());
-
             $('#Alice').replaceWith(alice.GetMarkup());
             $('#Bob').replaceWith(bob.GetMarkup());
             $('#Charlie').replaceWith(charlie.GetMarkup());
@@ -159,7 +160,9 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
                 </article>
 
                 <p><button class="btn btn-primary btn-sm" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button></p>                
-
+<button type="button" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+  Popover on top
+</button>
                 <p>As the transaction have been signed with Alice private key, we can know for sure that Alice is ok with the transaction. So if this encrypted transaction
                 is broadcasted on the network, everybody will be aware that Bob now have +1 coin and Alice -1 coin.</p>
             </article>
@@ -186,10 +189,11 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
             </article>
         </div>
 
-        <a class="network" href="#">
+        <div class="close-network">❌</div>
+        <div class="network">
             <div id="Alice"></div>
             <div id="Bob"></div>
             <div id="Charlie"></div>
-        </a>
+        </div>
     </body>
 </html>
