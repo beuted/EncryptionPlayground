@@ -122,12 +122,12 @@ class User {
     }
 
     // Public
-    GetMessage(receiver, amount, date) {
-        return { "from": this.name, "to": receiver, "amount": amount, "date": date };
+    GetMessage(receiver, amount, date, isRewarded) {
+        return { "from": isRewarded ? "root" : this.name, "to": receiver, "amount": amount, "date": date };
     }
 
-    GetSignedMessageWithSerialNumber(receiver, amount, date) {
-        let message = this.GetMessage(receiver, amount, date);
+    GetSignedMessageWithSerialNumber(receiver, amount, date, isRewarded) {
+        let message = this.GetMessage(receiver, amount, date, isRewarded);
         var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });
         md.updateString(JSON.stringify(message));
 
@@ -152,9 +152,7 @@ class User {
         }
 
         // Hash match message
-        var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });
-        md.updateString(JSON.stringify(signedMessage.message));        
-        if (signedMessage.hash != md.digest()) {
+        if (!this.IsAValidHash(signedMessage.hash, signedMessage.message)) {
             console.error(`${this.name}: Hash does not match message: ${signedMessage.hash}`);
             return false;
         }
@@ -180,7 +178,7 @@ class User {
         return true;
     }
 
-    iterateOnBlockChain(callback) {
+    IterateOnBlockChain(callback) {
         var found = false;
         Object.keys(this.localBlockChain).forEach((key, index) => {
             this.localBlockChain[key].transactions.forEach(transaction => {
@@ -192,9 +190,15 @@ class User {
         return !found;
     }
 
+    IsAValidHash(hash, message) {
+        var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });
+        md.updateString(JSON.stringify(message));
+        return hash == md.digest();   
+    }
+
     IsHashAlreadyInBlockChain(hash) {
         let found = false;
-        this.iterateOnBlockChain(transaction => {
+        this.IterateOnBlockChain(transaction => {
             if (transaction.hash == hash) {
                 found = true;
                 return true;
@@ -204,15 +208,6 @@ class User {
         });
 
         return found;
-        /*var found = false;
-        Object.keys(this.localBlockChain).forEach((key, index) => {
-            if (this.localBlockChain[key].findIndex(x => x.hash == hash) !== -1) {
-                found = true;
-                return;
-            }
-        });
-
-        return !found;*/
     }
 
     VerifySignedMessageAndAddToUnvalidatedTransactions(signedMessage) {
@@ -246,10 +241,12 @@ class User {
     }
 
     ReceiveValidation(block) {
+        // Check that the proof-of-work (hash of the block) starts with three 0
         if (block.proofOfWork[0] != "0" || block.proofOfWork[1] != "0" || block.proofOfWork[2] != "0") {
             return false;
         }
 
+        // Check that the proof-of-work is indeed a valid hash of the block
         var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });
         md.updateString(JSON.stringify(block.transactions) + block.nonce); 
         var proofOfWork = md.digest();
@@ -257,9 +254,22 @@ class User {
             return false;
         }
 
+        // Verify each messages in the block with siganture, unique hash and that user spending coins have these coins
         var isValid = true;
-        block.transactions.forEach(transaction => {
-            if(!this.VerifySignedMessageWithSerialNumber(transaction)) {
+        block.transactions.forEach((transaction, i) => {
+            // Exception for first transaction that is allowed to reward user with 25 potato-coins
+            if (i == 0)
+                if (transaction.message.amount <= 25
+                  && this.IsAValidHash(signedMessage.hash, signedMessage.message)
+                  && !this.IsHashAlreadyInBlockChain(signedMessage.hash)) {
+                    return false;
+                } else {
+                    console.error(`${this.name}: Invalid reward signedMessage: ${JSON.stringify(signedMessage)}`);
+                    isValid = false;
+                    return true;
+                }
+
+            if (!this.VerifySignedMessageWithSerialNumber(transaction)) {
                 isValid = false;
                 return true;
             }
@@ -269,8 +279,10 @@ class User {
             return false;
         }
 
+        // Add the block to local block-chain
         this.localBlockChain[block.proofOfWork] = block;
 
+        // Remove validated transactions from the unvalidatedTransactions list
         var done = false;
         while (!done) {
             done = true;                        
@@ -299,7 +311,7 @@ class User {
     VerifyUserHaveEnoughtCoins(username, amount) {
         let credit = 0;
         let hasEnoughMoney = false;
-        this.iterateOnBlockChain(transaction => {
+        this.IterateOnBlockChain(transaction => {
             if (transaction.message.to == username)
                 credit += transaction.message.amount;
 
@@ -332,7 +344,7 @@ class User {
             this.localAddressBook[key].money = 0;
         });
 
-        this.iterateOnBlockChain(transaction => {
+        this.IterateOnBlockChain(transaction => {
             if (transaction.message.from == this.name)
                 this.money -= transaction.message.amount;
             else if (this.localAddressBook[transaction.message.from])
@@ -348,6 +360,10 @@ class User {
     Mine() {
         if (this.unvalidatedTransactions.length >= 10) {
             var transactionList = this.unvalidatedTransactions.slice(0, 10);
+
+            // Add a reward of 25 potato-coins at the beginning of a block
+            transactionList.unshift(this.GetSignedMessageWithSerialNumber(this.name, 25, Date.now(), true));
+
             var beginTime = Date.now()
             var message = findValidHash(transactionList);
             var timeSpentMiningBlock = (Date.now() - beginTime)/1000;
