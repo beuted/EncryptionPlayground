@@ -1,0 +1,266 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+        <link href="./style/main.css" rel="stylesheet">
+
+        <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+        <!-- Scripts comming from https://github.com/kjur/jsrsasign -->
+        <script src="./vendors/jsrsasign/jsrsasign-all-min.js" type="text/javascript"></script>
+
+        <script src="./js/crypto-currency-v5.js" type="text/javascript"></script>
+        <script src="./js/crypto-currency-common.js" type="text/javascript"></script>
+
+        <script type="text/javascript">
+
+        var network = new Network();
+        var alice = new User('Alice', `-----BEGIN RSA PRIVATE KEY-----
+MIICWwIBAAKBgQDRhGF7X4A0ZVlEg594WmODVVUIiiPQs04aLmvfg8SborHss5gQ
+Xu0aIdUT6nb5rTh5hD2yfpF2WIW6M8z0WxRhwicgXwi80H1aLPf6lEPPLvN29EhQ
+NjBpkFkAJUbS8uuhJEeKw0cE49g80eBBF4BCqSL6PFQbP9/rByxdxEoAIQIDAQAB
+AoGAA9/q3Zk6ib2GFRpKDLO/O2KMnAfR+b4XJ6zMGeoZ7Lbpi3MW0Nawk9ckVaX0
+ZVGqxbSIX5Cvp/yjHHpww+QbUFrw/gCjLiiYjM9E8C3uAF5AKJ0r4GBPl4u8K4bp
+bXeSxSB60/wPQFiQAJVcA5xhZVzqNuF3EjuKdHsw+dk+dPECQQDubX/lVGFgD/xY
+uchz56Yc7VHX+58BUkNSewSzwJRbcueqknXRWwj97SXqpnYfKqZq78dnEF10SWsr
+/NMKi+7XAkEA4PVqDv/OZAbWr4syXZNv/Mpl4r5suzYMMUD9U8B2JIRnrhmGZPzL
+x23N9J4hEJ+Xh8tSKVc80jOkrvGlSv+BxwJAaTOtjA3YTV+gU7Hdza53sCnSw/8F
+YLrgc6NOJtYhX9xqdevbyn1lkU0zPr8mPYg/F84m6MXixm2iuSz8HZoyzwJARi2p
+aYZ5/5B2lwroqnKdZBJMGKFpUDn7Mb5hiSgocxnvMkv6NjT66Xsi3iYakJII9q8C
+Ma1qZvT/cigmdbAh7wJAQNXyoizuGEltiSaBXx4H29EdXNYWDJ9SS5f070BRbAIl
+dqRh3rcNvpY6BKJqFapda1DjdcncZECMizT/GMrc1w==
+-----END RSA PRIVATE KEY-----`, network);
+        var bob = new User('Bob', `-----BEGIN RSA PRIVATE KEY-----
+MIICWgIBAAKBgHJNuOcdqshauCKFhxYHUNGuIyv6H7OLtUV+Ew3ra75hWWW2fMNl
+gHFwATEIg9xaDHaVmGXxdBmot78ZUeNpVYuymflwfBl06VUxSYpl7QfS5M4E9gOV
+sERX/ytzRl3uuTprk/LvGwcejsVpHLlxBuVPMy6u2yPE0+X59ayLX26/AgMBAAEC
+gYBI0esyklvzOJiGpbrh9dcvPll58uevYxohI6jP/WOu7iYd/pyNf2TM4CZiLqKT
+B2tZQQTOLX1hu3MUc/UPhFPSybbBh4aXPYU7cBPmXz910m7PwrQZcFUETKV2Mkug
+sLim1baAq++O6jUYM6RRnEcdtag3uIN/21VCevx9yTqYAQJBALSN6Nj7OFRcQfiw
+ijakun2H7ldNKOXH3c8DgRTDgBrfJDmOZlcIZmQ6G10ZsROk5beRkVgHGX8G3Dia
+nU2el4ECQQCiEOapzIZCLEpfG3Ay+X6FQfrkhkvrg9EECucx0GYQ6bAUgkwTiLn6
+g70sKXT2E2fYvEQDB0v1t6pAHHcMWyY/AkBjmJAj+NgGuOlvPDrRj6aLjkrr/1Ub
+A1gYVE+E256zs/kwgptzUN/iU6c6gOyL8H8C9ppdG3V1+5vI4Yj6AwyBAkBkCTSo
+GOPCkt4xSJmADXroPGrmhnL0ZAAvk59To0RtKiIS9r6IzDuoA4tQaCKXBjFymfsN
+N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
+/tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
+-----END RSA PRIVATE KEY-----`, network);
+        var charlie = new User('Charlie', `-----BEGIN RSA PRIVATE KEY-----
+MIICWwIBAAKBgHNNh/YaZnvIr58+v1MagvNjOzEg18yLVAQeZWpnNzE0qxquB2w2
+eM2Rk6V9fh4WS35fatAvPfVqF/y5oZGwQ3v2ebm/AXTzrI+XCxJDRiHqsuIFRl8Z
+98f0zs/NNCHtCLGqdnu0zNdL4OyA+dCeexcch6TUQklkvJRuCTUJRt9TAgMBAAEC
+gYByjMMXj9DjB1Ta+0autDcGwD3tJ/jcoEr+sIgGtrZRb0bSAbUkH9XSPN+XWN5z
+26hyyy7d1yFR8G4WSQGoMJpJdJH3De4RrU7ZCyx8Ln1xgk1DwoJPvOmPNcUftR5f
+p3+XuuH/w6CywOtUttNgIdQeR6sIUCvgyCDHHbF5S8iMSQJBAMHKkTs9GEzK3r1s
+o7Wgl/Mk4sIiAxExkD3m27IVoCWDD2QZUwLCnbaQqHQNq5GtGRRxs3ciPu4P54XU
+C4RuKD8CQQCYUOu0cW229v4HVCVKeN51vbLDxdch38k9TswrQ1p3EzQuQTdxAkr4
+svQGSPvyChktlCrr7Qlv9OkmOAFFdSPtAkBzxkInouNOlXCmuC3Bx5Sf1SyHkGxG
+rFahNLeR1+uaHYdnZN2762rvc9K/qp8SY9h050yxYss3zFakFD9hObJfAkEAlW31
+/92z/GcOStRTjV9NKAfGJGioqVPqEtqGVP9L9jwB2ksjABx2vsyZuLzLZ+ZeUyfk
+f/bZZlvIjDUvkhvc9QJATDAOITmhUk/1iADjP1vqdmfVXZRdxs/iJYChQIrck0fb
+hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
+-----END RSA PRIVATE KEY-----`, network);
+        var dylan = new User('Dylan', `-----BEGIN RSA PRIVATE KEY-----
+MIICWwIBAAKBgHoAhy90y1pqYuD+4v8Tg2eggd+/bk75xI3ATSC9ogZikOKNq5u3
+gI9vRaylJhrzqdpdTu5whBY1g2QoOIHcjPmqnsTmHhMU4fNAhvLW+ThfYrwgsYlQ
+YgipJBfwoZm+xc54tZbRhg89s9TXJk3H/d55WPEWN8F6V3nQukwldeqvAgMBAAEC
+gYAUkgY5IC4xXoKxgQhxDa84R73eJf7JXh+f7u6SOKcbAH+BU3W92aDZjl9nDqlw
+Heljohvu5BXBUOCIgKeWbcNvDrNNHfgOjrUjzLJ86IVw4zt5GeV/9XhPoH3rpfG6
+CMJ2FbqRGJYxcPks3FteqAGRPLmAUiHZh/PYlPniuANQ0QJBAPD+noxaKcjlgLX5
+zq2ljkBF+XhP9N9xdD74R1aDbpv5J8WH/UJUUCyoKsG4Iv7m2F7oa2bq1zPoaTWc
+03/95WUCQQCBmTQs4s3xCa/8KF9C5UMmYOlE7sP1T+lT8N+p+pV2j7OHv03GcSG7
+lv9CC6LCyID5/PBbJwVitmh768LUruiDAkB2zN31zGC600A+9PWIrotQbe5L/AZ3
+u+MVQ6lPIZ1+MDYF70LO1udrDD9/nblKtRvGtYZ0hqItyY1Ly5KLjurtAkAB32fc
+mi5lpEExwJeXzN5KiK32PAkC23PArcNdnmxYeT0b4gzKqEnXfxgTKT3h2KnccuY6
+Ovcd9QrPd5mqHxjnAkEAydMa7DM1rmj90T7dHpUbyNcqbDgOg5mojEOPgQX2DClc
+xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
+-----END RSA PRIVATE KEY-----`, network);
+
+        var signedMessage;
+        $(document).ready(function() {
+            $('#Alice').replaceWith(alice.GetMarkup());
+            $('#Bob').replaceWith(bob.GetMarkup());
+            $('#Charlie').replaceWith(charlie.GetMarkup());
+            $('#Dylan').replaceWith(dylan.GetMarkup());            
+        });
+
+        aliceSend1CoinToBob = function() {
+            var message = alice.GetMessage("Bob", 1, Date.now());
+            signedMessage = alice.GetSignedMessageWithSerialNumber("Bob", 1, Date.now());
+            var sanityCheckOk = alice.VerifySignedMessageAndAddToUnvalidatedTransactions(signedMessage);
+            if (sanityCheckOk)
+                alice.BroadcastSignedMessage(signedMessage);
+
+            $('#transaction-block').css("display", "block");
+
+            $('.transaction').text(JSON.stringify(message, undefined, 2));
+            $('.signed-message').text(JSON.stringify(signedMessage, undefined, 2));
+            $('.verify-message').text(sanityCheckOk);
+
+            $('#Alice').replaceWith(alice.GetMarkup());
+            $('#Bob').replaceWith(bob.GetMarkup());
+            $('#Charlie').replaceWith(charlie.GetMarkup());
+            $('#Dylan').replaceWith(dylan.GetMarkup());
+        }
+
+        makeDylanMine = function() {
+            dylan.Mine();
+
+            $('#Alice').replaceWith(alice.GetMarkup());
+            $('#Bob').replaceWith(bob.GetMarkup());
+            $('#Charlie').replaceWith(charlie.GetMarkup());
+            $('#Dylan').replaceWith(dylan.GetMarkup());
+        }
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <h1>The block-chain: A tree instead of an array</h1>
+
+            <p>I’ll analyse double spending shortly. Before doing that, I want to fill in an important detail in the
+            description of potato-coin. <b>We’d ideally like the potato-coin network to agree upon the order in which transactions have
+            occurred</b>. If we don’t have such an ordering then at any given moment it may not be clear who owns which potato-coins.
+            To help do this we’ll require that new blocks always include a pointer to the last block validated in the chain, in
+            addition to the list of transactions in the block. (The pointer is actually just a hash of the previous block). So
+            typically the block chain is just a linear chain of blocks of transactions, one after the other, with later blocks each
+            containing a pointer to the immediately prior block:</p>
+
+            <img class="img" src="../assets/block_chain.png"></img>
+
+            <p>Occasionally, a fork will appear in the block chain. This can happen, for instance, if by chance two miners happen
+            to validate a block of transactions near-simultaneously – both broadcast their newly-validated block out to the network,
+            and some people update their block chain one way, and others update their block chain the other way:</p>
+
+            <img class="img" src="../assets/block_chain_fork.png"></img>
+
+            <p>This causes exactly the problem we’re trying to avoid – it’s no longer clear in what order transactions have occurred,
+            and it may not be clear who owns which potato-coins. Fortunately, there’s a simple idea that can be used to remove any
+            forks. The rule is this: if a fork occurs, people on the network keep track of both forks. But at any given time,
+            miners only work to extend whichever fork is longest in their copy of the block chain.</p>
+
+            <p>Suppose, for example, that we have a fork in which some miners receive block A first, and some miners receive block B first.
+            Those miners who receive block A first will continue mining along that fork, while the others will mine along fork B. Let’s
+            suppose that the miners working on fork B are the next to successfully mine a block:</p>
+
+            <img class="img" src="../assets/block_chain_extended.png"></img>
+
+            <p>After they receive news that this has happened, the miners working on fork A will notice that fork B is now longer,
+            and will switch to working on that fork. Presto, in short order work on fork A will cease, and everyone will be working
+            on the same linear chain, and block A can be ignored. Of course, any still-pending transactions in A will still be pending
+            in the queues of the miners working on fork B, and so all transactions will eventually be validated.</p>
+
+            <p>Likewise, it may be that the miners working on fork A are the first to extend their fork. In that case work on fork B
+            will quickly cease, and again we have a single linear chain.</p>
+
+            <p>No matter what the outcome, this process ensures that the block chain has an agreed-upon time ordering of the blocks.
+            In Bitcoin proper, a transaction is not considered confirmed until: (1) it is part of a block in the longest fork, and (2)
+            at least 5 blocks follow it in the longest fork. In this case we say that the transaction has “6 confirmations”. This gives
+            the network time to come to an agreed-upon the ordering of the blocks. We’ll also use this strategy for potato-coin.</p>
+
+            <p>With the time-ordering now understood, let’s return to think about what happens if a dishonest party tries to double spend.
+            Suppose Alice tries to double spend with Bob and Charlie. One possible approach is for her to try to validate a block that
+            includes both transactions. Assuming she has one percent of the computing power, she will occasionally get lucky and validate
+            the block by solving the proof-of-work. Unfortunately for Alice, the double spending will be immediately spotted by other people
+            in the potato-coin network and rejected, despite solving the proof-of-work problem. So that’s not something we need to worry about.</p>
+
+            <p>A more serious problem occurs if she broadcasts two separate transactions in which she spends the same potato-coin with Bob and
+            Charlie, respectively. She might, for example, broadcast one transaction to a subset of the miners, and the other transaction
+            to another set of miners, hoping to get both transactions validated in this way. Fortunately, in this case, as we’ve seen, the
+            network will eventually confirm one of these transactions, but not both. So, for instance, Bob’s transaction might ultimately
+            be confirmed, in which case Bob can go ahead confidently. Meanwhile, Charlie will see that his transaction has not been
+            confirmed, and so will decline Alice’s offer. So this isn’t a problem either. In fact, knowing that this will be the case,
+            there is little reason for Alice to try this in the first place.</p>
+
+            <p>An important variant on double spending is if Alice = Bob, i.e., Alice tries to spend a coin with Charlie which she
+            is also “spending” with herself (i.e., giving back to herself). This sounds like it ought to be easy to detect and deal
+            with, but, of course, it’s easy on a network to set up multiple identities associated with the same person or organization,
+            so this possibility needs to be considered. In this case, Alice’s strategy is to wait until Charlie accepts the potato-coin,
+            which happens after the transaction has been confirmed 6 times in the longest chain. She will then attempt to fork the
+            chain before the transaction with Charlie, adding a block which includes a transaction in which she pays herself:</p>
+
+            <img class="img" src="../assets/block_chain_cheating.png"></img>
+
+            <p>Unfortunately for Alice, it’s now very difficult for her to catch up with the longer fork. Other miners won’t want to
+            help her out, since they’ll be working on the longer fork. And unless Alice is able to solve the proof-of-work at least as
+            fast as everyone else in the network combined – roughly, that means controlling more than fifty percent of the computing
+            power – then she will just keep falling further and further behind. Of course, she might get lucky. We can, for example,
+            imagine a scenario in which Alice controls one percent of the computing power, but happens to get lucky and finds six
+            extra blocks in a row, before the rest of the network has found any extra blocks. In this case, she might be able to
+            get ahead, and get control of the block chain. But this particular event will occur with probability <code>1/100^6 = 10^{-12}</code>.
+            A more general analysis along these lines shows that Alice’s probability of ever catching up is infinitesimal, unless
+            she is able to solve proof-of-work puzzles at a rate approaching all other miners combined.</p>
+
+            <article class="card" id="transaction-block" style="display: none;">
+                <div class="card-block">
+                    <ol style="margin: 0;">
+                        <li><b>Transaction message:</b>
+                            <code class="transaction"></code>
+                        </li>
+
+                        <li><b>Alice will then sign the message with her private key:</b>
+                            <code class="signed-message"></code>
+                        </li>
+
+                        <li><b>Bob can then verify that the message is from Alice by checking the signature, check that the hash is valid and that he
+                        cannot be found in his local blockchain, he finds that is is:</b>
+                            <code class="verify-message"></code>
+                        </li>
+
+                        <li><b>But Bob do not consider the transaction "verified" yet. He will broadcast this message to all users in his network and ask them to verify the transaction</b>
+
+                        <li><b>Users will respond to Bob that the message is correct considering their current blockchain</b></li>
+
+                        <li><b>Bob can now give Alice the potato she bought him.</b>
+                    </ol>
+                </div>                
+            </article>
+
+            <button class="btn btn-primary" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button><br><br>
+
+            <h3>Mining</h3>
+            
+            <p><button class="btn btn-primary btn-sm" onclick="makeDylanMine()">Make Dylan start mining</button></p>
+
+            <h3>Outroduction</h3>            
+
+            <p>Of course, this is not a rigorous security analysis showing that Alice cannot double spend. It’s merely an informal
+            plausibility argument. The original paper introducing Bitcoin did not, in fact, contain a rigorous security
+            analysis, only informal arguments along the lines I’ve presented here. The security community is still analysing
+            Bitcoin, and trying to understand possible vulnerabilities. You can see some of this research listed here, and I
+            mention a few related problems in the “Problems for the author” below. At this point I think it’s fair to say that
+            the jury is still out on how secure Bitcoin is.</p>
+
+            <p>The proof-of-work and mining ideas give rise to many questions. How much reward is enough to persuade people to
+            mine? How does the change in supply of potato-coins affect the potato-coin economy? Will potato-coin mining end up concentrated
+            in the hands of a few, or many? If it’s just a few, doesn’t that endanger the security of the system? Presumably
+            transaction fees will eventually equilibriate – won’t this introduce an unwanted source of friction, and make small
+            transactions less desirable? These are all great questions, but beyond the scope of this post. I may come back to the
+            questions (in the context of Bitcoin) in a future post. For now, we’ll stick to our focus on understanding how the
+            Bitcoin protocol works.</p>
+
+            <div class="row navigation">
+                <div class="col-sm-12">
+                    <a class="btn btn-success float-left" href="./crypto-currency-v3.html"><< prev</a>                    
+                    <a class="btn btn-success float-right" href="./crypto-currency-v5.html">next >></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="close-network">❌</div>
+        <div class="network">
+            <div id="Alice"></div>
+            <div id="Bob"></div>
+            <div id="Charlie"></div>
+            <div id="Dylan"></div>
+            <div id="BobPuppet1"></div>
+            <div id="BobPuppet2"></div>
+            <div id="BobPuppet3"></div>
+            <div id="BobPuppet4"></div>
+        </div>
+    </body>
+</html>
