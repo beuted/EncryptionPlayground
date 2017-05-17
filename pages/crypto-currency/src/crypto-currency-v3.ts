@@ -151,7 +151,7 @@ class BobPuppetUser extends UserV3 {
 
 (<any>window).AddUiInteractionsV3 = function() {
     var network = new NetworkV3();
-    var alice = new UserV3('Alice', `-----BEGIN RSA PRIVATE KEY-----
+    var alice = new UserV3("Alice", `-----BEGIN RSA PRIVATE KEY-----
 MIICWwIBAAKBgQDRhGF7X4A0ZVlEg594WmODVVUIiiPQs04aLmvfg8SborHss5gQ
 Xu0aIdUT6nb5rTh5hD2yfpF2WIW6M8z0WxRhwicgXwi80H1aLPf6lEPPLvN29EhQ
 NjBpkFkAJUbS8uuhJEeKw0cE49g80eBBF4BCqSL6PFQbP9/rByxdxEoAIQIDAQAB
@@ -166,7 +166,7 @@ aYZ5/5B2lwroqnKdZBJMGKFpUDn7Mb5hiSgocxnvMkv6NjT66Xsi3iYakJII9q8C
 Ma1qZvT/cigmdbAh7wJAQNXyoizuGEltiSaBXx4H29EdXNYWDJ9SS5f070BRbAIl
 dqRh3rcNvpY6BKJqFapda1DjdcncZECMizT/GMrc1w==
 -----END RSA PRIVATE KEY-----`, network);
-    var bob = new UserV3('Bob', `-----BEGIN RSA PRIVATE KEY-----
+    var bob = new UserV3("Bob", `-----BEGIN RSA PRIVATE KEY-----
 MIICWgIBAAKBgHJNuOcdqshauCKFhxYHUNGuIyv6H7OLtUV+Ew3ra75hWWW2fMNl
 gHFwATEIg9xaDHaVmGXxdBmot78ZUeNpVYuymflwfBl06VUxSYpl7QfS5M4E9gOV
 sERX/ytzRl3uuTprk/LvGwcejsVpHLlxBuVPMy6u2yPE0+X59ayLX26/AgMBAAEC
@@ -181,7 +181,7 @@ GOPCkt4xSJmADXroPGrmhnL0ZAAvk59To0RtKiIS9r6IzDuoA4tQaCKXBjFymfsN
 N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
 /tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
 -----END RSA PRIVATE KEY-----`, network);
-    var charlie = new UserV3('Charlie', `-----BEGIN RSA PRIVATE KEY-----
+    var charlie = new UserV3("Charlie", `-----BEGIN RSA PRIVATE KEY-----
 MIICWwIBAAKBgHNNh/YaZnvIr58+v1MagvNjOzEg18yLVAQeZWpnNzE0qxquB2w2
 eM2Rk6V9fh4WS35fatAvPfVqF/y5oZGwQ3v2ebm/AXTzrI+XCxJDRiHqsuIFRl8Z
 98f0zs/NNCHtCLGqdnu0zNdL4OyA+dCeexcch6TUQklkvJRuCTUJRt9TAgMBAAEC
@@ -196,7 +196,7 @@ rFahNLeR1+uaHYdnZN2762rvc9K/qp8SY9h050yxYss3zFakFD9hObJfAkEAlW31
 f/bZZlvIjDUvkhvc9QJATDAOITmhUk/1iADjP1vqdmfVXZRdxs/iJYChQIrck0fb
 hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
 -----END RSA PRIVATE KEY-----`, network);
-    var dylan = new UserV3('Dylan', `-----BEGIN RSA PRIVATE KEY-----
+    var dylan = new UserV3("Dylan", `-----BEGIN RSA PRIVATE KEY-----
 MIICWwIBAAKBgHoAhy90y1pqYuD+4v8Tg2eggd+/bk75xI3ATSC9ogZikOKNq5u3
 gI9vRaylJhrzqdpdTu5whBY1g2QoOIHcjPmqnsTmHhMU4fNAhvLW+ThfYrwgsYlQ
 YgipJBfwoZm+xc54tZbRhg89s9TXJk3H/d55WPEWN8F6V3nQukwldeqvAgMBAAEC
@@ -214,10 +214,10 @@ xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
 
     var signedMessage;
     $(document).ready(function() {
-        $('#Alice').replaceWith(alice.GetMarkup());
-        $('#Bob').replaceWith(bob.GetMarkup());
-        $('#Charlie').replaceWith(charlie.GetMarkup());
-        $('#Dylan').replaceWith(dylan.GetMarkup());            
+        $("#Alice").replaceWith(alice.GetMarkup());
+        $("#Bob").replaceWith(bob.GetMarkup());
+        $("#Charlie").replaceWith(charlie.GetMarkup());
+        $("#Dylan").replaceWith(dylan.GetMarkup());            
     });
 
     (<any>window).aliceSend1CoinToBob = function() {
@@ -227,16 +227,16 @@ xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
         if (sanityCheckOk)
             alice.BroadcastSignedMessage(signedMessage);
 
-        $('#transaction-block').css("display", "block");
+        $("#transaction-block").css("display", "block");
 
-        $('.transaction').text(JSON.stringify(message, undefined, 2));
-        $('.signed-message').text(JSON.stringify(signedMessage, undefined, 2));
-        $('.verify-message').text(sanityCheckOk);
+        $(".transaction").text(JSON.stringify(message, undefined, 2));
+        $(".signed-message").text(JSON.stringify(signedMessage, undefined, 2));
+        $(".verify-message").text(sanityCheckOk);
 
-        $('#Alice').replaceWith(alice.GetMarkup());
-        $('#Bob').replaceWith(bob.GetMarkup());
-        $('#Charlie').replaceWith(charlie.GetMarkup());
-        $('#Dylan').replaceWith(dylan.GetMarkup());
+        $("#Alice").replaceWith(alice.GetMarkup());
+        $("#Bob").replaceWith(bob.GetMarkup());
+        $("#Charlie").replaceWith(charlie.GetMarkup());
+        $("#Dylan").replaceWith(dylan.GetMarkup());
     };
 
     (<any>window).broadcastSimultaneousMessages = function() {
@@ -265,10 +265,10 @@ xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
         // Bob only add Charlie transaction to his local blockchain
         bob.VerifySignedMessageAndAddToBlockChain(signedMessage2);
 
-        $('#Alice').replaceWith(alice.GetMarkup());
-        $('#Bob').replaceWith(bob.GetMarkup());
-        $('#Charlie').replaceWith(charlie.GetMarkup());
-        $('#Dylan').replaceWith(dylan.GetMarkup());
+        $("#Alice").replaceWith(alice.GetMarkup());
+        $("#Bob").replaceWith(bob.GetMarkup());
+        $("#Charlie").replaceWith(charlie.GetMarkup());
+        $("#Dylan").replaceWith(dylan.GetMarkup());
     };
 
     var networkSwarmed = false;
@@ -276,7 +276,7 @@ xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
         if (networkSwarmed)
             return;
 
-        var bobPuppet1 = new BobPuppetUser('BobPuppet1', `-----BEGIN RSA PRIVATE KEY-----
+        var bobPuppet1 = new BobPuppetUser("BobPuppet1", `-----BEGIN RSA PRIVATE KEY-----
 MIICWgIBAAKBgHJNuOcdqshauCKFhxYHUNGuIyv6H7OLtUV+Ew3ra75hWWW2fMNl
 gHFwATEIg9xaDHaVmGXxdBmot78ZUeNpVYuymflwfBl06VUxSYpl7QfS5M4E9gOV
 sERX/ytzRl3uuTprk/LvGwcejsVpHLlxBuVPMy6u2yPE0+X59ayLX26/AgMBAAEC
@@ -292,7 +292,7 @@ N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
 /tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
 -----END RSA PRIVATE KEY-----`, network);
 
-        var bobPuppet2 = new BobPuppetUser('BobPuppet2', `-----BEGIN RSA PRIVATE KEY-----
+        var bobPuppet2 = new BobPuppetUser("BobPuppet2", `-----BEGIN RSA PRIVATE KEY-----
 MIICWgIBAAKBgHJNuOcdqshauCKFhxYHUNGuIyv6H7OLtUV+Ew3ra75hWWW2fMNl
 gHFwATEIg9xaDHaVmGXxdBmot78ZUeNpVYuymflwfBl06VUxSYpl7QfS5M4E9gOV
 sERX/ytzRl3uuTprk/LvGwcejsVpHLlxBuVPMy6u2yPE0+X59ayLX26/AgMBAAEC
@@ -308,7 +308,7 @@ N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
 /tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
 -----END RSA PRIVATE KEY-----`, network);
 
-        var bobPuppet3 = new BobPuppetUser('BobPuppet3', `-----BEGIN RSA PRIVATE KEY-----
+        var bobPuppet3 = new BobPuppetUser("BobPuppet3", `-----BEGIN RSA PRIVATE KEY-----
 MIICWgIBAAKBgHJNuOcdqshauCKFhxYHUNGuIyv6H7OLtUV+Ew3ra75hWWW2fMNl
 gHFwATEIg9xaDHaVmGXxdBmot78ZUeNpVYuymflwfBl06VUxSYpl7QfS5M4E9gOV
 sERX/ytzRl3uuTprk/LvGwcejsVpHLlxBuVPMy6u2yPE0+X59ayLX26/AgMBAAEC
@@ -324,7 +324,7 @@ N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
 /tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
 -----END RSA PRIVATE KEY-----`, network);
 
-        var bobPuppet4 = new BobPuppetUser('BobPuppet4', `-----BEGIN RSA PRIVATE KEY-----
+        var bobPuppet4 = new BobPuppetUser("BobPuppet4", `-----BEGIN RSA PRIVATE KEY-----
 MIICWgIBAAKBgHJNuOcdqshauCKFhxYHUNGuIyv6H7OLtUV+Ew3ra75hWWW2fMNl
 gHFwATEIg9xaDHaVmGXxdBmot78ZUeNpVYuymflwfBl06VUxSYpl7QfS5M4E9gOV
 sERX/ytzRl3uuTprk/LvGwcejsVpHLlxBuVPMy6u2yPE0+X59ayLX26/AgMBAAEC
@@ -340,9 +340,9 @@ N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
 /tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
 -----END RSA PRIVATE KEY-----`, network);
 
-        $('#BobPuppet1').replaceWith(bobPuppet1.GetMarkup());
-        $('#BobPuppet2').replaceWith(bobPuppet2.GetMarkup());
-        $('#BobPuppet3').replaceWith(bobPuppet3.GetMarkup());
-        $('#BobPuppet4').replaceWith(bobPuppet4.GetMarkup());
+        $("#BobPuppet1").replaceWith(bobPuppet1.GetMarkup());
+        $("#BobPuppet2").replaceWith(bobPuppet2.GetMarkup());
+        $("#BobPuppet3").replaceWith(bobPuppet3.GetMarkup());
+        $("#BobPuppet4").replaceWith(bobPuppet4.GetMarkup());
     };
 }

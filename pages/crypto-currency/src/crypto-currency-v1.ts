@@ -1,5 +1,5 @@
-import 'jsrsasign';
-import 'jquery';
+import "jsrsasign";
+import "jquery";
 
 declare var KEYUTIL: any;
 declare var RSAKey: any;
@@ -241,7 +241,7 @@ export class User {
 (<any>window).AddUiInteractionsV1 = function() {
     // UI interactions
     var network = new Network();
-    var alice = new User('Alice', `-----BEGIN RSA PRIVATE KEY-----
+    var alice = new User("Alice", `-----BEGIN RSA PRIVATE KEY-----
     MIICWwIBAAKBgQDRhGF7X4A0ZVlEg594WmODVVUIiiPQs04aLmvfg8SborHss5gQ
     Xu0aIdUT6nb5rTh5hD2yfpF2WIW6M8z0WxRhwicgXwi80H1aLPf6lEPPLvN29EhQ
     NjBpkFkAJUbS8uuhJEeKw0cE49g80eBBF4BCqSL6PFQbP9/rByxdxEoAIQIDAQAB
@@ -256,7 +256,7 @@ export class User {
     Ma1qZvT/cigmdbAh7wJAQNXyoizuGEltiSaBXx4H29EdXNYWDJ9SS5f070BRbAIl
     dqRh3rcNvpY6BKJqFapda1DjdcncZECMizT/GMrc1w==
     -----END RSA PRIVATE KEY-----`, network);
-    var bob = new User('Bob', `-----BEGIN RSA PRIVATE KEY-----
+    var bob = new User("Bob", `-----BEGIN RSA PRIVATE KEY-----
     MIICWgIBAAKBgHJNuOcdqshauCKFhxYHUNGuIyv6H7OLtUV+Ew3ra75hWWW2fMNl
     gHFwATEIg9xaDHaVmGXxdBmot78ZUeNpVYuymflwfBl06VUxSYpl7QfS5M4E9gOV
     sERX/ytzRl3uuTprk/LvGwcejsVpHLlxBuVPMy6u2yPE0+X59ayLX26/AgMBAAEC
@@ -271,7 +271,7 @@ export class User {
     N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
     /tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
     -----END RSA PRIVATE KEY-----`, network);
-    var charlie = new User('Charlie', `-----BEGIN RSA PRIVATE KEY-----
+    var charlie = new User("Charlie", `-----BEGIN RSA PRIVATE KEY-----
     MIICWwIBAAKBgHNNh/YaZnvIr58+v1MagvNjOzEg18yLVAQeZWpnNzE0qxquB2w2
     eM2Rk6V9fh4WS35fatAvPfVqF/y5oZGwQ3v2ebm/AXTzrI+XCxJDRiHqsuIFRl8Z
     98f0zs/NNCHtCLGqdnu0zNdL4OyA+dCeexcch6TUQklkvJRuCTUJRt9TAgMBAAEC
@@ -289,9 +289,9 @@ export class User {
 
     var signedMessage: ISignedMessage;
     $(document).ready(function() {
-        $('#Alice').replaceWith(alice.GetMarkup());
-        $('#Bob').replaceWith(bob.GetMarkup());
-        $('#Charlie').replaceWith(charlie.GetMarkup());
+        $("#Alice").replaceWith(alice.GetMarkup());
+        $("#Bob").replaceWith(bob.GetMarkup());
+        $("#Charlie").replaceWith(charlie.GetMarkup());
     });
 
     (<any>window).aliceSend1CoinToBob = function() {
@@ -304,21 +304,21 @@ export class User {
         }
 
 
-        $('#transaction-block').css("display", "block");
-        $('.transaction').text(JSON.stringify(message, undefined, 2));
-        $('.signed-message').text(JSON.stringify(signedMessage, undefined, 2));
-        $('.verify-message').text(isOk ? "valid" : "invalid");
+        $("#transaction-block").css("display", "block");
+        $(".transaction").text(JSON.stringify(message, undefined, 2));
+        $(".signed-message").text(JSON.stringify(signedMessage, undefined, 2));
+        $(".verify-message").text(isOk ? "valid" : "invalid");
 
-        $('#Alice').replaceWith(alice.GetMarkup());
-        $('#Bob').replaceWith(bob.GetMarkup());
-        $('#Charlie').replaceWith(charlie.GetMarkup());
+        $("#Alice").replaceWith(alice.GetMarkup());
+        $("#Bob").replaceWith(bob.GetMarkup());
+        $("#Charlie").replaceWith(charlie.GetMarkup());
 
 
     };
 
     (<any>window).broadcastMessage10Times = function() {
         if (!signedMessage) {
-            alert('First send a legit message to be able to replay it');
+            console.warn("First send a legit message to be able to replay it");
             return;
         }
 
@@ -328,8 +328,8 @@ export class User {
         }
         
         // Refresh UI
-        $('#Alice').replaceWith(alice.GetMarkup());
-        $('#Bob').replaceWith(bob.GetMarkup());
-        $('#Charlie').replaceWith(charlie.GetMarkup());
+        $("#Alice").replaceWith(alice.GetMarkup());
+        $("#Bob").replaceWith(bob.GetMarkup());
+        $("#Charlie").replaceWith(charlie.GetMarkup());
     };
 }

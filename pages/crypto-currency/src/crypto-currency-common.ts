@@ -20,6 +20,7 @@ $(document).ready(function() {
     $(() => $('[data-toggle="popover"]').popover());
 });
 
+// Add a popup for each console.error/info/warning
 var consoleError = console.error;
 var showErrorNotification = function(content: string) {
     $('body').append(`<div class="notification alert alert-danger alert-dismissable">
@@ -29,6 +30,16 @@ var showErrorNotification = function(content: string) {
     consoleError(content);
 }
 console.error = showErrorNotification;
+
+var consoleWarn = console.warn;
+var showErrorNotification = function(content: string) {
+    $('body').append(`<div class="notification alert alert-warning alert-dismissable">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+        <strong>Error</strong> ${content}
+    </div>`)
+    consoleWarn(content);
+}
+console.warn = showErrorNotification;
 
 var consoleInfo = console.info;
 var showInfoNotification = function(content: string) {

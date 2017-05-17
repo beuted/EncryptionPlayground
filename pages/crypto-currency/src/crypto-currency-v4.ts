@@ -130,20 +130,12 @@ export class UserV4 extends UserV3 {
     }
 
     public ReceiveBlockValidation(block: Block) {
-        // Check that the proof-of-work (hash of the block) starts with three 0
-        if (block.proofOfWork[0] != "0" || block.proofOfWork[1] != "0" || block.proofOfWork[2] != "0") {
-            return false;
-        }
-
         // Check that the proof-of-work is indeed a valid hash of the block
-        var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });
-        md.updateString(JSON.stringify(block.transactions) + block.nonce); 
-        var proofOfWork = md.digest();
-        if (block.proofOfWork != proofOfWork) {
+        if (!this.ValidateBlockHash(block)) {
             return false;
         }
 
-        // Verify each messages in the block with siganture, unique hash and that user spending coins have these coins
+        // Verify each messages in the block has a valid signature, unique hash and that user spending coins have these coins
         var isValid = true;
         block.transactions.forEach(transaction => {
             if (!this.VerifySignedMessage(transaction)) {
@@ -160,17 +152,7 @@ export class UserV4 extends UserV3 {
         this.localBlockChain[block.proofOfWork] = block;
 
         // Remove validated transactions from the unvalidatedTransactions list
-        var done = false;
-        while (!done) {
-            done = true;                        
-            this.unvalidatedTransactions.forEach((t, index) => {
-                if ((<any>block.transactions).findIndex((x: ISignedHashedMessage) => x.hash == t.hash) !== -1) {
-                    done = false;                                
-                    this.unvalidatedTransactions.splice(index, 1);
-                    return;
-                }
-            });
-        }
+        this.RemoveValidatedTransactions(block.transactions);
     }
 
     // Check that at the moment user $username have AT LEAST $amount coins 
@@ -234,6 +216,35 @@ export class UserV4 extends UserV3 {
 
         return false;
     }
+
+    protected RemoveValidatedTransactions(transactions: ISignedHashedMessage[]) {
+        var done = false;
+        while (!done) {
+            done = true;                        
+            this.unvalidatedTransactions.forEach((t, index) => {
+                if ((<any>transactions).findIndex((x: ISignedHashedMessage) => x.hash == t.hash) !== -1) {
+                    done = false;                                
+                    this.unvalidatedTransactions.splice(index, 1);
+                    return;
+                }
+            });
+        }
+    }
+
+    protected ValidateBlockHash(block: Block) {
+        // Check that the proof-of-work (hash of the block) starts with three 0
+        if (block.proofOfWork[0] != "0" || block.proofOfWork[1] != "0" || block.proofOfWork[2] != "0") {
+            return false;
+        }
+
+        var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });
+        md.updateString(JSON.stringify(block.transactions) + block.nonce); 
+        var proofOfWork = md.digest();
+        if (block.proofOfWork != proofOfWork) {
+            return false;
+        }
+        return true;
+    }
 }
 
 export class Helpers {
@@ -262,7 +273,7 @@ export class Helpers {
 
 (<any>window).AddUiInteractionsV4 = function() {
     var network = new NetworkV4();
-    var alice = new UserV4('Alice', `-----BEGIN RSA PRIVATE KEY-----
+    var alice = new UserV4("Alice", `-----BEGIN RSA PRIVATE KEY-----
     MIICWwIBAAKBgQDRhGF7X4A0ZVlEg594WmODVVUIiiPQs04aLmvfg8SborHss5gQ
     Xu0aIdUT6nb5rTh5hD2yfpF2WIW6M8z0WxRhwicgXwi80H1aLPf6lEPPLvN29EhQ
     NjBpkFkAJUbS8uuhJEeKw0cE49g80eBBF4BCqSL6PFQbP9/rByxdxEoAIQIDAQAB
@@ -277,7 +288,7 @@ export class Helpers {
     Ma1qZvT/cigmdbAh7wJAQNXyoizuGEltiSaBXx4H29EdXNYWDJ9SS5f070BRbAIl
     dqRh3rcNvpY6BKJqFapda1DjdcncZECMizT/GMrc1w==
     -----END RSA PRIVATE KEY-----`, network);
-    var bob = new UserV4('Bob', `-----BEGIN RSA PRIVATE KEY-----
+    var bob = new UserV4("Bob", `-----BEGIN RSA PRIVATE KEY-----
     MIICWgIBAAKBgHJNuOcdqshauCKFhxYHUNGuIyv6H7OLtUV+Ew3ra75hWWW2fMNl
     gHFwATEIg9xaDHaVmGXxdBmot78ZUeNpVYuymflwfBl06VUxSYpl7QfS5M4E9gOV
     sERX/ytzRl3uuTprk/LvGwcejsVpHLlxBuVPMy6u2yPE0+X59ayLX26/AgMBAAEC
@@ -292,7 +303,7 @@ export class Helpers {
     N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
     /tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
     -----END RSA PRIVATE KEY-----`, network);
-    var charlie = new UserV4('Charlie', `-----BEGIN RSA PRIVATE KEY-----
+    var charlie = new UserV4("Charlie", `-----BEGIN RSA PRIVATE KEY-----
     MIICWwIBAAKBgHNNh/YaZnvIr58+v1MagvNjOzEg18yLVAQeZWpnNzE0qxquB2w2
     eM2Rk6V9fh4WS35fatAvPfVqF/y5oZGwQ3v2ebm/AXTzrI+XCxJDRiHqsuIFRl8Z
     98f0zs/NNCHtCLGqdnu0zNdL4OyA+dCeexcch6TUQklkvJRuCTUJRt9TAgMBAAEC
@@ -307,7 +318,7 @@ export class Helpers {
     f/bZZlvIjDUvkhvc9QJATDAOITmhUk/1iADjP1vqdmfVXZRdxs/iJYChQIrck0fb
     hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
     -----END RSA PRIVATE KEY-----`, network);
-    var dylan = new UserV4('Dylan', `-----BEGIN RSA PRIVATE KEY-----
+    var dylan = new UserV4("Dylan", `-----BEGIN RSA PRIVATE KEY-----
     MIICWwIBAAKBgHoAhy90y1pqYuD+4v8Tg2eggd+/bk75xI3ATSC9ogZikOKNq5u3
     gI9vRaylJhrzqdpdTu5whBY1g2QoOIHcjPmqnsTmHhMU4fNAhvLW+ThfYrwgsYlQ
     YgipJBfwoZm+xc54tZbRhg89s9TXJk3H/d55WPEWN8F6V3nQukwldeqvAgMBAAEC
@@ -325,10 +336,10 @@ export class Helpers {
 
     var signedMessage;
     $(document).ready(function() {
-        $('#Alice').replaceWith(alice.GetMarkup());
-        $('#Bob').replaceWith(bob.GetMarkup());
-        $('#Charlie').replaceWith(charlie.GetMarkup());
-        $('#Dylan').replaceWith(dylan.GetMarkup());            
+        $("#Alice").replaceWith(alice.GetMarkup());
+        $("#Bob").replaceWith(bob.GetMarkup());
+        $("#Charlie").replaceWith(charlie.GetMarkup());
+        $("#Dylan").replaceWith(dylan.GetMarkup());            
     });
 
     (<any>window).aliceSend1CoinToBob = function() {
@@ -338,24 +349,24 @@ export class Helpers {
         if (sanityCheckOk)
             alice.BroadcastSignedMessage(signedMessage);
 
-        $('#transaction-block').css("display", "block");
+        $("#transaction-block").css("display", "block");
 
-        $('.transaction').text(JSON.stringify(message, undefined, 2));
-        $('.signed-message').text(JSON.stringify(signedMessage, undefined, 2));
-        $('.verify-message').text(sanityCheckOk);
+        $(".transaction").text(JSON.stringify(message, undefined, 2));
+        $(".signed-message").text(JSON.stringify(signedMessage, undefined, 2));
+        $(".verify-message").text(sanityCheckOk);
 
-        $('#Alice').replaceWith(alice.GetMarkup());
-        $('#Bob').replaceWith(bob.GetMarkup());
-        $('#Charlie').replaceWith(charlie.GetMarkup());
-        $('#Dylan').replaceWith(dylan.GetMarkup());
+        $("#Alice").replaceWith(alice.GetMarkup());
+        $("#Bob").replaceWith(bob.GetMarkup());
+        $("#Charlie").replaceWith(charlie.GetMarkup());
+        $("#Dylan").replaceWith(dylan.GetMarkup());
     };
 
     (<any>window).makeDylanMine = function() {
         dylan.Mine();
 
-        $('#Alice').replaceWith(alice.GetMarkup());
-        $('#Bob').replaceWith(bob.GetMarkup());
-        $('#Charlie').replaceWith(charlie.GetMarkup());
-        $('#Dylan').replaceWith(dylan.GetMarkup());
+        $("#Alice").replaceWith(alice.GetMarkup());
+        $("#Bob").replaceWith(bob.GetMarkup());
+        $("#Charlie").replaceWith(charlie.GetMarkup());
+        $("#Dylan").replaceWith(dylan.GetMarkup());
     };
 };

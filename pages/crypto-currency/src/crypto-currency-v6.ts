@@ -1,4 +1,5 @@
-import { NetworkV4, UserV4, Block, Helpers } from "./crypto-currency-v4";
+import { NetworkV5, UserV5 } from "./crypto-currency-v5";
+import { Block, Helpers } from "./crypto-currency-v4";
 import { ISignedHashedMessage } from "./crypto-currency-v2";
 import { hash, signature, IMessage } from "./crypto-currency-v1";
 
@@ -6,104 +7,25 @@ declare var KEYUTIL: any;
 declare var RSAKey: any;
 declare var KJUR: any;
 
-export class NetworkV5<TUser extends UserV5, TMessage extends ISignedHashedMessage> extends NetworkV4<TUser, TMessage>{
+export class NetworkV6<TUser extends UserV6, TMessage extends ISignedHashedMessage> extends NetworkV5<TUser, TMessage>{
     constructor() {
         super();
     }
 }
 
-export class UserV5 extends UserV4 {
-    public network: NetworkV5<UserV5, ISignedHashedMessage>;
+export class UserV6 extends UserV5 {
+    public network: NetworkV6<UserV6, ISignedHashedMessage>;
 
     constructor(name: string, privateKey: string, network: NetworkV5<UserV5, ISignedHashedMessage>) {
       super(name, privateKey, network)
-    }
-
-    public GetMessage(receiver: string, amount: number, date: number, isRewarded: boolean = false) {
-        return { from: isRewarded ? "Root" : this.name, to: receiver, amount: amount, date: date };
-    }
-
-    public GetSignedMessageWithSerialNumber(receiver: string, amount: number, date: number, isRewarded: boolean = false) {
-        let message = this.GetMessage(receiver, amount, date, isRewarded);
-        var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });
-        md.updateString(JSON.stringify(message));
-
-        return {
-            message: message,
-            signature: this.Sign(JSON.stringify(message)),
-            hash: md.digest()
-        }
-    }
-
-    public ReceiveBlockValidation(block: Block) {
-        // Check that the proof-of-work is indeed a valid hash of the block
-        if (!this.ValidateBlockHash(block)) {
-            return false;
-        }
-
-        // Verify each messages in the block has a valid signature, unique hash and that user spending coins have these coins
-        var isValid = true;
-        block.transactions.forEach((signedMessage, i) => {
-            // Exception made for first transaction that is allowed to reward a user with 25 potato-coins
-            if (i == 0) {
-                if (signedMessage.message.amount <= 25
-                  && this.IsAValidHash(signedMessage.hash, signedMessage.message)
-                  && !this.IsHashAlreadyInBlockChain(signedMessage.hash)) {
-                    return false;
-                } else {
-                    console.error(`${this.name}: Invalid reward signedMessage: ${JSON.stringify(signedMessage)}`);
-                    isValid = false;
-                    return true;
-                }
-            }
-
-            if (!this.VerifySignedMessage(signedMessage)) {
-                isValid = false;
-                return true;
-            }
-        });
-
-        if (!isValid) {
-            return false;
-        }
-
-        // Add the block to local block-chain
-        this.localBlockChain[block.proofOfWork] = block;
-
-        // Remove validated transactions from the unvalidatedTransactions list
-        this.RemoveValidatedTransactions(block.transactions);
-    }
-
-    public Mine() {
-        if (this.unvalidatedTransactions.length >= 10) {
-            var transactionList = this.unvalidatedTransactions.slice(0, 10);
-
-            // Add a reward of 25 potato-coins at the beginning of the block
-            transactionList.unshift(this.GetSignedMessageWithSerialNumber(this.name, 25, Date.now(), true));
-
-            var beginTime = Date.now()
-            var message = Helpers.FindValidHash(transactionList);
-            var timeSpentMiningBlock = (Date.now() - beginTime)/1000;
-            console.info(`${this.name}: Took ${timeSpentMiningBlock}s to mine a block`);
-            if (message) {
-                var block = new Block(transactionList, message.hash, message.nonce);
-                this.BroadcastValidatedBlock(block);
-                this.ReceiveBlockValidation(block);
-                return true;
-            }
-        } else {
-            console.info(`${this.name}: Can't mine a block if less than 10 transactions are waiting.`);
-        }
-
-        return false;
     }
 }
 
 // UI Interactions ///////////////////////////////////////////////////////////////////
 
-(<any>window).AddUiInteractionsV5 = function() {
-    var network = new NetworkV5();
-    var alice = new UserV5("Alice", `-----BEGIN RSA PRIVATE KEY-----
+(<any>window).AddUiInteractionsV6 = function() {
+    var network = new NetworkV6();
+    var alice = new UserV6("Alice", `-----BEGIN RSA PRIVATE KEY-----
 MIICWwIBAAKBgQDRhGF7X4A0ZVlEg594WmODVVUIiiPQs04aLmvfg8SborHss5gQ
 Xu0aIdUT6nb5rTh5hD2yfpF2WIW6M8z0WxRhwicgXwi80H1aLPf6lEPPLvN29EhQ
 NjBpkFkAJUbS8uuhJEeKw0cE49g80eBBF4BCqSL6PFQbP9/rByxdxEoAIQIDAQAB
@@ -118,7 +40,7 @@ aYZ5/5B2lwroqnKdZBJMGKFpUDn7Mb5hiSgocxnvMkv6NjT66Xsi3iYakJII9q8C
 Ma1qZvT/cigmdbAh7wJAQNXyoizuGEltiSaBXx4H29EdXNYWDJ9SS5f070BRbAIl
 dqRh3rcNvpY6BKJqFapda1DjdcncZECMizT/GMrc1w==
 -----END RSA PRIVATE KEY-----`, network);
-    var bob = new UserV5("Bob", `-----BEGIN RSA PRIVATE KEY-----
+    var bob = new UserV6("Bob", `-----BEGIN RSA PRIVATE KEY-----
 MIICWgIBAAKBgHJNuOcdqshauCKFhxYHUNGuIyv6H7OLtUV+Ew3ra75hWWW2fMNl
 gHFwATEIg9xaDHaVmGXxdBmot78ZUeNpVYuymflwfBl06VUxSYpl7QfS5M4E9gOV
 sERX/ytzRl3uuTprk/LvGwcejsVpHLlxBuVPMy6u2yPE0+X59ayLX26/AgMBAAEC
@@ -133,7 +55,7 @@ GOPCkt4xSJmADXroPGrmhnL0ZAAvk59To0RtKiIS9r6IzDuoA4tQaCKXBjFymfsN
 N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
 /tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
 -----END RSA PRIVATE KEY-----`, network);
-    var charlie = new UserV5("Charlie", `-----BEGIN RSA PRIVATE KEY-----
+    var charlie = new UserV6("Charlie", `-----BEGIN RSA PRIVATE KEY-----
 MIICWwIBAAKBgHNNh/YaZnvIr58+v1MagvNjOzEg18yLVAQeZWpnNzE0qxquB2w2
 eM2Rk6V9fh4WS35fatAvPfVqF/y5oZGwQ3v2ebm/AXTzrI+XCxJDRiHqsuIFRl8Z
 98f0zs/NNCHtCLGqdnu0zNdL4OyA+dCeexcch6TUQklkvJRuCTUJRt9TAgMBAAEC
@@ -148,7 +70,7 @@ rFahNLeR1+uaHYdnZN2762rvc9K/qp8SY9h050yxYss3zFakFD9hObJfAkEAlW31
 f/bZZlvIjDUvkhvc9QJATDAOITmhUk/1iADjP1vqdmfVXZRdxs/iJYChQIrck0fb
 hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
 -----END RSA PRIVATE KEY-----`, network);
-    var dylan = new UserV5("Dylan", `-----BEGIN RSA PRIVATE KEY-----
+    var dylan = new UserV6("Dylan", `-----BEGIN RSA PRIVATE KEY-----
 MIICWwIBAAKBgHoAhy90y1pqYuD+4v8Tg2eggd+/bk75xI3ATSC9ogZikOKNq5u3
 gI9vRaylJhrzqdpdTu5whBY1g2QoOIHcjPmqnsTmHhMU4fNAhvLW+ThfYrwgsYlQ
 YgipJBfwoZm+xc54tZbRhg89s9TXJk3H/d55WPEWN8F6V3nQukwldeqvAgMBAAEC
