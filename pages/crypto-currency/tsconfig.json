@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "module": "amd",
+        "noImplicitAny": true,
+        "types": [],
+        "typeRoots": [
+            "./node_modules/@types",
+            "./definitions/"
+        ],
+        "target": "es5"
+    },
+    "files": ["src/config.ts", "src/index.ts"]
+}

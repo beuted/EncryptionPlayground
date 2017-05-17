@@ -1,3 +1,11 @@
+import * as $ from 'jquery';
+import 'bootstrap';
+
+// Hack because bootstrap 4 sucks: see http://stackoverflow.com/questions/34567939/how-to-fix-the-error-error-bootstrap-tooltips-require-tether-http-github-h
+require(['tether'], function (Tether: any) {
+  (<any>window).Tether = Tether;
+});
+
 $(document).ready(function() {
     $('.network').click(e => {
         e.stopPropagation();
@@ -13,7 +21,7 @@ $(document).ready(function() {
 });
 
 var consoleError = console.error;
-showErrorNotification = function(content) {
+var showErrorNotification = function(content: string) {
     $('body').append(`<div class="notification alert alert-danger alert-dismissable">
         <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
         <strong>Error</strong> ${content}
@@ -23,7 +31,7 @@ showErrorNotification = function(content) {
 console.error = showErrorNotification;
 
 var consoleInfo = console.info;
-showInfoNotification = function(content) {
+var showInfoNotification = function(content: string) {
     $('body').append(`<div class="notification alert alert-info alert-dismissable">
         <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
         <strong>Info</strong> ${content}
@@ -31,18 +39,3 @@ showInfoNotification = function(content) {
     consoleInfo(content);
 }
 console.info = showInfoNotification;
-
-/*function pad (str, max) {
-    str = str.toString();
-    return str.length < max ? pad("0" + str, max) : str;
-}
-var t = "[{ \"from\": \"Bob\", \"to\": \"Alice\", \"amount\": 1, \"date\": 1234567 }, { \"from\": \"Charlie\", \"to\": \"Bob\", \"amount\": 1, \"date\": 3456789 }, { \"from\": \"Alice\", \"to\": \"Bob\", \"amount\": 1, \"date\": 7890123 }]"
-var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });
-
-for (var i=0; i < 100000; i++) {
-    //  console.log(i)
-    md.updateString(t+pad(i, 10)); 
-    var l = md.digest();
-    if (l[0] == "0" && l[1] == "0" && l[2] == "0")
-        console.log(l, i)
-}*/

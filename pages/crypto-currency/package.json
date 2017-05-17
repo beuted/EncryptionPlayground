@@ -1,0 +1,20 @@
+{
+  "name": "crypto-currency",
+  "version": "1.0.0",
+  "description": "Step by step description of crypto currencies with examples",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "dekajoo",
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "4.0.0-alpha.6",
+    "jquery": "3.2.1"
+  },
+  "devDependencies": {
+    "@types/bootstrap": "3.3.33",
+    "@types/jquery": "2.0.45",
+    "@types/requirejs": "2.1.29"
+  }
+}

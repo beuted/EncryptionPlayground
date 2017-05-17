@@ -4,113 +4,17 @@
         <meta charset="UTF-8">
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+        
         <link href="./style/main.css" rel="stylesheet">
 
-        <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
-
-        <!-- Scripts comming from https://github.com/kjur/jsrsasign -->
-        <script src="./vendors/jsrsasign/jsrsasign-all-min.js" type="text/javascript"></script>
-
-        <script src="./js/crypto-currency-v1.js" type="text/javascript"></script>
-        <script src="./js/crypto-currency-common.js" type="text/javascript"></script>
-
-        <script type="text/javascript">
-
-        var network = new Network();
-        var alice = new User('Alice', `-----BEGIN RSA PRIVATE KEY-----
-MIICWwIBAAKBgQDRhGF7X4A0ZVlEg594WmODVVUIiiPQs04aLmvfg8SborHss5gQ
-Xu0aIdUT6nb5rTh5hD2yfpF2WIW6M8z0WxRhwicgXwi80H1aLPf6lEPPLvN29EhQ
-NjBpkFkAJUbS8uuhJEeKw0cE49g80eBBF4BCqSL6PFQbP9/rByxdxEoAIQIDAQAB
-AoGAA9/q3Zk6ib2GFRpKDLO/O2KMnAfR+b4XJ6zMGeoZ7Lbpi3MW0Nawk9ckVaX0
-ZVGqxbSIX5Cvp/yjHHpww+QbUFrw/gCjLiiYjM9E8C3uAF5AKJ0r4GBPl4u8K4bp
-bXeSxSB60/wPQFiQAJVcA5xhZVzqNuF3EjuKdHsw+dk+dPECQQDubX/lVGFgD/xY
-uchz56Yc7VHX+58BUkNSewSzwJRbcueqknXRWwj97SXqpnYfKqZq78dnEF10SWsr
-/NMKi+7XAkEA4PVqDv/OZAbWr4syXZNv/Mpl4r5suzYMMUD9U8B2JIRnrhmGZPzL
-x23N9J4hEJ+Xh8tSKVc80jOkrvGlSv+BxwJAaTOtjA3YTV+gU7Hdza53sCnSw/8F
-YLrgc6NOJtYhX9xqdevbyn1lkU0zPr8mPYg/F84m6MXixm2iuSz8HZoyzwJARi2p
-aYZ5/5B2lwroqnKdZBJMGKFpUDn7Mb5hiSgocxnvMkv6NjT66Xsi3iYakJII9q8C
-Ma1qZvT/cigmdbAh7wJAQNXyoizuGEltiSaBXx4H29EdXNYWDJ9SS5f070BRbAIl
-dqRh3rcNvpY6BKJqFapda1DjdcncZECMizT/GMrc1w==
------END RSA PRIVATE KEY-----`, network);
-        var bob = new User('Bob', `-----BEGIN RSA PRIVATE KEY-----
-MIICWgIBAAKBgHJNuOcdqshauCKFhxYHUNGuIyv6H7OLtUV+Ew3ra75hWWW2fMNl
-gHFwATEIg9xaDHaVmGXxdBmot78ZUeNpVYuymflwfBl06VUxSYpl7QfS5M4E9gOV
-sERX/ytzRl3uuTprk/LvGwcejsVpHLlxBuVPMy6u2yPE0+X59ayLX26/AgMBAAEC
-gYBI0esyklvzOJiGpbrh9dcvPll58uevYxohI6jP/WOu7iYd/pyNf2TM4CZiLqKT
-B2tZQQTOLX1hu3MUc/UPhFPSybbBh4aXPYU7cBPmXz910m7PwrQZcFUETKV2Mkug
-sLim1baAq++O6jUYM6RRnEcdtag3uIN/21VCevx9yTqYAQJBALSN6Nj7OFRcQfiw
-ijakun2H7ldNKOXH3c8DgRTDgBrfJDmOZlcIZmQ6G10ZsROk5beRkVgHGX8G3Dia
-nU2el4ECQQCiEOapzIZCLEpfG3Ay+X6FQfrkhkvrg9EECucx0GYQ6bAUgkwTiLn6
-g70sKXT2E2fYvEQDB0v1t6pAHHcMWyY/AkBjmJAj+NgGuOlvPDrRj6aLjkrr/1Ub
-A1gYVE+E256zs/kwgptzUN/iU6c6gOyL8H8C9ppdG3V1+5vI4Yj6AwyBAkBkCTSo
-GOPCkt4xSJmADXroPGrmhnL0ZAAvk59To0RtKiIS9r6IzDuoA4tQaCKXBjFymfsN
-N4LOoFkJi8h8KwM3AkBXjoieYoy6eNIKa6QRn+/6qRhO5kxdh+KFXp1svc+dg93f
-/tSfi+i2Pn1Z/v7CSW9oFmFcQAwwamYlbGaBK87V
------END RSA PRIVATE KEY-----`, network);
-        var charlie = new User('Charlie', `-----BEGIN RSA PRIVATE KEY-----
-MIICWwIBAAKBgHNNh/YaZnvIr58+v1MagvNjOzEg18yLVAQeZWpnNzE0qxquB2w2
-eM2Rk6V9fh4WS35fatAvPfVqF/y5oZGwQ3v2ebm/AXTzrI+XCxJDRiHqsuIFRl8Z
-98f0zs/NNCHtCLGqdnu0zNdL4OyA+dCeexcch6TUQklkvJRuCTUJRt9TAgMBAAEC
-gYByjMMXj9DjB1Ta+0autDcGwD3tJ/jcoEr+sIgGtrZRb0bSAbUkH9XSPN+XWN5z
-26hyyy7d1yFR8G4WSQGoMJpJdJH3De4RrU7ZCyx8Ln1xgk1DwoJPvOmPNcUftR5f
-p3+XuuH/w6CywOtUttNgIdQeR6sIUCvgyCDHHbF5S8iMSQJBAMHKkTs9GEzK3r1s
-o7Wgl/Mk4sIiAxExkD3m27IVoCWDD2QZUwLCnbaQqHQNq5GtGRRxs3ciPu4P54XU
-C4RuKD8CQQCYUOu0cW229v4HVCVKeN51vbLDxdch38k9TswrQ1p3EzQuQTdxAkr4
-svQGSPvyChktlCrr7Qlv9OkmOAFFdSPtAkBzxkInouNOlXCmuC3Bx5Sf1SyHkGxG
-rFahNLeR1+uaHYdnZN2762rvc9K/qp8SY9h050yxYss3zFakFD9hObJfAkEAlW31
-/92z/GcOStRTjV9NKAfGJGioqVPqEtqGVP9L9jwB2ksjABx2vsyZuLzLZ+ZeUyfk
-f/bZZlvIjDUvkhvc9QJATDAOITmhUk/1iADjP1vqdmfVXZRdxs/iJYChQIrck0fb
-hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
------END RSA PRIVATE KEY-----`, network);
-
-        var signedMessage;
-        $(document).ready(function() {
-            $('#Alice').replaceWith(alice.GetMarkup());
-            $('#Bob').replaceWith(bob.GetMarkup());
-            $('#Charlie').replaceWith(charlie.GetMarkup());
-        });
-
-        aliceSend1CoinToBob = function() {
-            var now = Date.now();
-            var message = alice.GetMessage("Bob", 1, now);
-            signedMessage = alice.GetSignedMessage("Bob", 1, now);
-            var isOk = bob.VerifySignedMessageAndAddToBlockChain(signedMessage);
-            if (isOk) {
-                bob.BroadcastSignedMessage(signedMessage);
-            }
-
-
-            $('#transaction-block').css("display", "block");
-            $('.transaction').text(JSON.stringify(message, undefined, 2));
-            $('.signed-message').text(JSON.stringify(signedMessage, undefined, 2));
-            $('.verify-message').text(isOk ? "valid" : "invalid");
-
-            $('#Alice').replaceWith(alice.GetMarkup());
-            $('#Bob').replaceWith(bob.GetMarkup());
-            $('#Charlie').replaceWith(charlie.GetMarkup());
-
-
-        }
-
-        broadcastMessage10Times = function() {
-            if (!signedMessage) {
-                alert('First send a legit message to be able to replay it');
-                return;
-            }
-
-            for (var i = 0; i < 10; i++) {
-                bob.VerifySignedMessageAndAddToBlockChain(signedMessage);
-                bob.BroadcastSignedMessage(signedMessage);
-            }
-            
-            // Refresh UI
-            $('#Alice').replaceWith(alice.GetMarkup());
-            $('#Bob').replaceWith(bob.GetMarkup());
-            $('#Charlie').replaceWith(charlie.GetMarkup());
-        }
-
+        <script src="./node_modules/requirejs/require.js" data-main="src/config"></script>
+        <script>
+            var everythingLoaded = setInterval(function() {
+                if (window.AddUiInteractionsV1) {
+                    clearInterval(everythingLoaded);
+                    window.AddUiInteractionsV1()
+                }
+            }, 10);
         </script>
     </head>
     <body>
@@ -159,7 +63,7 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
                     </div>
                 </article>
 
-                <p><button class="btn btn-primary btn-sm" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button></p>  
+                <p><button class="btn btn-primary btn-sm" onclick="window.aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button></p>  
                               
                 <p>As the transaction have been signed with Alice private key, we can know for sure that Alice is ok with the transaction. So if this encrypted transaction
                 is broadcasted on the network, everybody will be aware that Bob now have +1 coin and Alice -1 coin.</p>
@@ -175,7 +79,7 @@ hNQeR4DcAUEsr+l+d1ihUflkp+EEyyNEnpgbY0dpsw==
                     </li>
 
                     <li><b>Bob can replay the message 10 times and steal 10 coins from Alice, Charlie and others will have no way to know!
-                    <button class="btn btn-primary btn-sm" onclick="broadcastMessage10Times()">Broadcast the same transaction message 10 times 😈</button></b>
+                    <button class="btn btn-primary btn-sm" onclick="window.broadcastMessage10Times()">Broadcast the same transaction message 10 times 😈</button></b>
                 </ol>
 
                 <p>We'll need a way to avoid simple double spending</p>
