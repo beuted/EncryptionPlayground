@@ -23,50 +23,33 @@
 
             <h1 class="h1">Using serial numbers to make coins uniquely identifiable</h1>
 
-            <p>What we’d like is a way of making potato-coins unique. They need a label or serial number. Alice would sign the message
-            <i>“I, Alice, am giving Bob one potato-coin, with serial number 8740348”</i>. Then, later, Alice could sign the message <i>“I, Alice,
-            am giving Bob one potato-coin, with serial number 8770431”</i>, and Bob (and everyone else) would know that a different potato-coin
-            was being transferred.</p>
+            <p>What we’d like is a way of making potato-coins unique. They need a label or serial-number to had on the message. So that we know if the exact
+            same message is replayed on the network</p>
 
-            <p>Something that will look like this: <code>{ "from": "Alice", "to": "Bob", "serialNumber": "8740348”" }</code></p>
+            <script src="https://gist.github.com/beuted/07e8cf611b941cd44638e93815a6c2be.js"></script>
 
             <p>To make this scheme work we need a trusted source of serial numbers for the potato-coins. <b>One way to create such a source is
             to introduce a bank</b>. This bank would provide serial numbers for potato-coins, keep track of who has which potato-coins, and verify
             that transactions really are legitimate,</p>
 
-            <p>In more detail, let’s suppose Alice goes into the bank, and says <i>“I want to withdraw one potato-coin from my account”</i>. The
-            bank reduces her account balance by one potato-coin, and assigns her a new, never-before used serial number, let’s say 1234567.
-            Then, when Alice wants to transfer her potato-coin to Bob, she signs the message <i>“I, Alice, am giving Bob one potato-coin, with serial
-            number 1234567”</i>. But Bob doesn’t just accept the potato-coin. Instead, he contacts the bank, and verifies that: (a) the potato-coin
-            with that serial number belongs to Alice; and (b) Alice hasn’t already spent the potato-coin. If both those things are true,
-            then Bob tells the bank he wants to accept the potato-coin, and the bank updates their records to show that the potato-coin with that
-            serial number is now in Bob’s possession, and no longer belongs to Alice.</p>
-            <br>
+            <h4 class="h4">Where do serial number come from?</h4>
 
-            <h2 class="h2">Making everyone collectively the bank</h2>
+            <p>This solution seems indeed to avoid the "simple double spending" issue but this forces us to trust a bank for the serial numbers.
+            Another solution would be to use <b>a hash of the message</b>. Since the message contains a date we can assume that no legit message
+            will have the same hash and so we can use this as our serial numbers.</p>
 
-            <p>This last solution looks pretty promising. However, it turns out that we can do something much more ambitious. We can eliminate
-            the bank entirely from the protocol. This changes the nature of the currency considerably. It means that there is no longer
-            any single organization in charge of the currency. And when you think about the enormous power a central bank has – control
-            over the money supply – that’s a pretty huge change.</p>
+            <script src="https://gist.github.com/beuted/eaf11e52768c3629000ecb585c9937ed.js"></script>
 
-            <p>The idea is to make it so everyone (collectively) is the bank. In particular, we’ll assume that everyone using potato-coin keeps
-            a complete record of which potato-coins belong to which person. You can think of this as a shared public ledger showing all
-            potato-coin transactions. We’ll call this ledger <b>the block chain</b>.</p>
+            <h2>Implementation</h2>
 
-            <p>Now, suppose Alice wants to transfer an potato-coin to Bob. She signs the message <i>“I, Alice, am giving Bob one potato-coin, with
-            serial number 1234567”</i>, and gives the signed message to Bob. Bob can use his copy of the block chain to check that, indeed,
-            the potato-coin is Alice’s to give. If that checks out then he broadcasts both Alice’s message and his acceptance of the transaction
-            to the entire network, and everyone updates their copy of the block chain.</p>
+            <p>The implementation haven't changed much, we just add a step at message creation and one at message validation.</p>
+            <script src="https://gist.github.com/beuted/721aad0b91a64ff35600cb0a04317f85.js"></script>
 
-            <h2 class="h2">Where do serial number come from?</h2>
+            <h2>Demonstration</h2>
 
-            <p>A simple idea to get this serial number would be to <b>use a hash of the message with its date</b>, so our previous messages would look 
-            like this:</p>
-    
-            <article class="card" id="transaction-block" style="display: none;">
+            <article class="card" id="transaction-block">
                 <div class="card-block">
-                    <ol style="margin: 0;">
+                    <ol style="opacity: 0;">
                         <li><b>Transaction message:</b>
                             <code class="transaction"></code>
                         </li>
@@ -87,27 +70,27 @@
                 </div>
             </article>
 
-            <p><button class="btn btn-primary btn-sm" onclick="window.aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button></p>            
+            <p><button class="btn btn-primary" onclick="window.aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button></p>            
 
             <p>As the transaction have been signed with Alice private key we can know for sure that Alice is okay with the transaction and since
             the hash parameter match the hash of the message and is unique on the network we can now for sure that <b>it have not been "replayed"</b></p>
 
-            <h3>Simple double emission?</h3>
-            <p><b>Previous signed transaction message:</b><code class="signed-message"></code></p>
+            <h4 class="h4">Simple double emission?</h4>
 
-            <p>This time Bob :</p>
+            <p>This time Bob:</p>
             <ol>
                 <li><b>cannot replay the message 10 times</b> because they will have the same hash:
-                <button class="btn btn-primary btn-sm" onclick="window.broadcastSameMessage()">Try broadcasting the same transaction message 👿</button><br>
+                <button class="btn btn-primary" onclick="window.broadcastSameMessage()">Try broadcasting the same transaction message 👿</button><br>
                 </li>
                 <li>and he <b>cannot change the message to change the hash</b> because the message will not be signed correctly anymore.
-                <button class="btn btn-primary btn-sm" onclick="window.broadcastDifferentMessages()">Just change the date of the message to change its hash
+                <button class="btn btn-primary" onclick="window.broadcastDifferentMessages()">Just change the date of the message to change its hash
                 (with the same signature) 👿</button></li>
             </ol>
 
-            <div class="alert alert-danger" role="alert">This implementation can still be abuse!</div>
+            <h2 class="h2">Flaw</h2>
 
-            <h3>Timing attack</h3>
+            <div class="alert alert-danger" role="alert">But this implementation can still be abuse with a timing-attack</div>
+
             <p>Great, having these hashes as serial numbers we can avoid simple double spending, but we are still weak against
             <i>"timing attacks"</i>, where malicious people spends money they don't have.</p>
             <p>Let's consider that Bob send <b>X coins</b> to Alice, (X being all the coins he has) and <b>at the exact same time</b>,
@@ -115,9 +98,9 @@
             <p>What will happen is that Alice will update her local blockchain with the transaction where Bob gives her all his coins and
             Charlie will update his local blockchain with a transaction where bob gives him all his coins, and both will give bob X potatoes
             even tho' only one out of Alice and Charlie have been paid.</p>
-            <p><button class="btn btn-primary btn-sm" onclick="window.broadcastSimultaneousMessages()">Simultaneously send two messages giving all Bob's money to Alice and Charlie 😈</button></p>
-            <p>In order to avoid that we need a way to choose and validate a common version of the blockchain for all users. It means
-            that we need to be able to choose if Bob have given all his coins to Alice or to Charlie.</p>
+            <p><button class="btn btn-primary" onclick="window.broadcastSimultaneousMessages()">Simultaneously send two messages giving all Bob's money to Alice and Charlie 😈</button></p>
+            <div class="alert alert-info" role="alert">In order to avoid that we need a way to choose and validate a common version of the list of transactions for all users. It means
+            that we need to be able to choose if Bob have given all his coins to Alice or to Charlie.</div>
          
             <div class="row navigation">
                 <div class="col-sm-12">

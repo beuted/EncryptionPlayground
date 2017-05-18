@@ -17,18 +17,18 @@ export class NetworkV3<TUser extends UserV3, TMessage extends ISignedHashedMessa
 }
 
 export class UserV3 extends UserV2 {
-    public localBlockValidators:{ [transactionHash: string]: hash[] };
+    public localTransactionValidators:{ [transactionHash: string]: hash[] };
     public network: NetworkV3<UserV3, ISignedHashedMessage>;
     
     constructor(name: string, privateKey: string, network: NetworkV3<UserV3, ISignedHashedMessage>) {
         super(name, privateKey, network)
-        this.localBlockValidators = {};
+        this.localTransactionValidators = {};
     }
 
     // Public
 
-    public VerifySignedMessageAndAddToBlockChain(signedMessage: ISignedHashedMessage) {
-        var success = super.VerifySignedMessageAndAddToBlockChain(signedMessage);
+    public VerifySignedMessageAndAddToSignedMessageList(signedMessage: ISignedHashedMessage) {
+        var success = super.VerifySignedMessageAndAddToSignedMessageList(signedMessage);
 
         if (success) {
             // Broadcast that the message is valid to all users on the network
@@ -61,10 +61,10 @@ export class UserV3 extends UserV2 {
         }
 
         // Add the name of the validator to the list of validators of the message (if not already here)
-        if (!this.localBlockValidators[messageHash])
-            this.localBlockValidators[messageHash] = [];
-        if ((<any>this.localBlockValidators[messageHash]).findIndex((name: string) => name == validatorName) == -1)
-            this.localBlockValidators[messageHash].push(validatorName)
+        if (!this.localTransactionValidators[messageHash])
+            this.localTransactionValidators[messageHash] = [];
+        if ((<any>this.localTransactionValidators[messageHash]).findIndex((name: string) => name == validatorName) == -1)
+            this.localTransactionValidators[messageHash].push(validatorName)
 
         return true;
     }
@@ -73,10 +73,10 @@ export class UserV3 extends UserV2 {
         if (this.network.GetGenesisTransaction().hash == messageHash)
             return true;
 
-        if (!this.localBlockValidators[messageHash])
+        if (!this.localTransactionValidators[messageHash])
             return false;
 
-        return this.localBlockValidators[messageHash].length / Object.keys(this.localAddressBook).length >= 0.5;
+        return this.localTransactionValidators[messageHash].length / Object.keys(this.localAddressBook).length >= 0.5;
     }
 
     // Check that at the moment user $username have AT LEAST $amount coins 
@@ -124,7 +124,7 @@ export class UserV3 extends UserV2 {
 }
 
 class BobPuppetUser extends UserV3 {
-    VerifySignedMessageAndAddToBlockChain(signedMessage: ISignedHashedMessage) {
+    VerifySignedMessageAndAddToSignedMessageList(signedMessage: ISignedHashedMessage) {
         // !!!!!!!!!!!!!!!! MALICIOUS BEHAVIOR HERE !!!!!!!!!!!!! //              
         if (signedMessage.message.from === "Bob") {
             this.localSignedMessages.push(signedMessage);                
@@ -223,11 +223,11 @@ xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
     (<any>window).aliceSend1CoinToBob = function() {
         var message = alice.GetMessage("Bob", 1, Date.now());
         signedMessage = alice.GetSignedMessageWithSerialNumber("Bob", 1, Date.now());
-        var sanityCheckOk = alice.VerifySignedMessageAndAddToBlockChain(signedMessage);
+        var sanityCheckOk = alice.VerifySignedMessageAndAddToSignedMessageList(signedMessage);
         if (sanityCheckOk)
             alice.BroadcastSignedMessage(signedMessage);
 
-        $("#transaction-block").css("display", "block");
+        $("#transaction-block>.card-block>ol").css("opacity", "1");
 
         $(".transaction").text(JSON.stringify(message, undefined, 2));
         $(".signed-message").text(JSON.stringify(signedMessage, undefined, 2));
@@ -263,7 +263,7 @@ xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
 
 
         // Bob only add Charlie transaction to his local blockchain
-        bob.VerifySignedMessageAndAddToBlockChain(signedMessage2);
+        bob.VerifySignedMessageAndAddToSignedMessageList(signedMessage2);
 
         $("#Alice").replaceWith(alice.GetMarkup());
         $("#Bob").replaceWith(bob.GetMarkup());

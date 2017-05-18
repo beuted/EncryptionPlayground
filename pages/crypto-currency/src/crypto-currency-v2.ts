@@ -53,7 +53,7 @@ export class UserV2 extends User {
         if (!super.VerifySignedMessage(signedMessage))
             return false;
 
-        // Verify that Hash match message
+        // Verify that the hash matchs the message
         if (!this.IsAValidHash(signedMessage.hash, signedMessage.message)) {
             console.error(`${this.name}: Hash does not match message: ${signedMessage.hash}`);
             return false;
@@ -140,11 +140,11 @@ export class UserV2 extends User {
     (<any>window).aliceSend1CoinToBob = function() {
         var message = alice.GetMessage("Bob", 1, Date.now());
         signedMessage = alice.GetSignedMessageWithSerialNumber("Bob", 1, Date.now());
-        var isOk = bob.VerifySignedMessageAndAddToBlockChain(signedMessage);
+        var isOk = bob.VerifySignedMessageAndAddToSignedMessageList(signedMessage);
         if (isOk)
             bob.BroadcastSignedMessage(signedMessage);
 
-        $("#transaction-block").css("display", "block");
+        $("#transaction-block>.card-block>ol").css("opacity", "1");
 
         $(".transaction").text(JSON.stringify(message, undefined, 2));
         $(".signed-message").text(JSON.stringify(signedMessage, undefined, 2));
@@ -199,7 +199,7 @@ export class UserV2 extends User {
         bob.BroadcastToSpecificUser("Charlie", signedMessage2);
 
         // Bob only add Alice transaction to his local blockchain
-        bob.VerifySignedMessageAndAddToBlockChain(signedMessage1);
+        bob.VerifySignedMessageAndAddToSignedMessageList(signedMessage1);
 
         $("#Alice").replaceWith(alice.GetMarkup());
         $("#Bob").replaceWith(bob.GetMarkup());

@@ -35,7 +35,7 @@ export class Network<TUser extends User, TMessage extends ISignedMessage> {
 
     public BroadcastToUser(name: string, signedMessage: TMessage) {
         let user = this.GetUser(name);
-        user.VerifySignedMessageAndAddToBlockChain(signedMessage);
+        user.VerifySignedMessageAndAddToSignedMessageList(signedMessage);
     }
 
     public GetGenesisTransaction() {
@@ -190,7 +190,7 @@ export class User {
         });
     }
 
-    public VerifySignedMessageAndAddToBlockChain(signedMessage: ISignedMessage) {
+    public VerifySignedMessageAndAddToSignedMessageList(signedMessage: ISignedMessage) {
         // Signature, amount of disponible money,... verification
         if (!this.VerifySignedMessage(signedMessage)) {
             return false;
@@ -298,13 +298,13 @@ export class User {
         var now = Date.now();
         var message = alice.GetMessage("Bob", 1, now);
         signedMessage = alice.GetSignedMessage("Bob", 1, now);
-        var isOk = bob.VerifySignedMessageAndAddToBlockChain(signedMessage);
+        var isOk = bob.VerifySignedMessageAndAddToSignedMessageList(signedMessage);
         if (isOk) {
             bob.BroadcastSignedMessage(signedMessage);
         }
 
+        $("#transaction-block>.card-block>ol").css("opacity", "1");
 
-        $("#transaction-block").css("display", "block");
         $(".transaction").text(JSON.stringify(message, undefined, 2));
         $(".signed-message").text(JSON.stringify(signedMessage, undefined, 2));
         $(".verify-message").text(isOk ? "valid" : "invalid");
@@ -323,7 +323,7 @@ export class User {
         }
 
         for (var i = 0; i < 10; i++) {
-            bob.VerifySignedMessageAndAddToBlockChain(signedMessage);
+            bob.VerifySignedMessageAndAddToSignedMessageList(signedMessage);
             bob.BroadcastSignedMessage(signedMessage);
         }
         

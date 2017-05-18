@@ -2,8 +2,12 @@ body  {
     margin-bottom: 210px;
 }
 
-.h1 {
+.h1, h1 {
     margin-bottom: 15px;
+}
+
+.h2, h2 {
+    margin-top: 45px;
 }
 
 article {
@@ -48,7 +52,7 @@ article {
 .close-network.selected {
     cursor: pointer;
 
-    transition: opacity 0.25s ease-in-out 0.25s;    
+    transition: opacity 0.25s ease-in-out 0.25s;
     opacity: 1;
 }
 
@@ -61,6 +65,11 @@ article {
 .card > .card-block > ol {
     font-size: 14px;
     overflow: hidden;
+    margin: 0;
+}
+
+#transaction-block>.card-block>ol {
+    transition: opacity 0.25s ease-in-out;
 }
 
 .user {

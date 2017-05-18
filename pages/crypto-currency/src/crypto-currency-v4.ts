@@ -349,7 +349,7 @@ export class Helpers {
         if (sanityCheckOk)
             alice.BroadcastSignedMessage(signedMessage);
 
-        $("#transaction-block").css("display", "block");
+        $("#transaction-block>.card-block>ol").css("opacity", "1");
 
         $(".transaction").text(JSON.stringify(message, undefined, 2));
         $(".signed-message").text(JSON.stringify(signedMessage, undefined, 2));

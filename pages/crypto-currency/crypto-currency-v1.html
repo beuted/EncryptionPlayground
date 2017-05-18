@@ -20,7 +20,7 @@
     <body>
         <div class="container">
 
-            <h1 class="h1">A simple Crypto-currency</h1>
+            <h1 class="h1">A signed letter of intent</h1>
             <article class="card">
                 <div class="card-block">
                     <p>For these examples we are going to consider the following simple problem: Alice want to buy a potato from Bob
@@ -36,53 +36,70 @@
                 </div>
             </article>
             
-            <h2 class="h2"><b>Step 1:</b> Signed letter of intent</h2>
+            
+            <h2 class="h2">Implementation</h2>
+            <p>Let's define a user on the network like so:</p>
+            <script src="https://gist.github.com/beuted/1acccf7063e8d595b78cb053f452fdbd.js"></script>
+            
+            <p>A user is defined by his private-key, that he keep secret, and his identity can be checked using his public-key. He also keeps a complete record,
+            and this is important, of <b>all transactions</b> he have ever witness. This allows him to be aware of who owns how much coins on the network.
+            Finally he keeps an address-book up to date with all the people he knows on the network.</p>
+
+            <p>This can seems pretty heavy but you have to keep in mind that in the crypto-currency we are trying to build we don't want any Bank or central authority.
+            This changes the nature of the currency considerably. It means that there is no longer any single organization in charge of the currency. And when
+            you think about the enormous power a central bank has – control over the money supply – that’s a pretty huge change.
+            the price to pay is that every user needs to be aware other users and how much they own.</p>
+
+            <p>Now let's imagine, Alice wants to buy a potato to Bob for 1 potato-coin. She will have to create a simple message with the the
+            amount of money she want to give bob and the current date, sign it and send it on the network.</p>
+
+            <script src="https://gist.github.com/beuted/ccaaf463a162bbe527825dfdf572c81a.js"></script>
+
+            <p>Bob would receive it, validate that the signature is correct, that Alice have enough coins to pay him (thanks to the list of
+            <b>all the transactions</b> on the network he keeps up to date) and if this is the case he will call it a deal and give the potato to Alice.</p>
+
+            <p>Other users on the network will see this transaction as well and update their list of transaction, they will now know that Bob has -1 potato-coin
+            and that Alice have +1 potato-coin</p>
+            
+
+            <h2 class="h2">Demonstration</h2>
 
             <article>
-                <p>Let's take a potato-coin network with 3 people: Alice, Bob and Charlie. Now consider the potato-coin trade being just a
-                message Alice is sending, <b>signed with her private key</b>.</p>
-                <div class="card" id="transaction-block" style="display: none;">
+                <div class="card" id="transaction-block">
                     <div class="card-block">
-                        <ol style="margin: 0;">
-                            <li><b>Transaction message:</b>
+                        <ol style="opacity: 0;">
+                            <li>Alice builds the transaction message:
                                 <code class="transaction"></code>
                             </li>
 
-                            <li><b>Alice will then sign the message with her private key:</b>
+                            <li>Alice will then sign the message with her private key:
                                 <code class="signed-message"></code>
                             </li>
 
-                            <li><b>Bob can then verify that the message is from Alice by checking the signature, he finds that it is:</b>
+                            <li>Bob can then verify that the message is from Alice by checking the signature, he finds that it is:
                                 <code class="verify-message"></code>
                             </li>
 
-                            <li><b>Bob will broadcast this message to all users proving that he now owns +1 coin and Alice -1</b>
-
-                            <li><b>Bob can now give Alice the potato she bought him. He can prove that Alice sent him a coin since he have a message signed with her private key</b>
+                            <li>Bob will broadcast this message to all users proving that he now owns +1 coin and Alice -1, and give a potato to Alice.
                         </ol>
                     </div>
                 </article>
 
-                <p><button class="btn btn-primary btn-sm" onclick="window.aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button></p>  
+                <p><button class="btn btn-primary" onclick="window.aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button></p>  
                               
                 <p>As the transaction have been signed with Alice private key, we can know for sure that Alice is ok with the transaction. So if this encrypted transaction
                 is broadcasted on the network, everybody will be aware that Bob now have +1 coin and Alice -1 coin.</p>
             </article>
-            
-            <div class="alert alert-danger" role="alert">This implementation can be abused in an easy way!</div>
-            <h3 class="h3">Simple double emission</h3>
+
+            <h2>Flaw</h2>
+
+            <div class="alert alert-danger" role="alert">This implementation can be abused with simple double emission!</div>
+
             <article>
-                <p>Bob could replay the same transaction on the network and steal all Alice money!</p>
-                <ol>
-                    <li><b>Previous signed transaction message:</b>
-                        <code class="signed-message"></code>
-                    </li>
-
-                    <li><b>Bob can replay the message 10 times and steal 10 coins from Alice, Charlie and others will have no way to know!
-                    <button class="btn btn-primary btn-sm" onclick="window.broadcastMessage10Times()">Broadcast the same transaction message 10 times 😈</button></b>
-                </ol>
-
-                <p>We'll need a way to avoid simple double spending</p>
+                <p>In this implementation nothing stop Bob from <b>replaying the same transaction</b> on the network and steal all Alice money!</p>
+                <p><button class="btn btn-primary" onclick="window.broadcastMessage10Times()">Broadcast the same transaction message 😈</button></p>
+                <br>
+                <div class="alert alert-info" role="alert">We need a way to avoid simple double spending</div>
                 <div class="row navigation">
                     <div class="col-sm-12">
                         <a class="btn btn-success float-right" href="./crypto-currency-v2.html">next >></a>

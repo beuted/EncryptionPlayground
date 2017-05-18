@@ -22,17 +22,10 @@
         <div class="container">
             <h1>Rewarding transactions validation</h1>
 
-            <p>Alright, let’s suppose Dylan is lucky and finds a suitable nonce, <code>x</code>. Celebration! (He’ll be rewarded for finding
-            the nonce, as described below). He broadcasts the block of transactions he’s approving to the network, together with
-            the value for <code>x</code>. Other participants in the potato-coin network can verify that <code>x</code> is a valid solution
-            to the proof-of-work puzzle. And they then update their block chains to include the new block of transactions.</p>
+            <p>In order to incentive people to participate to mining we could reward them with few potato coins that we will create out of nowhere!</p>
 
-            <p>For the proof-of-work idea to have any chance of succeeding, network users need an incentive to help validate transactions.
-            Without such an incentive, they have no reason to expend valuable computational power, merely to help validate other people’s
-            transactions. And if network users are not willing to expend that power, then the whole system won’t work. The solution to
-            this problem is to reward people who help validate transactions. In particular, suppose we reward whoever successfully
-            validates a block of transactions by crediting them with some potato-coins. Provided the potato-coin reward is large enough
-            that will give them an incentive to participate in validation.</p>
+            <p>This will have two benefits: Provided the potato-coin reward is large enough that will give them an incentive to participate in validation
+            and grow the number of people mining. And that will also help injecting a bit of potato-coins in the network, bootstraping our crypto-currency!</p>
 
             <p><div class="alert alert-info" role="alert">In the Bitcoin protocol, this validation process is called <b>mining</b>. For each block of transactions validated, the
             successful miner receives a bitcoin reward. Initially, this was set to be a 50 bitcoin reward. But for every 210,000
@@ -51,45 +44,65 @@
             equal to the proportion of the total computing power that they control. So, for instance, if a miner controls
             one percent of the computing power being used to validate Bitcoin transactions, then they have roughly a one
             percent chance of winning the competition. So provided a lot of computing power is being brought to bear on the
-            competition, a dishonest miner is likely to have only a relatively small chance to corrupt the validation process,
+            competition, a dishonest miner is likely to have only a <b>relatively small chance to corrupt the validation process</b>,
             unless they expend a huge amount of computing resources.</p>
 
+            <h2>Implementation</h2>
             <p>In our example let's state that the mining of a block of 10 transactions is rewarded with <b>25 potato-coins</b></p>
 
-            <article class="card" id="transaction-block" style="display: none;">
+            <b>TOOOODDDOOOOO</b>
+
+            <h2>Demonstration</h2>
+            <article class="card" id="transaction-block">
                 <div class="card-block">
-                    <ol style="margin: 0;">
-                        <li><b>Transaction message:</b>
+                    <ol style="opacity: 0;">
+                        <li>Transaction message:
                             <code class="transaction"></code>
                         </li>
 
-                        <li><b>Alice will then sign the message with her private key:</b>
+                        <li>Alice will then sign the message with her private key:
                             <code class="signed-message"></code>
                         </li>
 
-                        <li><b>Bob can then verify that the message is from Alice by checking the signature, check that the hash is valid and that he
-                        cannot be found in his local blockchain, he finds that is is:</b>
+                        <li>Bob can then verify that the message is from Alice by checking the signature, check that the hash is valid and that he
+                        cannot be found in his local blockchain, he finds that is is:
                             <code class="verify-message"></code>
                         </li>
 
-                        <li><b>But Bob do not consider the transaction "verified" yet. He will broadcast this message to all users in his network and ask them to verify the transaction</b>
+                        <li>But Bob do not consider the transaction "verified" yet. He will broadcast this message to all users in his network
+                        that will verify it and add it to there pending "unverified" transactions</li>
 
-                        <li><b>Users will respond to Bob that the message is correct considering their current blockchain</b></li>
+                        <li>When enough transaction will have been receive by mining-users, they will start brute-forcing
+                        for a hash of a block of transaction including Alice one. This hash will have to start with three zeros.</li>
 
-                        <li><b>Bob can now give Alice the potato she bought him.</b>
+                        <li>As soon as one user will have found such hash of a block he will proudly broadcast it to the network, <b>this block will start
+                        with a transaction rewarding him with 25 potato-coins.</b></li>
+
+                        <li>Bob (and other users) will check for the hash and and the content of the block, if it is a valid they will add the block to their blockchain
+                        considering it "verified"</li>
+
+                        <li>Bob being aware of that can now give Alice the potato she bought him.
                     </ol>
                 </div>                
             </article>
 
             <button class="btn btn-primary" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button><br><br>
 
-            <h3>Mining</h3>
+            <h4>Mining</h4>
             
             <p><button class="btn btn-primary btn-sm" onclick="makeDylanMine()">Make Dylan start mining</button></p>
 
-            <p>Of course, while it’s encouraging that a dishonest party has only a relatively small chance to corrupt the
-            block chain, that’s not enough to give us confidence in the currency. In particular, we haven’t yet conclusively
-            addressed the issue of double spending.</p>
+            <h2>Flaw</h2>
+
+            <div class="alert alert-danger" role="alert">The network is not converging on one version of the blockchain</div>
+
+            <p>Let's say two users that have successfully validated the same block ans send it on the network at the same time,
+            What will probably happen is that part of the network will ned-up with a version of the blockchain where the first user
+            validated the block and was rewarded for that, and part of the network will consider that it's the second user that
+            have been rewarded</p>
+
+            <p>Also, while it’s encouraging that a dishonest party has only a relatively small chance to corrupt the
+            block chain, that’s not enough to give us confidence in the currency.</p>
 
             <div class="row navigation">
                 <div class="col-sm-12">

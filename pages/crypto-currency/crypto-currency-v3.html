@@ -20,39 +20,45 @@
     </head>
     <body>
         <div class="container">
-            <h1 class="h1">Agreement on the state of the blockchain</h1>
+            <h1 class="h1">Agreement on the state of the transaction list</h1>
 
             <p>How can we address the problem of double spending? The obvious solution is that when Bob sends
             Alice a potato-coin, <b>Alice shouldn’t try to verify the transaction alone</b>. Rather, she should broadcast the
             possible transaction to the entire network of potato-coins users, and ask them to help determine whether
             the transaction is legitimate. If they collectively decide that the transaction is okay, then Alice can
-            accept the potato-coin, and everyone will update their block chain. This type of protocol can help prevent
-            timing attack, since if Bob tries to spend his potato-coin with both Alice and Charlie, other people on
+            accept the potato-coin, and everyone will update their transaction list. This type of protocol can help prevent
+            timing attacks. Since, if Bob tries to spend his potato-coin with both Alice and Charlie, other people on
             the network will notice, and network users will tell both Alice and Charlie that there is a problem with
             the transaction, and the transaction shouldn’t go through.</p>
 
-            <p>In more detail, let’s suppose Bob wants to give Alice a potato-coin. As before, he signs the message
-            <i>“I, Bob, am giving Alice one potato-coin, with serial number 1234567”</i>, and gives the signed message to Alice.
-            Also as before, Alice does a sanity check, using his copy of the block chain to check that, indeed, the coin
+            <p>In more detail, let’s suppose Bob wants to give Alice a potato-coin. As before, he signs the message and gives the signed message to Alice.
+            Also as before, Alice does a sanity check, using his copy of the transaction list to check that, indeed, the coin
             currently belongs to Alice. But at that point the protocol is modified. Alice doesn’t just go ahead and accept
             the transaction. Instead, she broadcasts Bob’s message to the entire network. Other members of the network
-            check to see whether Bob owns that potato-coin. If so, they broadcast the message <i>“Yes, Bob owns enough potato-coin for
-            the transaction 1234567, it can now be transferred to Alice.”</i> Once enough people have broadcast that message,
-            everyone updates their block chain to show that potato-coin now belongs to Bob through the transaction 1234567.</p>
+            will do the same checks with <b>their version of the transaction list</b>, if they find the transaction valid they will
+            broadcats this "check" of the network. Once enough people have broadcast that message,
+            everyone updates their transaction list to show that Bob has -1 coin and ALice +1.</p>
 
             <div class="alert alert-success" role="alert">We are reaching here the issue that have stayed unsolved for about 30 years until somebody under the nickname of
             Satoshi Nakamoto published <a href = "https://bitcoin.org/bitcoin.pdf">a paper on the subject</a> in 2008 that will
-            solve the issue of removing the "trusted 3rd party".</div>
+            solve this issue and truly remove the "trusted 3rd party".</div>
 
-            <p>Let's start with a simple idea, let's add a layer of verification to the system. Once Alice receive a coin from Bob
-            She will first do all the checks on the hash, signature and amount of coins Bob owns we previously discussed.
-            Alice will add the transaction in her blockchain <b>but will not consider yet that it is valid</b>.
-            Alice will then ask all the network to validate that this translation legit or not, when Alice will receive let's say
-            <b>50% of users in the network</b> responses saying that <b>the transaction is correct</b>. She will consider the transaction valid.</p>
+            <h2>Implementation</h2>
+
+            <p>Let's say we consider a transaction to be verified when <b>50% of users in the network</b> responsed saying that the transaction is correct.</p>
+
+            <p>The user will have to store, for each "serial numbers" (hash of the message), a list of user that have validated the transaction: <code>localTransactionValidators</code></p>
+
+            <p>Then we're going to add a last step to the previous function <code>VerifySignedMessageAndAddToSignedMessageList</code> broadcasting that the message is valid
+            to all other users if user find it valid.</p>
     
-            <article class="card" id="transaction-block" style="display: none;">
+            <script src="https://gist.github.com/beuted/397184e1971dac6f028bd20fe541f336.js"></script>
+
+            <h2>Demonstration</h2>
+
+            <article class="card" id="transaction-block">
                 <div class="card-block">
-                    <ol style="margin: 0;">
+                    <ol style="opacity: 0;">
                         <li><b>Transaction message:</b>
                             <code class="transaction"></code>
                         </li>
@@ -62,7 +68,7 @@
                         </li>
 
                         <li><b>Bob can then verify that the message is from Alice by checking the signature, check that the hash is valid and that he
-                        cannot be found in his local blockchain, he finds that is is:</b>
+                        cannot be found in his local transaction list, he finds that is is:</b>
                             <code class="verify-message"></code>
                         </li>
 
@@ -83,8 +89,9 @@
             <p>Timing attack will not work anymore since Alice and Charlie will now be able to agree on which transaction is valid and which one is not.
             So when Bob will send all his coins to Alice and Charlie at the same time, only one of this transaction will be validated.</p>
             
-            <p><button class="btn btn-primary btn-sm" onclick="window.broadcastSimultaneousMessages()">Simultaneously send two messages giving all Bob's money to Alice and Charlie 👿</button></p>
+            <p><button class="btn btn-primary" onclick="window.broadcastSimultaneousMessages()">Simultaneously send two messages giving all Bob's money to Alice and Charlie 👿</button></p>
 
+            <h2>Flaw</h2>
             <div class="alert alert-danger" role="alert">This implementation will not work either! (but we're getting close)</div>
 
             <p>Few issues comes with what we just discribed here:</p>
@@ -93,8 +100,10 @@
                 <b>"50% of the users in the network"</b> is.</li>
                 <li>Why a user will bother responding to Alice when she ask if the message she have been sent is valid?</li>                
                 <li>Even if she had a way to know, Bob could create billions of fake users and swarm the network with
-                puppets that will validate all his transactions. <button class="btn btn-primary btn-sm" onclick="window.swarmNetworkWithBobPuppets()">Swarm the network with bob's puppets 😈</button></li>
+                puppets that will validate all his transactions.</li>
             </ol>
+
+            <p><button class="btn btn-primary" onclick="window.swarmNetworkWithBobPuppets()">Swarm the network with bob's puppets 😈</button></p>
 
             <p>We need a better definition of: <i>“once enough people have broadcast that message”</i> for the currency to work.</p>
 

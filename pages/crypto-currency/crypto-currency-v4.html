@@ -23,10 +23,7 @@
             <h1 class="h1">A proof of work</h1>
 
             <p>There’s a clever way of avoiding these problems, using an idea known as <b>proof-of-work</b>.
-            The idea is counterintuitive and involves a combination of two ideas:</p>
-            <p>(1) to (artificially) make it computationally costly for network users to validate transactions.</p>
-            <p>(2) to reward them for trying to help validate transactions. The reward is used so that people on the network
-            will try to help validate transactions, even though that’s now been made a computationally costly process.</p>
+            The idea is counterintuitive it is to (artificially) make it computationally costly for network users to validate transactions.</p>
             
             <p>The benefit of making it costly to validate transactions is that validation can no longer be influenced by the
             number of network identities someone controls, but only by the total computational power they can bring to bear
@@ -35,19 +32,15 @@
 
             <p>That’s the gist of proof-of-work. But to really understand proof-of-work, we need to go through the details.</p>
 
-            <p>Suppose Alice broadcasts to the network the news that <i>“I, Alice, am giving Bob one potato-coin, with serial number 1234567”</i>.</p>
+            <p>Suppose Alice broadcasts to the network the news that <i>“I, Alice, am giving Bob one potato-coin”</i>.</p>
 
             <p>As other people on the network hear that message, each adds it to a queue of pending transactions that they’ve been
             told about, but which haven’t yet been approved by the network. For instance, another network user named Dylan might
             have the following queue of pending transactions:</p>
 
-            <p><code>{ "from": "Bob", "to": "Alice", "amount": 1, "date": 1234567 }</code></p>
+            <script src="https://gist.github.com/beuted/77a4c2e9aa4a22823ece961c25e2892b.js"></script>
 
-            <p><code>{ "from": "Charlie", "to": "Bob", "amount": 1, "date": 3456789 }</code></p>
-
-            <p><code>{ "from": "Alice", "to": "Bob", "amount": 1, "date": 7890123 }</code></p>
-
-            <p>Dylan checks his copy of the block chain, and can see that each transaction is valid. He would like to help out by
+            <p>Dylan checks his copy of queue of pending transactions, and can see that each transaction is valid. He would like to help out by
             broadcasting news of that validity to the entire network.</p>
 
             <p>However, before doing that, as part of the validation protocol Dylan is required to solve a hard computational
@@ -62,12 +55,7 @@
             Suppose Dylan appends a number <code>x</code> (called the nonce) to <code>l</code> and hashes the
             combination.</p>
 <p><b>x = "0000000000":</b></p>
-<p><code>
-h("[{ \"from\": \"Bob\", \"to\": \"Alice\", \"amount\": 1, \"date\": 1234567 },
-{ \"from\": \"Charlie\", \"to\": \"Bob\", \"amount\": 1, \"date\": 3456789 },
-{ \"from\": \"Alice\", \"to\": \"Bob\", \"amount\": 1, \"date\": 7890123 }]0000000000")
-</code></p>
-<p><code>= fe25f7a881925510b9c96008a3efff6d79aeffc3302d6acb530a34ab75941da0</code></p>
+<script src="https://gist.github.com/beuted/17c2d0d33f8276e44429c5549a9fcae2.js"></script>
 
             <p>The puzzle Dylan has to solve – the proof-of-work – is to find a nonce <code>x</code> such that when we append <code>x</code>
             to <code>l</code> and hash the combination the output hash begins with a long run of zeroes. The puzzle can be
@@ -78,23 +66,18 @@ h("[{ \"from\": \"Bob\", \"to\": \"Alice\", \"amount\": 1, \"date\": 1234567 },
             output doesn’t begin with any zeroes at all.</p>
 
 <p><b>x = "0000000001":</b></p>
-<p><code>
-h("[{ \"from\": \"Bob\", \"to\": \"Alice\", \"amount\": 1, \"date\": 1234567 },
-{ \"from\": \"Charlie\", \"to\": \"Bob\", \"amount\": 1, \"date\": 3456789 },
-{ \"from\": \"Alice\", \"to\": \"Bob\", \"amount\": 1, \"date\": 7890123 }]0000000001")
-</code></p>
-<p><code>= f96c2321f421094c45adb81267fe22a2fddd6662ca73e01a115a12ace6d4ccc2</code></p>
+<script src="https://gist.github.com/beuted/edbc12d90579d24c8dab48a228116e9d.js"></script>
 
             <p><code>x</code> = "0000000001" doesn't work either, we can keep trying different values for the nonce,
             <code>x</code> = 0000000002, 0000000003,...</p>
             
 <p>Finally, at <b>x = 0000003869</b> we obtain:</p>
-<p><code>
-h("[{ \"from\": \"Bob\", \"to\": \"Alice\", \"amount\": 1, \"date\": 1234567 },
-{ \"from\": \"Charlie\", \"to\": \"Bob\", \"amount\": 1, \"date\": 3456789 },
-{ \"from\": \"Alice\", \"to\": \"Bob\", \"amount\": 1, \"date\": 7890123 }]0000003869")
-</code></p>
-<p><code>= 0006530f9b816d547dff0551b99231d1f98192a3f442a76d65d8949fb869ef16</code></p>
+<script src="https://gist.github.com/beuted/bf506e7556a3ea385a714b9caa29a338.js"></script>
+
+
+            <p>This list pending transactions will be stored with the found hash inside a <b>block</b> and these blocks will be
+            broadcasted on the network and each user will store them locally as they will constitute the "verified" transactions
+            one user can trust. These block placed one after the other are called <b>the block chain</b> </p>
 
             <p>What makes this puzzle hard to solve is the fact that the output from a cryptographic hash function behaves
             like a random number: change the input even a tiny bit and the output from the hash function changes completely,
@@ -115,52 +98,74 @@ h("[{ \"from\": \"Bob\", \"to\": \"Alice\", \"amount\": 1, \"date\": 1234567 },
             single puzzle, we can require that multiple puzzles be solved; with some careful design it is possible to considerably
             reduce the variance in the time to validate a block of transactions.</div></p>
 
-            <p>The proof-of-work validation brings us two things. First it is now very costly for any malicious user to swarm the network
-            with fake users, as it is now his computation power that determine his impact on the network not his number of puppet users.
-            Second, this new validation only needs one user to validate the transaction, we don't need to know how many users there
-            is on the network anymore.</p>
+            <p>The proof-of-work validation brings us two things:
+                <ol>
+                    <li>It is now very costly for any malicious user to swarm the network
+                    with fake users, as it is now his computation power that determine his impact on the network not his number of puppet users</li>
+                    <li>Second, this new validation only needs one user to validate the transaction, we don't need to know how many users there
+                    is on the network anymore.</li>
+                </ol>
+            </p>
 
-            <article class="card" id="transaction-block" style="display: none;">
+
+            <h2>Implementation</h2>
+
+            <p>Here is an implementation of the mining process for a user. When the user have found a hash he proudly broadcast the result to other users.</p>
+            <script src="https://gist.github.com/beuted/b83473345194042a50c97de94a1ac846.js"></script>
+
+            <p>Other users will run all previous checks on transactions and also will verify that the found block hash is valid. If so they will modify their local
+            block-chain and remove the transactions mined from their list of pending transactions</p>
+            <script src="https://gist.github.com/beuted/edd1f30135862c9ec865494786b5f1a6.js"></script>
+
+            <h2>Demonstration</h2>
+            <article class="card" id="transaction-block">
                 <div class="card-block">
-                    <ol style="margin: 0;">
-                        <li><b>Transaction message:</b>
+                    <ol style="opacity: 0;">
+                        <li>Transaction message:
                             <code class="transaction"></code>
                         </li>
 
-                        <li><b>Alice will then sign the message with her private key:</b>
+                        <li>Alice will then sign the message with her private key:
                             <code class="signed-message"></code>
                         </li>
 
-                        <li><b>Bob can then verify that the message is from Alice by checking the signature, check that the hash is valid and that he
-                        cannot be found in his local blockchain, he finds that is is:</b>
+                        <li>Bob can then verify that the message is from Alice by checking the signature, check that the hash is valid and that he
+                        cannot be found in his local blockchain, he finds that is is:
                             <code class="verify-message"></code>
                         </li>
 
-                        <li><b>But Bob do not consider the transaction "verified" yet. He will broadcast this message to all users in his network
-                        that will verify it and add it to there pending "unverified" transactions</b></li>
+                        <li>But Bob do not consider the transaction "verified" yet. He will broadcast this message to all users in his network
+                        that will verify it and add it to there pending "unverified" transactions</li>
 
-                        <li><b>When enough transaction will have been receive by mining-users, they will start brute-forcing
-                        for a hash of a block of transaction including Alice one. This hash will have to start with three zeros.</b></li>
+                        <li>When enough transaction will have been receive by mining-users, they will start brute-forcing
+                        for a hash of a block of transaction including Alice one. This hash will have to start with three zeros.</li>
 
-                        <li><b>As soon as one user will have found such hash of a block he will proudly broadcast it to the network.</b></li>
+                        <li>As soon as one user will have found such hash of a block he will proudly broadcast it to the network.</li>
 
-                        <li><b>Bob (and other users) will check for the hash and if it is a valid one they will add the block to their blockchain
-                        considering it "verified"</b></li>
+                        <li>Bob (and other users) will check for the hash and and the content of the block, if it is a valid they will add the block to their blockchain
+                        considering it "verified"</li>
 
-                        <li><b>Bob being aware of that can now give Alice the potato she bought him.</b>
+                        <li>Bob being aware of that can now give Alice the potato she bought him.
                     </ol>
                 </div>                
             </article>
 
-            <button class="btn btn-primary btn-sm" onclick="window.aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button><br><br>
+            <button class="btn btn-primary" onclick="window.aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button><br><br>
 
-            <h3>Mining</h3>
+            <h4>Mining</h4>
 
             <p>Once you have sent more than 10 transactions you can click on the button below to have Dylan start mining the transactions
             you sent. When Dylan will have figured out a hash starting with three "0" of the block of transactions we will broadcast this
             block of transaction on the network. All users will receive it and will then consider these transaction as "verified".</p>
 
-            <p><button class="btn btn-primary btn-sm" onclick="window.makeDylanMine()">Make Dylan start mining 😇</button></p>
+            <p><button class="btn btn-primary" onclick="window.makeDylanMine()">Make Dylan start mining 😇</button></p>
+
+            <h2>Flaws</h2>
+
+            <div class="alert alert-danger" role="alert">Why would somebody use his personnal computation power to participate to mining?</div>
+
+            <p>Indeed we need a large amount of users to mine for a malicious user to be <i>unlikely</i> to succeed mining 2 block containing a double spending
+            (and thus have his double spending considered "verified" by other users)</p>
 
             <div class="row navigation">
                 <div class="col-sm-12">
