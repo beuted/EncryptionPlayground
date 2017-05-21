@@ -38,30 +38,32 @@ export class UserV5 extends UserV4 {
     public ReceiveBlockValidation(block: Block) {
         // Check that the proof-of-work is indeed a valid hash of the block
         if (!this.ValidateBlockHash(block)) {
+            console.error(`${this.name} [Invalid block]: Invalid hash: ${JSON.stringify(block)}`);
             return false;
         }
 
         // Verify each messages in the block has a valid signature, unique hash and that user spending coins have these coins
         var isValid = true;
-        block.transactions.forEach((signedMessage, i) => {
+        for (var i=0; i < block.transactions.length; i++) {
+            var signedMessage = block.transactions[i];
             // Exception made for first transaction that is allowed to reward a user with 25 potato-coins
             if (i == 0) {
                 if (signedMessage.message.amount <= 25
                   && this.IsAValidHash(signedMessage.hash, signedMessage.message)
-                  && !this.IsHashAlreadyInBlockChain(signedMessage.hash)) {
-                    return false;
+                  && !this.HashMatchAnotherHash(signedMessage.hash)) {
+                    continue
                 } else {
-                    console.error(`${this.name}: Invalid reward signedMessage: ${JSON.stringify(signedMessage)}`);
+                    console.error(`${this.name} [Invalid block]: Invalid reward signedMessage: ${JSON.stringify(signedMessage)}`);
                     isValid = false;
-                    return true;
+                    break;
                 }
             }
 
             if (!this.VerifySignedMessage(signedMessage)) {
                 isValid = false;
-                return true;
+                break;
             }
-        });
+        }
 
         if (!isValid) {
             return false;
@@ -74,7 +76,7 @@ export class UserV5 extends UserV4 {
         this.RemoveValidatedTransactions(block.transactions);
     }
 
-    public Mine() {
+    public async Mine() {
         if (this.unvalidatedTransactions.length >= 10) {
             var transactionList = this.unvalidatedTransactions.slice(0, 10);
 
@@ -82,7 +84,7 @@ export class UserV5 extends UserV4 {
             transactionList.unshift(this.GetSignedMessageWithSerialNumber(this.name, 25, Date.now(), true));
 
             var beginTime = Date.now()
-            var message = Helpers.FindValidHash(transactionList);
+            var message = await Helpers.FindValidHash(transactionList);
             var timeSpentMiningBlock = (Date.now() - beginTime)/1000;
             console.info(`${this.name}: Took ${timeSpentMiningBlock}s to mine a block`);
             if (message) {
@@ -191,8 +193,17 @@ xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
         $("#Dylan").replaceWith(dylan.GetMarkup());
     };
 
-    (<any>window).makeDylanMine = function() {
-        dylan.Mine();
+    (<any>window).makeDylanMine = async function() {
+        await dylan.Mine();
+
+        $("#Alice").replaceWith(alice.GetMarkup());
+        $("#Bob").replaceWith(bob.GetMarkup());
+        $("#Charlie").replaceWith(charlie.GetMarkup());
+        $("#Dylan").replaceWith(dylan.GetMarkup());
+    };
+
+    (<any>window).makeDylanAndCharlieMine = async function() {
+        await Promise.all([charlie.Mine(), dylan.Mine()]);
 
         $("#Alice").replaceWith(alice.GetMarkup());
         $("#Bob").replaceWith(bob.GetMarkup());

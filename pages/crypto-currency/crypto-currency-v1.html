@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-        
+        <link rel="stylesheet" href="./node_modules/font-awesome/css/font-awesome.css">
         <link href="./style/main.css" rel="stylesheet">
 
         <script src="./node_modules/requirejs/require.js" data-main="src/config"></script>
@@ -23,12 +23,12 @@
             <h1 class="h1">A signed letter of intent</h1>
             <article class="card">
                 <div class="card-block">
-                    <p>For these examples we are going to consider the following simple problem: Alice want to buy a potato from Bob
-                    for 1 potato-Coin, <b>How can Alice transfert 1 potato-Coin to Bob?</b> both users will have a private and
+                    <p>For these examples we are going to consider the following simple problem: Alice wants to buy a potato from Bob
+                    for 1 potato-Coin, <b>How can Alice transfers 1 potato-Coin to Bob?</b> Both users will have a private and
                     a public key that will allow them to sign messages.</p>
                     
                     <p>The asymmetric encryption system we will use is RSA (we <a href="file:///E:/src/repos/EncryptionPlayground/pages/rsa.html">
-                    implemented a simple one here</a>) but we will need a deeper implementation that supports encryption/decryption of large amount of
+                    implemented a simple one here</a>) but we will need a deeper implementation that supports encryption/decryption of large amounts of
                     data and of strings as well as a signing implementation, so we will use <code>jsrsasign</code> for that.</p>
 
                     <a href="https://github.com/kjur/jsrsasign" class="card-link">Jsrsasign</a>
@@ -42,16 +42,16 @@
             <script src="https://gist.github.com/beuted/1acccf7063e8d595b78cb053f452fdbd.js"></script>
             
             <p>A user is defined by his private-key, that he keep secret, and his identity can be checked using his public-key. He also keeps a complete record,
-            and this is important, of <b>all transactions</b> he have ever witness. This allows him to be aware of who owns how much coins on the network.
+            and this is important, of <b>all transactions</b> he has ever witness. This allows him to be aware of who owns how many coins on the network.
             Finally he keeps an address-book up to date with all the people he knows on the network.</p>
 
-            <p>This can seems pretty heavy but you have to keep in mind that in the crypto-currency we are trying to build we don't want any Bank or central authority.
+            <p>This can seem pretty heavy but you have to keep in mind that in the crypto-currency we are trying to build we don't want any Bank or central authority.
             This changes the nature of the currency considerably. It means that there is no longer any single organization in charge of the currency. And when
             you think about the enormous power a central bank has – control over the money supply – that’s a pretty huge change.
-            the price to pay is that every user needs to be aware other users and how much they own.</p>
+            The price to pay is that every user needs to be aware other users and how much they own.</p>
 
-            <p>Now let's imagine, Alice wants to buy a potato to Bob for 1 potato-coin. She will have to create a simple message with the the
-            amount of money she want to give bob and the current date, sign it and send it on the network.</p>
+            <p>Now let's imagine, Alice wants to buy a potato to Bob for 1 potato-coin. She will have to create a simple message with the
+            amount of money she wants to give bob and the current date, sign it and send it on the network.</p>
 
             <script src="https://gist.github.com/beuted/ccaaf463a162bbe527825dfdf572c81a.js"></script>
 
@@ -85,10 +85,10 @@
                     </div>
                 </article>
 
-                <p><button class="btn btn-primary" onclick="window.aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button></p>  
+                <p><button class="btn btn-success" onclick="window.aliceSend1CoinToBob()">Make Alice send one coin to Bob <i class="fa fa-exchange" aria-hidden="true"></i></button></p>  
                               
-                <p>As the transaction have been signed with Alice private key, we can know for sure that Alice is ok with the transaction. So if this encrypted transaction
-                is broadcasted on the network, everybody will be aware that Bob now have +1 coin and Alice -1 coin.</p>
+                <p>As the transaction have been signed with Alice private key, we can know for sure that Alice is OK with the transaction. So if this encrypted transaction
+                is broadcast on the network, everybody will be aware that Bob now have +1 coin and Alice -1 coin.</p>
             </article>
 
             <h2>Flaw</h2>
@@ -97,18 +97,18 @@
 
             <article>
                 <p>In this implementation nothing stop Bob from <b>replaying the same transaction</b> on the network and steal all Alice money!</p>
-                <p><button class="btn btn-primary" onclick="window.broadcastMessage10Times()">Broadcast the same transaction message 😈</button></p>
+                <p><button class="btn btn-danger" onclick="window.broadcastMessage10Times()">Broadcast the same transaction message <i class="fa fa-bomb" aria-hidden="true"></i></button></p>
                 <br>
                 <div class="alert alert-info" role="alert">We need a way to avoid simple double spending</div>
                 <div class="row navigation">
                     <div class="col-sm-12">
-                        <a class="btn btn-success float-right" href="./crypto-currency-v2.html">next >></a>
+                        <a class="btn btn-primary float-right" href="./crypto-currency-v2.html">next <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
                     </div>
                 </div>
             </article>
         </div>
 
-        <div class="close-network">❌</div>
+        <div class="close-network"><i class="fa fa-times" aria-hidden="true"></i></div>
         <div class="network">
             <div id="Alice"></div>
             <div id="Bob"></div>

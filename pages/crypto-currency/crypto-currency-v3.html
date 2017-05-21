@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-
+        <link rel="stylesheet" href="./node_modules/font-awesome/css/font-awesome.css">
         <link href="./style/main.css" rel="stylesheet">
 
         <script src="./node_modules/requirejs/require.js" data-main="src/config"></script>
@@ -32,12 +32,12 @@
             the transaction, and the transaction shouldn’t go through.</p>
 
             <p>In more detail, let’s suppose Bob wants to give Alice a potato-coin. As before, he signs the message and gives the signed message to Alice.
-            Also as before, Alice does a sanity check, using his copy of the transaction list to check that, indeed, the coin
+            Also, as before, Alice does a sanity check, using his copy of the transaction list to check that, indeed, the coin
             currently belongs to Alice. But at that point the protocol is modified. Alice doesn’t just go ahead and accept
             the transaction. Instead, she broadcasts Bob’s message to the entire network. Other members of the network
             will do the same checks with <b>their version of the transaction list</b>, if they find the transaction valid they will
-            broadcats this "check" of the network. Once enough people have broadcast that message,
-            everyone updates their transaction list to show that Bob has -1 coin and ALice +1.</p>
+            broadcast this "check" of the network. Once enough people have broadcast that message,
+            everyone updates their transaction list to show that Bob has -1 coin and Alice +1.</p>
 
             <div class="alert alert-success" role="alert">We are reaching here the issue that have stayed unsolved for about 30 years until somebody under the nickname of
             Satoshi Nakamoto published <a href = "https://bitcoin.org/bitcoin.pdf">a paper on the subject</a> in 2008 that will
@@ -45,7 +45,7 @@
 
             <h2>Implementation</h2>
 
-            <p>Let's say we consider a transaction to be verified when <b>50% of users in the network</b> responsed saying that the transaction is correct.</p>
+            <p>Let's say we consider a transaction to be verified when <b>50% of users in the network</b> responded saying that the transaction is correct.</p>
 
             <p>The user will have to store, for each "serial numbers" (hash of the message), a list of user that have validated the transaction: <code>localTransactionValidators</code></p>
 
@@ -74,14 +74,14 @@
 
                         <li><b>But Bob do not consider the transaction "verified" yet. He will broadcast this message to all users in his network and ask them to verify the transaction</b>
 
-                        <li><b>Users will respond to Bob that the message is correct considering their current blockchain</b></li>
+                        <li><b>Users will respond to Bob that the message is correct considering their current list of transactions</b></li>
 
                         <li><b>Bob can now give Alice the potato she bought him.</b>
                     </ol>
                 </div>                
             </article>
 
-            <button class="btn btn-primary" onclick="window.aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button><br><br>
+            <button class="btn btn-success" onclick="window.aliceSend1CoinToBob()">Make Alice send one coin to Bob <i class="fa fa-exchange" aria-hidden="true"></i></button><br><br>
             
 
             <h3>Timing attacks?</h3>
@@ -89,12 +89,12 @@
             <p>Timing attack will not work anymore since Alice and Charlie will now be able to agree on which transaction is valid and which one is not.
             So when Bob will send all his coins to Alice and Charlie at the same time, only one of this transaction will be validated.</p>
             
-            <p><button class="btn btn-primary" onclick="window.broadcastSimultaneousMessages()">Simultaneously send two messages giving all Bob's money to Alice and Charlie 👿</button></p>
+            <p><button class="btn btn-warning" onclick="window.broadcastSimultaneousMessages()">Simultaneously send two messages giving all Bob's money to Alice and Charlie <i class="fa fa-shield" aria-hidden="true"></i></button></p>
 
             <h2>Flaw</h2>
             <div class="alert alert-danger" role="alert">This implementation will not work either! (but we're getting close)</div>
 
-            <p>Few issues comes with what we just discribed here:</p>
+            <p>Few issues comes with what we just described here:</p>
             <ol>
                 <li>Alice have no way to know how many people in the network there is, so she have no way to know what
                 <b>"50% of the users in the network"</b> is.</li>
@@ -103,19 +103,19 @@
                 puppets that will validate all his transactions.</li>
             </ol>
 
-            <p><button class="btn btn-primary" onclick="window.swarmNetworkWithBobPuppets()">Swarm the network with bob's puppets 😈</button></p>
+            <p><button class="btn btn-danger" onclick="window.swarmNetworkWithBobPuppets()">Swarm the network with bob's puppets <i class="fa fa-bomb" aria-hidden="true"></i></button></p>
 
             <p>We need a better definition of: <i>“once enough people have broadcast that message”</i> for the currency to work.</p>
 
             <div class="row navigation">
                 <div class="col-sm-12">
-                    <a class="btn btn-success float-left" href="./crypto-currency-v2.html"><< prev</a>                    
-                    <a class="btn btn-success float-right" href="./crypto-currency-v4.html">next >></a>
+                    <a class="btn btn-primary float-left" href="./crypto-currency-v2.html"><i class="fa fa-arrow-left" aria-hidden="true"></i> prev</a>                    
+                    <a class="btn btn-primary float-right" href="./crypto-currency-v4.html">next <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
                 </div>
             </div>
         </div>
 
-        <div class="close-network">❌</div>
+        <div class="close-network"><i class="fa fa-times" aria-hidden="true"></i></div>
         <div class="network">
             <div id="Alice"></div>
             <div id="Bob"></div>

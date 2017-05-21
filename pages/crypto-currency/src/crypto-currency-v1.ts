@@ -113,11 +113,11 @@ export class User {
         return `<div class="user-container" id="${this.name}"><div class="card user"><div class="card-block">
             <h4>
                 ${this.name}
-                <label class="privateKey" data-container="body" data-placement="top" data-trigger="hover" data-toggle="popover" data-content="${this.privateKey.replace(/"/g, '\'')}">🔑</label>
+                <label class="privateKey" data-container="body" data-placement="top" data-trigger="hover" data-toggle="popover" data-content="${this.privateKey.replace(/"/g, '\'')}"><i class="fa fa-key" aria-hidden="true"></i></label>
             </h4>
             <ul>
                 <li>Money I think I Own: <b>${this.money}\$</b></li>
-                <li class="localBlockChain hover-to-see">localBlockChain (${this.localSignedMessages.length}): <code>${JSON.stringify(this.localSignedMessages, undefined, 2)}</code></li>
+                <li class="localBlockChain hover-to-see">localSignedMessages (${this.localSignedMessages.length}): <code>${JSON.stringify(this.localSignedMessages, undefined, 2)}</code></li>
                 <li class="localAddressBook hover-to-see">localAddressBook (${Object.keys(this.localAddressBook).length}): <code>${JSON.stringify(Object.keys(this.localAddressBook).map((key, index) => { return { name: key, publicKey: '[...]', money: this.localAddressBook[key].money }; }), undefined, 2)}</code></li>
             </ul>
         </div></div></div>`;

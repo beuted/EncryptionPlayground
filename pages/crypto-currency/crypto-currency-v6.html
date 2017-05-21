@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-
+        <link rel="stylesheet" href="./node_modules/font-awesome/css/font-awesome.css">
         <link href="./style/main.css" rel="stylesheet">
 
         <script src="./node_modules/requirejs/require.js" data-main="src/config"></script>
@@ -95,6 +95,12 @@
             A more general analysis along these lines shows that Alice’s probability of ever catching up is infinitesimal, unless
             she is able to solve proof-of-work puzzles at a rate approaching all other miners combined.</p>
 
+            <h2>Implementation</h2>
+
+            <b>TODO</b>
+
+            <h2>Demonstration</h2>
+
             <article class="card" id="transaction-block">
                 <div class="card-block">
                     <ol style="opacity: 0;">
@@ -120,13 +126,18 @@
                 </div>                
             </article>
 
-            <button class="btn btn-primary" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button><br><br>
+            <button class="btn btn-success" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob <i class="fa fa-exchange" aria-hidden="true"></i></button><br><br>
 
-            <h3>Mining</h3>
+            <h4>Mining</h4>
             
-            <p><button class="btn btn-primary btn-sm" onclick="makeDylanMine()">Make Dylan start mining</button></p>
+            <p><button class="btn btn-success" onclick="makeDylanMine()">Make Dylan start mining <i class="fa fa-cogs" aria-hidden="true"></i></button></p>
 
-            <h3>Outroduction</h3>            
+            <p><button class="btn btn-success" onclick="makeDylanAndCharlieMine()">Make Dylan and Charlie start mining at the same time <i class="fa fa-cogs" aria-hidden="true"></i></button></p>
+
+            
+
+            <h2>Flaw?</h2>
+            <h2>Outroduction</h2>            
 
             <p>Of course, this is not a rigorous security analysis showing that Alice cannot double spend. It’s merely an informal
             plausibility argument. The original paper introducing Bitcoin did not, in fact, contain a rigorous security
@@ -143,15 +154,17 @@
             questions (in the context of Bitcoin) in a future post. For now, we’ll stick to our focus on understanding how the
             Bitcoin protocol works.</p>
 
+            <p>Proof of stake ? both etherum and bitcoin consume ~ 1M$ worth of electricity per day. https://github.com/ethereum/wiki/wiki/Proof-of-Stake-FAQ</p>
+
             <div class="row navigation">
                 <div class="col-sm-12">
-                    <a class="btn btn-success float-left" href="./crypto-currency-v5.html"><< prev</a>                    
-                    <a class="btn btn-success float-right" href="./crypto-currency-v7.html">next >></a>
+                    <a class="btn btn-primary float-left" href="./crypto-currency-v5.html"><i class="fa fa-arrow-left" aria-hidden="true"></i> prev</a>                    
+                    <a class="btn btn-primary float-right" href="./crypto-currency-v7.html">next <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
                 </div>
             </div>
         </div>
 
-        <div class="close-network">❌</div>
+        <div class="close-network"><i class="fa fa-times" aria-hidden="true"></i></div>
         <div class="network">
             <div id="Alice"></div>
             <div id="Bob"></div>

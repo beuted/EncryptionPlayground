@@ -11,13 +11,178 @@ export class NetworkV6<TUser extends UserV6, TMessage extends ISignedHashedMessa
     constructor() {
         super();
     }
+
+    public async GenerateGenesisBlock() {
+        var genesisTransactions = [this.GenerateGenesisTransaction()];
+        var message = await HelpersV6.FindValidHashWithPrevBlockHash(genesisTransactions, "origin");
+
+        return new BlockV6(genesisTransactions, message.hash, message.nonce, "origin");
+    }
+}
+
+export class BlockV6 extends Block {
+    public proofOfWork: hash;
+    public transactions: ISignedHashedMessage[];
+    public nonce: string;
+    public prevBlockHash: hash;
+
+    constructor(transactions: ISignedHashedMessage[], proofOfWork: hash, nonce: string, prevBlockHash: hash) {
+        super(transactions, proofOfWork, nonce);
+
+        this.prevBlockHash = prevBlockHash;
+    }
 }
 
 export class UserV6 extends UserV5 {
     public network: NetworkV6<UserV6, ISignedHashedMessage>;
 
+    public localBlockChain: { [key: string]: BlockV6 };
+    public lastBlockProofOfWork: string;
+    public trustedBlockChainLength: number;
+    public genesisBlock: Promise<BlockV6>;
+
     constructor(name: string, privateKey: string, network: NetworkV5<UserV5, ISignedHashedMessage>) {
-      super(name, privateKey, network)
+      super(name, privateKey, network);
+
+      this.genesisBlock.then((genesisBlock: Block) => {
+        this.lastBlockProofOfWork = genesisBlock.proofOfWork;
+        this.trustedBlockChainLength = 1;
+      });
+    }
+
+    public ReceiveBlockValidation(block: BlockV6) {
+        // Check that the proof-of-work is indeed a valid hash of the block
+        if (!this.ValidateBlockHash(block)) {
+            console.error(`${this.name}: Invalid block hash: ${JSON.stringify(block.proofOfWork)}`);
+            return false;
+        }
+
+        // Verify each messages in the block has a valid signature, unique hash and that user spending coins have these coins
+        var isValid = true;
+        block.transactions.forEach((signedMessage, i) => {
+            // Exception made for first transaction that is allowed to reward a user with 25 potato-coins
+            if (i == 0) {
+                if (signedMessage.message.amount <= 25
+                  && this.IsAValidHash(signedMessage.hash, signedMessage.message)
+                  && !this.HashMatchAnotherHash(signedMessage.hash)) {
+                    return false;
+                } else {
+                    console.error(`${this.name}: Invalid reward signedMessage: ${JSON.stringify(signedMessage)}`);
+                    isValid = false;
+                    return true;
+                }
+            }
+
+            if (!this.VerifySignedMessage(signedMessage)) {
+                isValid = false;
+                return true;
+            }
+        });
+
+        if (!isValid) {
+            return false;
+        }
+
+        // Add the block to local block-chain
+        this.localBlockChain[block.proofOfWork] = block;
+
+        let proposedChainLength = this.FindChainLength(block.proofOfWork);
+        if (this.trustedBlockChainLength < proposedChainLength) {
+            // Update the last known block
+            this.lastBlockProofOfWork = block.proofOfWork;
+            this.trustedBlockChainLength = proposedChainLength;
+
+            // Remove validated transactions from the unvalidatedTransactions list
+            this.RemoveValidatedTransactions(block.transactions);
+        }
+    }
+
+    protected ValidateBlockHash(block: BlockV6) {
+        // Check that the proof-of-work (hash of the block) starts with three 0
+        if (block.proofOfWork[0] != "0" || block.proofOfWork[1] != "0" || block.proofOfWork[2] != "0") {
+            return false;
+        }
+
+        var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });
+        md.updateString(JSON.stringify({ transactionList: block.transactions, prevBlockHash: block.prevBlockHash }) + block.nonce); 
+        var proofOfWork = md.digest();
+        if (block.proofOfWork != proofOfWork) {
+            return false;
+        }
+        return true;
+    }
+
+    public FindChainLength(proofOfWork: string) {
+        var length = 1;
+        let block = this.localBlockChain[proofOfWork]
+        while (block && block.prevBlockHash) {
+            if (block.prevBlockHash == "origin") {
+                return length;
+            }
+            
+            length++;
+            block = this.localBlockChain[block.prevBlockHash]
+        }
+    }
+
+    protected IterateOnBlockChain(callback: Function) {
+        var found = false;
+        var blockPointer = this.lastBlockProofOfWork;
+        
+        while(blockPointer != "origin") {
+            this.localBlockChain[blockPointer].transactions.forEach(transaction => {
+                if (callback(transaction))
+                    return;
+            });
+            blockPointer = this.localBlockChain[blockPointer].prevBlockHash;
+        }
+
+        return !found;
+    }
+
+    public async Mine() {
+        if (this.unvalidatedTransactions.length >= 10) {
+            var transactionList = this.unvalidatedTransactions.slice(0, 10);
+
+            // Add a reward of 25 potato-coins at the beginning of the block
+            transactionList.unshift(this.GetSignedMessageWithSerialNumber(this.name, 25, Date.now(), true));
+
+            let beginTime = Date.now();
+            let lastBlockProofOfWork = this.lastBlockProofOfWork;
+            let message = await HelpersV6.FindValidHashWithPrevBlockHash(transactionList, lastBlockProofOfWork);
+            let timeSpentMiningBlock = (Date.now() - beginTime)/1000;
+            console.info(`${this.name}: Took ${timeSpentMiningBlock}s to mine a block`);
+            if (message)  {
+                var block = new BlockV6(transactionList, message.hash, message.nonce, lastBlockProofOfWork);
+                this.BroadcastValidatedBlock(block);
+                this.ReceiveBlockValidation(block);
+                return true;
+            } 
+        } else {
+            console.info(`${this.name}: Can't mine a block if less than 10 transactions are waiting.`);
+        }
+
+        return false;
+    }
+}
+
+export class HelpersV6 extends Helpers {
+    public static async FindValidHashWithPrevBlockHash(transactionList: ISignedHashedMessage[], prevBlockHash: hash) {
+        
+        const maxTries = 100000;
+        const stepSize = 100;
+        var content = JSON.stringify({ transactionList: transactionList, prevBlockHash: prevBlockHash });
+
+        for (var i=0; i < maxTries/stepSize; i++) {
+            var res = await HelpersV6.FindValidHashWithPrevBlockHashStep(content, stepSize)
+            if (res !== null)
+                return res;
+
+        }
+        
+        console.warn(`${this.name}: Failed to find a valid hash after ${maxTries} tries.`);
+        return null;
+
     }
 }
 
@@ -113,8 +278,17 @@ xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
         $("#Dylan").replaceWith(dylan.GetMarkup());
     };
 
-    (<any>window).makeDylanMine = function() {
-        dylan.Mine();
+    (<any>window).makeDylanMine = async function() {
+        await dylan.Mine();
+
+        $("#Alice").replaceWith(alice.GetMarkup());
+        $("#Bob").replaceWith(bob.GetMarkup());
+        $("#Charlie").replaceWith(charlie.GetMarkup());
+        $("#Dylan").replaceWith(dylan.GetMarkup());
+    };
+
+    (<any>window).makeDylanAndCharlieMine = async function() {
+        await Promise.all([charlie.Mine(), dylan.Mine()]);
 
         $("#Alice").replaceWith(alice.GetMarkup());
         $("#Bob").replaceWith(bob.GetMarkup());

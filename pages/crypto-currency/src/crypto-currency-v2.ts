@@ -15,14 +15,14 @@ export class NetworkV2<TUser extends UserV2, TMessage extends ISignedHashedMessa
     // (More on bitcoin Genesis block here: https://en.bitcoin.it/wiki/Genesis_block)
     // V2: new Genesis transaction with hash
     protected GenerateGenesisTransaction(): TMessage {
-        var previousGenesisTransllation: TMessage = <TMessage>super.GenerateGenesisTransaction();
+        var genesisTranaction: TMessage = <TMessage>super.GenerateGenesisTransaction();
 
         var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });
-        md.updateString(JSON.stringify(previousGenesisTransllation.message));
+        md.updateString(JSON.stringify(genesisTranaction.message));
 
 
-        previousGenesisTransllation.hash = md.digest();
-        return previousGenesisTransllation;
+        genesisTranaction.hash = md.digest();
+        return genesisTranaction;
     }
 
 }
@@ -60,12 +60,16 @@ export class UserV2 extends User {
         }
 
         // Verify that there is no hash similarities
-        if ((<any>this.localSignedMessages).findIndex((x: ISignedHashedMessage) => x.hash == signedMessage.hash) !== -1) {
+        if (this.HashMatchAnotherHash(signedMessage.hash)) {
             console.error(`${this.name}: A message with a similar hash have been found: ${signedMessage.hash}`);
             return false;
         }
 
         return true;
+    }
+
+    protected HashMatchAnotherHash(hash: hash) {
+        return (<any>this.localSignedMessages).findIndex((x: ISignedHashedMessage) => x.hash == hash) !== -1;
     }
 
     protected IsAValidHash(hash: hash, message: IMessage) {

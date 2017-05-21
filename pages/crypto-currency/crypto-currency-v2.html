@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-        
+        <link rel="stylesheet" href="./node_modules/font-awesome/css/font-awesome.css">
         <link href="./style/main.css" rel="stylesheet">
         
         <script src="./node_modules/requirejs/require.js" data-main="src/config"></script>
@@ -59,18 +59,18 @@
                         </li>
 
                         <li><b>Bob can then verify that the message is from Alice by checking the signature, that the hash is valid and that he
-                        cannot be found in his local blockchain twice, he finds that it is:</b>
+                        cannot be found in his local list of transactions twice, he finds that it is:</b>
                             <code class="verify-message"></code>
                         </li>
 
                         <li><b>Bob will broadcast this message to all users, proving that he now owns +1 coin and Alice -1</b>
 
-                        <li><b>Bob can now give Alice the potato she bought him. He can prove that Alice sent him a coin since he have a message signed with her private key</b>
+                        <li><b>Bob can now give Alice the potato she bought him. He can prove that Alice sent him a coin since he has a message signed with her private key</b>
                     </ol>
                 </div>
             </article>
 
-            <p><button class="btn btn-primary" onclick="window.aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button></p>            
+            <p><button class="btn btn-success" onclick="window.aliceSend1CoinToBob()">Make Alice send one coin to Bob <i class="fa fa-exchange" aria-hidden="true"></i></button></p>            
 
             <p>As the transaction have been signed with Alice private key we can know for sure that Alice is okay with the transaction and since
             the hash parameter match the hash of the message and is unique on the network we can now for sure that <b>it have not been "replayed"</b></p>
@@ -79,12 +79,12 @@
 
             <p>This time Bob:</p>
             <ol>
-                <li><b>cannot replay the message 10 times</b> because they will have the same hash:
-                <button class="btn btn-primary" onclick="window.broadcastSameMessage()">Try broadcasting the same transaction message 👿</button><br>
+                <li><b>Cannot replay the message 10 times</b> because they will have the same hash:
+                <button class="btn btn-warning" onclick="window.broadcastSameMessage()">Try broadcasting the same transaction message <i class="fa fa-shield" aria-hidden="true"></i></button><br>
                 </li>
                 <li>and he <b>cannot change the message to change the hash</b> because the message will not be signed correctly anymore.
-                <button class="btn btn-primary" onclick="window.broadcastDifferentMessages()">Just change the date of the message to change its hash
-                (with the same signature) 👿</button></li>
+                <button class="btn btn-warning" onclick="window.broadcastDifferentMessages()">Just change the date of the message to change its hash
+                (with the same signature) <i class="fa fa-shield" aria-hidden="true"></i></button></li>
             </ol>
 
             <h2 class="h2">Flaw</h2>
@@ -95,22 +95,22 @@
             <i>"timing attacks"</i>, where malicious people spends money they don't have.</p>
             <p>Let's consider that Bob send <b>X coins</b> to Alice, (X being all the coins he has) and <b>at the exact same time</b>,
             send X coins to Charlie.</p>
-            <p>What will happen is that Alice will update her local blockchain with the transaction where Bob gives her all his coins and
-            Charlie will update his local blockchain with a transaction where bob gives him all his coins, and both will give bob X potatoes
+            <p>What will happen is that Alice will update her local list of transactions with the transaction where Bob gives her all his coins and
+            Charlie will update his local list of transactions with a transaction where bob gives him all his coins, and both will give bob X potatoes
             even tho' only one out of Alice and Charlie have been paid.</p>
-            <p><button class="btn btn-primary" onclick="window.broadcastSimultaneousMessages()">Simultaneously send two messages giving all Bob's money to Alice and Charlie 😈</button></p>
+            <p><button class="btn btn-danger" onclick="window.broadcastSimultaneousMessages()">Simultaneously send two messages giving all Bob's money to Alice and Charlie <i class="fa fa-bomb" aria-hidden="true"></i></button></p>
             <div class="alert alert-info" role="alert">In order to avoid that we need a way to choose and validate a common version of the list of transactions for all users. It means
             that we need to be able to choose if Bob have given all his coins to Alice or to Charlie.</div>
          
             <div class="row navigation">
                 <div class="col-sm-12">
-                    <a class="btn btn-success float-left" href="./crypto-currency-v1.html"><< prev</a>                    
-                    <a class="btn btn-success float-right" href="./crypto-currency-v3.html">next >></a>
+                    <a class="btn btn-primary float-left" href="./crypto-currency-v1.html"><i class="fa fa-arrow-left" aria-hidden="true"></i> prev</a>                    
+                    <a class="btn btn-primary float-right" href="./crypto-currency-v3.html">next <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
                 </div>
             </div>
         </div>
 
-        <div class="close-network">❌</div>
+        <div class="close-network"><i class="fa fa-times" aria-hidden="true"></i></div>
         <div class="network">
             <div id="Alice"></div>
             <div id="Bob"></div>

@@ -7,7 +7,8 @@
             "./node_modules/@types",
             "./definitions/"
         ],
-        "target": "es5"
+        "target": "es6"
+
     },
     "files": ["src/config.ts", "src/index.ts"]
 }

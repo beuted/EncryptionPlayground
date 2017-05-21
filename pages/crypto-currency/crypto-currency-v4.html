@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-
+        <link rel="stylesheet" href="./node_modules/font-awesome/css/font-awesome.css">
         <link href="./style/main.css" rel="stylesheet">
 
         <script src="./node_modules/requirejs/require.js" data-main="src/config"></script>
@@ -76,7 +76,7 @@
 
 
             <p>This list pending transactions will be stored with the found hash inside a <b>block</b> and these blocks will be
-            broadcasted on the network and each user will store them locally as they will constitute the "verified" transactions
+            broadcast on the network and each user will store them locally as they will constitute the "verified" transactions
             one user can trust. These block placed one after the other are called <b>the block chain</b> </p>
 
             <p>What makes this puzzle hard to solve is the fact that the output from a cryptographic hash function behaves
@@ -130,7 +130,7 @@
                         </li>
 
                         <li>Bob can then verify that the message is from Alice by checking the signature, check that the hash is valid and that he
-                        cannot be found in his local blockchain, he finds that is is:
+                        cannot be found in his local block chain, he finds that is is:
                             <code class="verify-message"></code>
                         </li>
 
@@ -142,7 +142,7 @@
 
                         <li>As soon as one user will have found such hash of a block he will proudly broadcast it to the network.</li>
 
-                        <li>Bob (and other users) will check for the hash and and the content of the block, if it is a valid they will add the block to their blockchain
+                        <li>Bob (and other users) will check for the hash and and the content of the block, if it is a valid they will add the block to their block chain
                         considering it "verified"</li>
 
                         <li>Bob being aware of that can now give Alice the potato she bought him.
@@ -150,7 +150,7 @@
                 </div>                
             </article>
 
-            <button class="btn btn-primary" onclick="window.aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button><br><br>
+            <button class="btn btn-success" onclick="window.aliceSend1CoinToBob()">Make Alice send one coin to Bob <i class="fa fa-exchange" aria-hidden="true"></i></button><br><br>
 
             <h4>Mining</h4>
 
@@ -158,7 +158,7 @@
             you sent. When Dylan will have figured out a hash starting with three "0" of the block of transactions we will broadcast this
             block of transaction on the network. All users will receive it and will then consider these transaction as "verified".</p>
 
-            <p><button class="btn btn-primary" onclick="window.makeDylanMine()">Make Dylan start mining 😇</button></p>
+            <p><button class="btn btn-success" onclick="window.makeDylanMine()">Make Dylan start mining <i class="fa fa-cogs" aria-hidden="true"></i></button></p>
 
             <h2>Flaws</h2>
 
@@ -169,13 +169,13 @@
 
             <div class="row navigation">
                 <div class="col-sm-12">
-                    <a class="btn btn-success float-left" href="./crypto-currency-v3.html"><< prev</a>                    
-                    <a class="btn btn-success float-right" href="./crypto-currency-v5.html">next >></a>
+                    <a class="btn btn-primary float-left" href="./crypto-currency-v3.html"><i class="fa fa-arrow-left" aria-hidden="true"></i> prev</a>                    
+                    <a class="btn btn-primary float-right" href="./crypto-currency-v5.html">next <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
                 </div>
             </div>
         </div>
 
-        <div class="close-network">❌</div>
+        <div class="close-network"><i class="fa fa-times" aria-hidden="true"></i></div>
         <div class="network">
             <div id="Alice"></div>
             <div id="Bob"></div>

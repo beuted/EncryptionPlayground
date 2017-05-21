@@ -7,7 +7,7 @@ declare var RSAKey: any;
 declare var KJUR: any;
 
 export class NetworkV4<TUser extends UserV4, TMessage extends ISignedHashedMessage> extends NetworkV3<TUser, TMessage> {
-    public genesisBlock : Block;
+    public genesisBlock : Promise<Block>;
 
     constructor() {
         super();
@@ -29,9 +29,9 @@ export class NetworkV4<TUser extends UserV4, TMessage extends ISignedHashedMessa
         return this.genesisBlock;
     }
 
-    public GenerateGenesisBlock() {
+    public async GenerateGenesisBlock() {
         var genesisTransactions = [this.GenerateGenesisTransaction()];
-        var message = Helpers.FindValidHash(genesisTransactions);
+        var message = await Helpers.FindValidHash(genesisTransactions);
 
         return new Block(genesisTransactions, message.hash, message.nonce);
     }
@@ -53,7 +53,7 @@ export class Block {
 export class UserV4 extends UserV3 {
     public unvalidatedTransactions: ISignedHashedMessage[];
     public localBlockChain: { [key: string]: Block };
-    public genesisBlock: Block;
+    public genesisBlock: Promise<Block>;
     public network: NetworkV4<UserV4, ISignedHashedMessage>;
 
     constructor(name: string, privateKey: string, network: NetworkV4<UserV4, ISignedHashedMessage>) {
@@ -63,8 +63,10 @@ export class UserV4 extends UserV3 {
         this.unvalidatedTransactions = [];
 
         // Init the local chain of transaction with genesis one
-        var genesisBlock = this.network.GetGenesisBlock();
-        this.localBlockChain[genesisBlock.proofOfWork] = genesisBlock;
+        this.genesisBlock = this.network.GetGenesisBlock();
+        this.genesisBlock.then((genesisBlock: Block) => {
+            this.localBlockChain[genesisBlock.proofOfWork] = genesisBlock;
+        });
     }
 
     public GetMarkup() {
@@ -72,7 +74,7 @@ export class UserV4 extends UserV3 {
         return `<div class="user-container" id="${this.name}"><div class="card user"><div class="card-block">
             <h4>
                 ${this.name}
-                <label class="privateKey" data-container="body" data-placement="top" data-trigger="hover" data-toggle="popover" data-content="${this.privateKey.replace(/"/g, '\'')}">🔑</label>
+                <label class="privateKey" data-container="body" data-placement="top" data-trigger="hover" data-toggle="popover" data-content="${this.privateKey.replace(/"/g, '\'')}"><i class="fa fa-key" aria-hidden="true"></i></label>
             </h4>
             <p><b>Money I think I Own</b>: ${this.money}\$</p>
             <p class="localBlockChain hover-to-see"><b>localBlockChain (${Object.keys(this.localBlockChain).length})</b>: <code>${JSON.stringify(this.localBlockChain, undefined, 2)}</code></p>
@@ -82,29 +84,26 @@ export class UserV4 extends UserV3 {
     }
 
     protected IterateOnBlockChain(callback: Function) {
-        var found = false;
         Object.keys(this.localBlockChain).forEach((key, index) => {
             this.localBlockChain[key].transactions.forEach(transaction => {
                 if (callback(transaction))
                     return;
             });
         });
-
-        return !found;
     }
 
-    protected IsHashAlreadyInBlockChain(hash: hash) {
-        let found = false;
+    protected HashMatchAnotherHash(hash: hash) {
+        let hashFound = false;
         this.IterateOnBlockChain((transaction: ISignedHashedMessage) => {
             if (transaction.hash == hash) {
-                found = true;
+                hashFound = true;
                 return true;
             }
 
             return false;
         });
 
-        return found;
+        return hashFound;
     }
 
     public VerifySignedMessageAndAddToUnvalidatedTransactions(signedMessage: ISignedHashedMessage) {
@@ -197,11 +196,11 @@ export class UserV4 extends UserV3 {
         });
     }
 
-    public Mine() {
+    public async Mine() {
         if (this.unvalidatedTransactions.length >= 10) {
             var transactionList = this.unvalidatedTransactions.slice(0, 10);
             var beginTime = Date.now()
-            var message = Helpers.FindValidHash(transactionList);
+            var message = await Helpers.FindValidHash(transactionList);
             var timeSpentMiningBlock = (Date.now() - beginTime)/1000;
             console.info(`${this.name}: Took ${timeSpentMiningBlock}s to mine a block`);
             if (message)  {
@@ -248,22 +247,43 @@ export class UserV4 extends UserV3 {
 }
 
 export class Helpers {
-    public static FindValidHash(transactionList: ISignedHashedMessage[]) {
+    public static async FindValidHash(transactionList: ISignedHashedMessage[],) {
+        
+        const maxTries = 100000;
+        const stepSize = 100;
         var content = JSON.stringify(transactionList);
 
-        for (var i=0; i < 100000; i++) {
-            var nonce = Helpers.Pad(i, 10);
+        for (var i=0; i < maxTries/stepSize; i++) {
+            var res = await Helpers.FindValidHashWithPrevBlockHashStep(content, stepSize)
+            if (res !== null)
+                return res;
 
-            var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });        
-            md.updateString(content + nonce); 
-            var h = md.digest();
-            if (h[0] == "0" && h[1] == "0" && h[2] == "0")
-                return { hash: h, nonce: nonce };
         }
+        
+        console.warn(`${this.name}: Failed to find a valid hash after ${maxTries} tries.`);
         return null;
+
     }
 
-    private static Pad(str: string | number, max: number): string {
+    // We need another function generating a "step" due to js engine asynchronisity that will run the all Promise before switching to another
+    public static async FindValidHashWithPrevBlockHashStep(content: string, maxTries: number) {
+        return new Promise<{ hash: string, nonce: string }>((successCb: Function, errorCb: Function) => {
+            for (var i=0; i < maxTries; i++) {
+                var nonce = Helpers.Pad(Math.floor(Math.random() * 10000000000), 10);
+
+                var md = new KJUR.crypto.MessageDigest({ alg: "sha256", prov: "cryptojs" });        
+                md.updateString(content + nonce); 
+                var h = md.digest();
+                if (h[0] == "0" && h[1] == "0" && h[2] == "0") {
+                    successCb({ hash: h, nonce: nonce });
+                    return;
+                }
+            }
+            successCb(null);
+        });
+    }
+
+    protected static Pad(str: string | number, max: number): string {
         str = str.toString();
         return str.length < max ? Helpers.Pad("0" + str, max) : str;
     }
@@ -361,8 +381,8 @@ export class Helpers {
         $("#Dylan").replaceWith(dylan.GetMarkup());
     };
 
-    (<any>window).makeDylanMine = function() {
-        dylan.Mine();
+    (<any>window).makeDylanMine = async function() {
+        await dylan.Mine();
 
         $("#Alice").replaceWith(alice.GetMarkup());
         $("#Bob").replaceWith(bob.GetMarkup());

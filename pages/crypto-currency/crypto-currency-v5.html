@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-
+        <link rel="stylesheet" href="./node_modules/font-awesome/css/font-awesome.css">
         <link href="./style/main.css" rel="stylesheet">
 
         <script src="./node_modules/requirejs/require.js" data-main="src/config"></script>
@@ -25,18 +25,18 @@
             <p>In order to incentive people to participate to mining we could reward them with few potato coins that we will create out of nowhere!</p>
 
             <p>This will have two benefits: Provided the potato-coin reward is large enough that will give them an incentive to participate in validation
-            and grow the number of people mining. And that will also help injecting a bit of potato-coins in the network, bootstraping our crypto-currency!</p>
+            and grow the number of people mining. And that will also help injecting a bit of potato-coins in the network, bootstrapping our crypto-currency!</p>
 
             <p><div class="alert alert-info" role="alert">In the Bitcoin protocol, this validation process is called <b>mining</b>. For each block of transactions validated, the
-            successful miner receives a bitcoin reward. Initially, this was set to be a 50 bitcoin reward. But for every 210,000
+            successful miner receives a Bitcoin reward. Initially, this was set to be a 50 Bitcoin reward. But for every 210,000
             validated blocks (roughly, once every four years) the reward halves. This has happened just once, to date, and so the
-            current reward for mining a block is 25 bitcoins. This halving in the rate will continue every four years until the
-            year 2140 CE. At that point, the reward for mining will drop below 10^{-8} bitcoins per block. 10^{-8} bitcoins is
-            actually the minimal unit of Bitcoin, and is known as a <i>satoshi</i>. So in 2140 CE the total supply of bitcoins will cease
+            current reward for mining a block is 25 Bitcoins. This halving in the rate will continue every four years until the
+            year 2140 CE. At that point, the reward for mining will drop below 10^{-8} Bitcoins per block. 10^{-8} Bitcoins is
+            actually the minimal unit of Bitcoin, and is known as a <i>satoshi</i>. So in 2140 CE the total supply of Bitcoins will cease
             to increase. However, that won’t eliminate the incentive to help validate transactions. Bitcoin also makes it possible
             to set aside some currency in a transaction as a transaction fee, which goes to the miner who helps validate it.
             In the early days of Bitcoin transaction fees were mostly set to zero, but as Bitcoin has gained in popularity,
-            transaction fees have gradually risen, and are now a substantial additional incentive on top of the 25 bitcoin reward
+            transaction fees have gradually risen, and are now a substantial additional incentive on top of the 25 Bitcoin reward
             for mining a block.</div></p>
 
             <p>You can think of proof-of-work as a competition to approve transactions. Each entry in the competition costs a
@@ -50,7 +50,17 @@
             <h2>Implementation</h2>
             <p>In our example let's state that the mining of a block of 10 transactions is rewarded with <b>25 potato-coins</b></p>
 
-            <b>TOOOODDDOOOOO</b>
+            <p>So we're going to slightly modify our previous implementation so that when a user is mining a block, he is adding a transaction rewarding him with 25 potato-coins.
+            These coins in order to be "generated" will come from a fake user we call "root"</p>
+
+            <script src="https://gist.github.com/beuted/42d293b3496c27efe1e96aac916370be.js"></script>
+
+            <p>Then when other users will validate the computed block they will add a special case for this first transaction where they will not do any check on
+            the user giving the coins but just the value that should be less or equal to 25 coins.</p>
+
+            <script src="https://gist.github.com/beuted/97002082ebff2531570533b0e0b3c3b3.js"></script>
+
+            <p>That's it, our previous implementation now generates coins when mining blocks!</p>
 
             <h2>Demonstration</h2>
             <article class="card" id="transaction-block">
@@ -65,7 +75,7 @@
                         </li>
 
                         <li>Bob can then verify that the message is from Alice by checking the signature, check that the hash is valid and that he
-                        cannot be found in his local blockchain, he finds that is is:
+                        cannot be found in his local block chain, he finds that is is:
                             <code class="verify-message"></code>
                         </li>
 
@@ -78,7 +88,7 @@
                         <li>As soon as one user will have found such hash of a block he will proudly broadcast it to the network, <b>this block will start
                         with a transaction rewarding him with 25 potato-coins.</b></li>
 
-                        <li>Bob (and other users) will check for the hash and and the content of the block, if it is a valid they will add the block to their blockchain
+                        <li>Bob (and other users) will check for the hash and and the content of the block, if it is a valid they will add the block to their block chain
                         considering it "verified"</li>
 
                         <li>Bob being aware of that can now give Alice the potato she bought him.
@@ -86,18 +96,20 @@
                 </div>                
             </article>
 
-            <button class="btn btn-primary" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob 😇</button><br><br>
+            <button class="btn btn-success" onclick="aliceSend1CoinToBob()">Make Alice send one coin to Bob <i class="fa fa-exchange" aria-hidden="true"></i></button><br><br>
 
             <h4>Mining</h4>
             
-            <p><button class="btn btn-primary btn-sm" onclick="makeDylanMine()">Make Dylan start mining</button></p>
+            <p><button class="btn btn-success" onclick="makeDylanMine()">Make Dylan start mining <i class="fa fa-cogs" aria-hidden="true"></i></button></p>
+            
+            <p><button class="btn btn-success" onclick="makeDylanAndCharlieMine()">Make Dylan and Charlie start mining at the same time <i class="fa fa-cogs" aria-hidden="true"></i></button></p>
 
             <h2>Flaw</h2>
 
-            <div class="alert alert-danger" role="alert">The network is not converging on one version of the blockchain</div>
+            <div class="alert alert-danger" role="alert">The network is not converging on one version of the block chain</div>
 
             <p>Let's say two users that have successfully validated the same block ans send it on the network at the same time,
-            What will probably happen is that part of the network will ned-up with a version of the blockchain where the first user
+            What will probably happen is that part of the network will ned-up with a version of the block chain where the first user
             validated the block and was rewarded for that, and part of the network will consider that it's the second user that
             have been rewarded</p>
 
@@ -106,13 +118,13 @@
 
             <div class="row navigation">
                 <div class="col-sm-12">
-                    <a class="btn btn-success float-left" href="./crypto-currency-v4.html"><< prev</a>                    
-                    <a class="btn btn-success float-right" href="./crypto-currency-v6.html">next >></a>
+                    <a class="btn btn-primary float-left" href="./crypto-currency-v4.html"><i class="fa fa-arrow-left" aria-hidden="true"></i> prev</a>                    
+                    <a class="btn btn-primary float-right" href="./crypto-currency-v6.html">next <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
                 </div>
             </div>
         </div>
 
-        <div class="close-network">❌</div>
+        <div class="close-network"><i class="fa fa-times" aria-hidden="true"></i></div>
         <div class="network">
             <div id="Alice"></div>
             <div id="Bob"></div>
