@@ -102,8 +102,6 @@
             
             <p><button class="btn btn-success" onclick="makeDylanMine()">Make Dylan start mining <i class="fa fa-cogs" aria-hidden="true"></i></button></p>
             
-            <p><button class="btn btn-success" onclick="makeDylanAndCharlieMine()">Make Dylan and Charlie start mining at the same time <i class="fa fa-cogs" aria-hidden="true"></i></button></p>
-
             <h2>Flaw</h2>
 
             <div class="alert alert-danger" role="alert">The network is not converging on one version of the block chain</div>
@@ -112,6 +110,9 @@
             What will probably happen is that part of the network will ned-up with a version of the block chain where the first user
             validated the block and was rewarded for that, and part of the network will consider that it's the second user that
             have been rewarded</p>
+
+            <p><i>TODO: make communication async so that demo works</i></p>
+            <p><button class="btn btn-danger" onclick="makeDylanAndCharlieMine()">Make Dylan and Charlie start mining at the same time <i class="fa fa-cogs" aria-hidden="true"></i></button></p>            
 
             <p>Also, while it’s encouraging that a dishonest party has only a relatively small chance to corrupt the
             block chain, that’s not enough to give us confidence in the currency.</p>

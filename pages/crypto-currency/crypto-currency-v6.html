@@ -97,7 +97,20 @@
 
             <h2>Implementation</h2>
 
-            <b>TODO</b>
+            <p>With this method the blockchain becomes a tree (In the bitcoin protocol it's actually a Merkle tree to save space
+            for light clients, more on this here: https://en.wikipedia.org/wiki/Merkle_tree) where each block points toward the previous
+            one using the hash of this previous block. So to iterate on it we can do the following:</p>
+
+            <script src="https://gist.github.com/beuted/c43d7f701c2f9fec973b1b347c7e5f99.js"></script>
+
+            <p>Now each time a user successfully validate a block he updates the branch he trusts by comparing the length of his previous
+            trusted branch with the new one. If the new branch is longer he accepts it, if not he add it to his local blockchain but doesn't
+            consider the branch to be the offcial one.
+            (The last block of the branch he trusts will be used as previous block if we happen to mine).</p>
+
+            <script src="https://gist.github.com/beuted/19a03d0d64cba2737aeb0bb67dec7cbe.js"></script>
+
+
 
             <h2>Demonstration</h2>
 
