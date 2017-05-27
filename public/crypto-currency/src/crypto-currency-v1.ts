@@ -322,10 +322,8 @@ export class User {
             return;
         }
 
-        for (var i = 0; i < 10; i++) {
-            bob.VerifySignedMessageAndAddToSignedMessageList(signedMessage);
-            bob.BroadcastSignedMessage(signedMessage);
-        }
+        bob.VerifySignedMessageAndAddToSignedMessageList(signedMessage);
+        bob.BroadcastSignedMessage(signedMessage);
         
         // Refresh UI
         $("#Alice").replaceWith(alice.GetMarkup());

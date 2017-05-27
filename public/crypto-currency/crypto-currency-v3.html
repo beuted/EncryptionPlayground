@@ -49,6 +49,8 @@
 
             <p>The user will have to store, for each "serial numbers" (hash of the message), a list of user that have validated the transaction: <code>localTransactionValidators</code></p>
 
+            <script src="https://gist.github.com/beuted/498c5598c3a1212ec842e10fa3483072.js"></script>
+
             <p>Then we're going to add a last step to the previous function <code>VerifySignedMessageAndAddToSignedMessageList</code> broadcasting that the message is valid
             to all other users if user find it valid.</p>
     
@@ -102,6 +104,14 @@
                 <li>Even if she had a way to know, Bob could create billions of fake users and swarm the network with
                 puppets that will validate all his transactions.</li>
             </ol>
+
+            <p>Indeed let's imagine Bob create 4 Users on 4 differents ip addresses with the following behavior: Eache time they're sent a transaction coming from bob they validate it only if
+            the user requesting the validation is the user receiving the coins.</p>
+
+            <script src="https://gist.github.com/beuted/2526b2a9539632665369aff793005149.js"></script>
+
+            <p>The effect would be that users receiving a lot of validations for the transaction benefiting him would consider it as valid and reject the transaction where somebody elso get paid.
+            But for the rest of the network it would be the opposite.</p>
 
             <p><button class="btn btn-danger" onclick="window.swarmNetworkWithBobPuppets()">Swarm the network with bob's puppets <i class="fa fa-bomb" aria-hidden="true"></i></button></p>
 
