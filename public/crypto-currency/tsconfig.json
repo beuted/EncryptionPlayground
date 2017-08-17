@@ -3,6 +3,7 @@
         "module": "amd",
         "noImplicitAny": true,
         "types": [],
+        "sourceMap": true,
         "typeRoots": [
             "./node_modules/@types",
             "./definitions/"
