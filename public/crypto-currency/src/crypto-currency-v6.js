@@ -262,3 +262,4 @@ xvM6Gba9b8Yz8rS08V0oPVLEUz4IwtX17Hv5y8IuPw==
         };
     };
 });
+//# sourceMappingURL=crypto-currency-v6.js.map

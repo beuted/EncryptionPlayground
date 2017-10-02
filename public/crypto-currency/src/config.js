@@ -18,3 +18,4 @@ requirejs.config({
     }
 });
 require(['src/index']);
+//# sourceMappingURL=config.js.map

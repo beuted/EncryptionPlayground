@@ -341,3 +341,4 @@ define(["require", "exports", "./crypto-currency-v3"], function (require, export
         };
     };
 });
+//# sourceMappingURL=crypto-currency-v4.js.map

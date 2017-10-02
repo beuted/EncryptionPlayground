@@ -47,3 +47,4 @@ define(["require", "exports", "jquery", "bootstrap"], function (require, exports
     };
     console.info = showInfoNotification;
 });
+//# sourceMappingURL=crypto-currency-common.js.map

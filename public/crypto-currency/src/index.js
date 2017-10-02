@@ -2,3 +2,4 @@ define(["require", "exports", "./crypto-currency-common", "./crypto-currency-v1"
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
+//# sourceMappingURL=index.js.map

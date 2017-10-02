@@ -19,6 +19,8 @@
         </script>
     </head>
     <body>
+        <a href="https://github.com/beuted/EncryptionPlayground/tree/master/public/crypto-currency"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
+
         <div class="container">
             <h1>The block-chain: A tree instead of an array</h1>
 
@@ -98,7 +100,7 @@
             <h2>Implementation</h2>
 
             <p>With this method the blockchain becomes a tree (In the bitcoin protocol it's actually a Merkle tree to save space
-            for light clients, more on this here: https://en.wikipedia.org/wiki/Merkle_tree) where each block points toward the previous
+            for light clients, more on this here: <a href="https://en.wikipedia.org/wiki/Merkle_tree">https://en.wikipedia.org/wiki/Merkle_tree</a>) where each block points toward the previous
             one using the hash of this previous block. So to iterate on it we can do the following:</p>
 
             <script src="https://gist.github.com/beuted/c43d7f701c2f9fec973b1b347c7e5f99.js"></script>
@@ -147,32 +149,31 @@
 
             <p><button class="btn btn-success" onclick="makeDylanAndCharlieMine()">Make Dylan and Charlie start mining at the same time <i class="fa fa-cogs" aria-hidden="true"></i></button></p>
 
-            
+            <h2>Flaw?</h2>         
 
-            <h2>Flaw?</h2>
-            <h2>Outroduction</h2>            
+            <p>Of course, we haven't prooved that the Double-spending was impossible with our implementation of the potatocoin. The network part is
+            just a stub and the code haven't been really check for security flaws. The idea here was more to try to reproduce the different steps
+            that lead to the current design crypto-currencies are using.</p>
 
-            <p>Of course, this is not a rigorous security analysis showing that Alice cannot double spend. It’s merely an informal
-            plausibility argument. The original paper introducing Bitcoin did not, in fact, contain a rigorous security
-            analysis, only informal arguments along the lines I’ve presented here. The security community is still analysing
-            Bitcoin, and trying to understand possible vulnerabilities. You can see some of this research listed here, and I
-            mention a few related problems in the “Problems for the author” below. At this point I think it’s fair to say that
-            the jury is still out on how secure Bitcoin is.</p>
+            <p>The proof-of-work idea that we presented also raise questions that still not have been answered to this day. One them being: "What will happen if
+            the mining power ends up in the hands of few? Will the protocol be compromised?". Indeed with Bitcoin we saw a raise of huge mining farms that are
+            controlling a fairly good part of the mining power. This can be explain by a need to reduce mining cost by moving the farms where electricity is cheap
+            and by using dedicated GPU and such. Some crypto-currencies like monero protocol have tried to limit this last issue by making the mining protocol hard to optimize
+            on a dedicated GPU.</p>
 
-            <p>The proof-of-work and mining ideas give rise to many questions. How much reward is enough to persuade people to
-            mine? How does the change in supply of potato-coins affect the potato-coin economy? Will potato-coin mining end up concentrated
-            in the hands of a few, or many? If it’s just a few, doesn’t that endanger the security of the system? Presumably
-            transaction fees will eventually equilibriate – won’t this introduce an unwanted source of friction, and make small
-            transactions less desirable? These are all great questions, but beyond the scope of this post. I may come back to the
-            questions (in the context of Bitcoin) in a future post. For now, we’ll stick to our focus on understanding how the
-            Bitcoin protocol works.</p>
+            <p>Another issue that appeared with bitcoin is the carbon print of the proof-of-work. Indeed the bitcoin miners alone spend around <b>1M$ worth of eletricity every day</b>.
+            An answer ethereum and other crypto is trying to give to this problem is proof-of-stake, a protocol where the "mining" consist into validating transaction by blocking a part
+            of your wallet and receive interest for it: <a href="https://github.com/ethereum/wiki/wiki/Proof-of-Stake-FAQ">https://github.com/ethereum/wiki/wiki/Proof-of-Stake-FAQ</a></p>
 
-            <p>Proof of stake ? both etherum and bitcoin consume ~ 1M$ worth of electricity per day. https://github.com/ethereum/wiki/wiki/Proof-of-Stake-FAQ</p>
+            <p>Crypto-currencies really seems at their early stage and the ideas that are floating around can be mind blowing. I hope this few pages made you enthousiast about the
+            technology and if you have any suggestion of improvment, question or if you just want to have a look at the code 
+            <a href="https://github.com/beuted/EncryptionPlayground/tree/master/public/crypto-currency">here is the link to the github page</a>.</p>
+
+            <p>Benoit Jehanno</p>
 
             <div class="row navigation">
                 <div class="col-sm-12">
                     <a class="btn btn-primary float-left" href="./crypto-currency-v5.html"><i class="fa fa-arrow-left" aria-hidden="true"></i> prev</a>                    
-                    <a class="btn btn-primary float-right" href="./crypto-currency-v7.html">next <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
                 </div>
             </div>
         </div>
